@@ -1,9 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { response } from 'express';
 import { User } from 'src/user/model/user.model';
 import { UserService } from 'src/user/user.service';
 import { MetadataDTO } from './DTO/Metadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
-import { Metadata } from './models/metamodel.model';
+import { MetadataService } from './metadata.service';
+import { Metadata, MetadataDocument } from './models/metamodel.model';
 import { Project } from './models/project.model';
 import { ProjectService } from './project.service';
 
@@ -13,7 +16,21 @@ export class ProjectController {
 
 
     constructor(private readonly projectService: ProjectService,
-      private readonly userService: UserService){}
+      private readonly userService: UserService,
+      private readonly metadataService: MetadataService
+      ){}
+
+
+    @Get("/all")
+    async getAllProjects(){
+      return this.projectService.getAllProjects();
+    }
+
+    @Get(":id")
+    async getProjectById(@Param("id") id: string){
+      return await this.projectService.findProject(id);
+    }
+
 
 
 
@@ -39,18 +56,17 @@ export class ProjectController {
 
     }
 
-    @Post(":id")
-    createMetadataForProject(@Param("id") idProjekta: string, @Body() metadataDTO: MetadataDTO){
+    @Post(":id/metadata")
+    async createMetadataForProject(@Param("id") idProjekta: string, @Body() metadata: Metadata){
+
+        let project = await this.projectService.findProject(idProjekta);
+        let saved = await this.metadataService.createMetadata(metadata);
+        project.metadata.push(saved);
+        const updated = await this.projectService.updateProject(idProjekta,project);
+        return updated;
 
 
-        //let project = findProjectById(id);
 
-        let metadata = new MetadataDTO();
-        metadata.name = metadata.name;
-
-        //project.metadatas.push(metadata);
-
-        //update project
 
     }
 

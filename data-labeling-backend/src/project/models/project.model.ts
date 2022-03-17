@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { type } from "os";
 import { User } from "src/user/model/user.model";
 import { Metadata } from "./metamodel.model";
-
+import { Types } from "mongoose";
 
 export type ProjectDocument = Project & Document;
 
@@ -20,7 +20,7 @@ export class Project{
     @Prop()
     identNumber:string;
 
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'metadata'}]})
+    @Prop({type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'metadata' }] })
     metadata: Metadata[];
 
 
