@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UseInterceptors } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Role, UserDocument } from './model/user.model';
 import {Model} from 'mongoose';
@@ -10,8 +10,7 @@ export class UserService {
 
 
     constructor(
-        @InjectModel("user") private readonly userModel: Model<UserDocument>
-    ){}
+        @InjectModel("user") private readonly userModel: Model<UserDocument>    ){}
 
 
     async createUser(user: UserCreateDTO):Promise<User>{
@@ -27,4 +26,22 @@ export class UserService {
         .then((user) => {return user})
         .catch((err) => console.log(err));
     }
+
+
+
+ 
+
+    async findUser(id: string){
+        const user = <User> await this.userModel.findOne({_id:id}).lean().exec();
+        if (!user){
+            throw new NotFoundException("Could not find user!")
+        }
+        return user;
+
+
+    }
+
+
 }
+
+

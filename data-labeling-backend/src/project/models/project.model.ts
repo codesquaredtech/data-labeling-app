@@ -17,6 +17,9 @@ export class Project{
     @Prop()
     description: string;
 
+    @Prop()
+    identNumber:string;
+
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'metadata'}]})
     metadata: Metadata[];
 
@@ -26,7 +29,10 @@ export class Project{
 
 
     ///neka ovo sad za pocetak obican string koji unosi admin /////
-    inputFile: string;                                       /////
+    @Prop()
+    inputFile: string;       
+    
+    @Prop()
     outputFile: string;                                      ////
     /////////////////////////////////////////////////////////////
 

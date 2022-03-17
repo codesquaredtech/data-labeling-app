@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Types } from "mongoose";
 
 export type UserDocument = User & Document;
 
@@ -6,6 +7,7 @@ export type UserDocument = User & Document;
 @Schema()
 export class User{
 
+    _id: Types.ObjectId;
 
     @Prop()
     firstname: string;
@@ -21,6 +23,9 @@ export class User{
 
     @Prop({ required: true, default: 0}) // Is working
     role: Role
+
+
+
 
 
 }
