@@ -35,6 +35,7 @@ export class ProjectController {
 
 
 
+
     @Post()
     async createProjectTemplate(@Body() projectTemplate: ProjectTemplateDTO){
         let project = new Project();
@@ -77,6 +78,19 @@ export class ProjectController {
       }
    
       return listMetadatas;
+    }
+
+    @Get(":id/users")
+    async getUsersByProject(@Param("id") id:string){
+      let project = await this.projectService.findProject(id);
+      let listUsers = [];
+      for(const user of project.users){
+        listUsers.push(await this.userService.findUser(user._id.toString()));
+      }
+
+      return listUsers;
+
+
     }
 
     @Post("remove-metadata")
