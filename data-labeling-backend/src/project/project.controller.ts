@@ -1,10 +1,11 @@
-import { Body, Controller, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { response } from 'express';
 import { User } from 'src/user/model/user.model';
 import { UserService } from 'src/user/user.service';
 import { MetadataDTO } from './DTO/Metadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
+import { RemoveMetadataDTO } from './DTO/removeMetadata.dto';
 import { MetadataService } from './metadata.service';
 import { Metadata, MetadataDocument } from './models/metamodel.model';
 import { Project } from './models/project.model';
@@ -36,8 +37,6 @@ export class ProjectController {
 
     @Post()
     async createProjectTemplate(@Body() projectTemplate: ProjectTemplateDTO){
-
-        
         let project = new Project();
         project.title = projectTemplate.title;
         project.description = projectTemplate.description;
@@ -58,7 +57,6 @@ export class ProjectController {
 
     @Post(":id/metadata")
     async createMetadataForProject(@Param("id") idProjekta: string, @Body() metadata: Metadata){
-
         let project = await this.projectService.findProject(idProjekta);
         let saved = await this.metadataService.createMetadata(metadata);
         project.metadata.push(saved);
@@ -66,26 +64,34 @@ export class ProjectController {
         return updated;
 
 
+    }
+
+
+    @Get(":id/metadata")
+    async getAllMetadatasByProject(@Param("id") idProject: string){
+      let project = await this.projectService.findProject(idProject);
+      let listMetadatas = [];
+      for (const metadata of project.metadata) {
+        listMetadatas.push(await this.metadataService.findById(metadata._id.toString()))
+        
+      }
+   
+      return listMetadatas;
+    }
+
+    @Post("remove-metadata")
+    async removeMetadata(@Body() dto:RemoveMetadataDTO){
+      let project = await this.projectService.findProject(dto.projectId);
+      project.metadata  = project.metadata.filter(meta => meta._id.toString() !== dto.metadataId);
+      console.log(project.metadata);
+      const updated = await this.projectService.updateProject(project.identNumber,project);
+      return updated;
 
 
     }
 
 
-    @Get(":id")
-    getMetadataByProject(@Param("id") id: string){
 
-
-      //  let lista = []
-        //let projects = projectService.findAll();
-        //for(Project project: projects){
-      //      for(Metadata metadata: project.metadatas){
-        //   if(id === Metadata.id){
-        //       //lista.push(metadata)
-        //   }
-      }
-     //   }
-      //  
-//
     }
 
 

@@ -20,4 +20,14 @@ export class MetadataService{
         return await newMetadata.save();
     }
 
+    async deleteMetadata(id: string){
+        return await this.metadataModel.deleteOne({_id: id});
+    }
+
+    async findById(id: string){
+        const metadata = <Metadata> await this.metadataModel.findById(id).lean().exec();
+        return metadata;
+    }
+
+
 }
