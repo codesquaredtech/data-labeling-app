@@ -1,10 +1,14 @@
 import axios from "axios";
+import { ProjectTemplate } from "../pages/AddProject";
 
 export const ProjectService = {
     getProjects,
     getProjectById,
     getMetadataByProject,
-    getUsersByProject
+    getUsersByProject,
+    addProject,
+    addMetadataToProject,
+    removeMetadata
 }
 
 async function getProjects(){
@@ -22,6 +26,19 @@ async function getMetadataByProject(id:any){
 
 async function getUsersByProject(id:any){
     return await axios.get("http://localhost:3030/project/"+ id + "/users")
+}
+
+async function addProject(projekat: ProjectTemplate){
+    return await axios.post("http://localhost:3030/project", projekat);
+}
+
+async function addMetadataToProject(id:any, metadata:any){
+    return await axios.post(`http://localhost:3030/project/${id}/metadata`, metadata);
+
+}
+
+async function removeMetadata(removedto: any){
+    return await axios.post("http://localhost:3030/project/remove-metadata", removedto);
 }
 
 

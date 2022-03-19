@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import { ProjectTable } from '../components/ProjectTable'
 
 export const AdminPage = () => {
@@ -9,7 +10,10 @@ export const AdminPage = () => {
        <div style={{ textAlign: "center", marginTop:"50px"}}>
          <h5>Желите ли додати нови пројекат? </h5>
          <p></p>
-         <Button>Додај!</Button>
+
+         <Link to='/add-project'>
+            <Button>Додај!</Button>
+        </Link>
        </div>
     </>
     

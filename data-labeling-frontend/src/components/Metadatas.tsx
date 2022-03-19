@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Table} from 'react-bootstrap';
+import { Container, Table, Button} from 'react-bootstrap';
 import { useParams } from 'react-router-dom'
 import { ProjectService } from '../services/ProjectService';
 
@@ -8,9 +8,19 @@ export interface INumber{
     identNumber:string
 }
 
+export interface deleteDto{
+  projectId:string,
+  metadataId: string
+
+}
+
 const Metadatas: React.FC<INumber> = ({ identNumber }) => {
 
     const [metadatas, setMetadatas] = useState<any[]>([]);
+    const [deletemetadata, setDeletemetadata] = useState<deleteDto>({
+      projectId:"",
+      metadataId:""
+    });
 
 
     useEffect(() => {
@@ -30,6 +40,15 @@ const Metadatas: React.FC<INumber> = ({ identNumber }) => {
       }
 
 
+    async function removeFromProject(id:string){
+      deletemetadata.metadataId = id;
+      deletemetadata.projectId = identNumber;
+      setMetadatas((m) => metadatas.filter((m) => m._id !== id));
+      return await ProjectService.removeMetadata(deletemetadata);
+
+    }
+
+
   return (
 
     <Container style={{ textAlign: "center"}}>
@@ -39,6 +58,8 @@ const Metadatas: React.FC<INumber> = ({ identNumber }) => {
         <tr>
           <th>Назим метаподатка</th>
           <th>Тип метаподатка</th>
+          <th>Уклони</th>
+
         </tr>
       </thead>
       <tbody>
@@ -51,7 +72,9 @@ const Metadatas: React.FC<INumber> = ({ identNumber }) => {
                 <tr key={m._id}>
                   <td>{m.name}</td>
                   <td>{m.type}</td>
-
+                  <td>
+                    <Button variant="link" onClick={()=> removeFromProject(m._id)}>Уклони</Button>
+                    </td>
 
                 </tr>
               )

@@ -7,6 +7,8 @@ import { Footer } from './components/Footer';
 import { Home } from './pages/Home';
 import { AdminPage } from './pages/AdminPage';
 import { ProjectDetail } from './pages/ProjectDetail';
+import { AddProject } from './pages/AddProject';
+import { AddMetadata } from './pages/AddMetadata';
 
 function App() {
   return (
@@ -15,7 +17,9 @@ function App() {
         <NavBar/>
         <Routes>
           <Route path='/' element={<Home/>}></Route>
+          <Route path='/project/metadata/:id' element={<AddMetadata/>}></Route>
           <Route path='/admin' element={<AdminPage/>}></Route>
+          <Route path='/add-project' element={<AddProject/>}></Route>
           <Route path='/project/:id' element={<ProjectDetail/>}></Route>
         </Routes>
       </Fragment>
