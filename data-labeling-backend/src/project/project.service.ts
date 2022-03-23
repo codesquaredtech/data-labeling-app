@@ -19,9 +19,9 @@ export class ProjectService {
     }
 
     async getAllProjects(){
-        return this.projectModel.find({})
-        .then((project) => {return project})
-        .catch((err) => console.log(err))
+        const projects = <Project[]> await this.projectModel.find({}).lean().exec();
+        return projects;
+
     }
 
     async findProject(id){

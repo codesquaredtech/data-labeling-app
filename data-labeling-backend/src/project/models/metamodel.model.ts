@@ -11,10 +11,10 @@ export class Metadata{
     _id: Types.ObjectId;
 
     @Prop()
-    name: string;
+    name: string;  //field_label
 
     @Prop()
-    type: string;
+    type: string;  //field_type
 
 
 }

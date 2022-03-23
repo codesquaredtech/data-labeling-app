@@ -9,6 +9,7 @@ import { AdminPage } from './pages/AdminPage';
 import { ProjectDetail } from './pages/ProjectDetail';
 import { AddProject } from './pages/AddProject';
 import { AddMetadata } from './pages/AddMetadata';
+import LabelingData from './pages/LabelingData';
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
           <Route path='/admin' element={<AdminPage/>}></Route>
           <Route path='/add-project' element={<AddProject/>}></Route>
           <Route path='/project/:id' element={<ProjectDetail/>}></Route>
+          <Route path='/labeling-data' element={<LabelingData/>}></Route>
+
         </Routes>
       </Fragment>
       <Footer/>

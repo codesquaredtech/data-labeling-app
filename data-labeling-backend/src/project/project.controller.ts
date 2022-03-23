@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { response } from 'express';
 import { User } from 'src/user/model/user.model';
 import { UserService } from 'src/user/user.service';
-import { MetadataDTO } from './DTO/Metadata.dto';
+import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
 import { RemoveMetadataDTO } from './DTO/removeMetadata.dto';
 import { MetadataService } from './metadata.service';
@@ -102,6 +102,43 @@ export class ProjectController {
       return updated;
 
 
+    }
+
+
+    @Post("remove-user")
+    async removeUser(@Body() dto:RemoveMetadataDTO){
+      let project = await this.projectService.findProject(dto.projectId);
+      project.users = project.users.filter(user => user._id.toString() !== dto.metadataId);
+      const updated = await this.projectService.updateProject(project.identNumber,project);
+      return updated;
+    }
+
+
+    @Get("user-projects/:id")
+    async projectByUser(@Param("id") id: string){
+      //Ovde će da se namapira na korisnika, sve projekti na kojim je korisnik
+      let korisnikId = "62331a624b920f5e9e4f7ee4"; //za sad zaberoniran korisnik
+
+      let project = await this.projectService.findProject(id);
+      let metadataProjectDto = new ProjectMetadataDTO();
+      metadataProjectDto.fields = [];
+
+      for (const m of project.metadata) {
+        let metadata = await this.metadataService.findById(m._id.toString());
+        metadataProjectDto.fields.push(metadata);
+
+        
+      }
+
+      metadataProjectDto.projectId = project.identNumber;
+      metadataProjectDto.projectResource = project.inputFile;
+      metadataProjectDto.projectTitle = project.title;
+
+      return metadataProjectDto;
+
+
+
+    
     }
 
 

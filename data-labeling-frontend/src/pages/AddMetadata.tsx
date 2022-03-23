@@ -41,11 +41,9 @@ export const AddMetadata = () => {
     }else{
       alert("Polja nisu uredu!")
   }
+}
 
 
-
-
-  }
 
 
   return (
@@ -69,14 +67,12 @@ export const AddMetadata = () => {
             <Form.Label>Тип подататка</Form.Label>
 
             <Form.Group style={{marginBottom:"20px"}}>
-              <select value={metadata.type} onChange={handleFormInputChange("type")}>
-                <option value=""></option>
-                <option value="STRING">STRING</option>
-                <option value="RANGE">RANGE</option>
-                <option value="NUMBER">NUMBER</option>
-                <option value="BOOLEAN">BOOLEAN</option>
-
-              </select>
+              <Form.Select value={metadata.type} onChange={handleFormInputChange("type")}>
+                <option value="">Отвори за селекцију</option>
+                <option value="text">STRING</option>
+                <option value="text">NUMBER</option>
+                <option value="checkbox">BOOLEAN</option>
+              </Form.Select>
             </Form.Group>
 
 
@@ -114,6 +110,10 @@ export const AddMetadata = () => {
                         Унеси метаподатак
                 </Button>
 
+                <Button style={{marginLeft: "20px"}} variant='info' onClick={() => window.location.replace("/project/" + id)}>
+                        Заврши
+                </Button>
+
         
         
         </Col>
@@ -123,3 +123,5 @@ export const AddMetadata = () => {
     </>
   )
 }
+
+

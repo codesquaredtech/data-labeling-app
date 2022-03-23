@@ -8,7 +8,9 @@ export const ProjectService = {
     getUsersByProject,
     addProject,
     addMetadataToProject,
-    removeMetadata
+    removeMetadata,
+    removeUser,
+    getLabelingData
 }
 
 async function getProjects(){
@@ -39,6 +41,15 @@ async function addMetadataToProject(id:any, metadata:any){
 
 async function removeMetadata(removedto: any){
     return await axios.post("http://localhost:3030/project/remove-metadata", removedto);
+}
+
+async function removeUser(removedto:any){
+    return await axios.post("http://localhost:3030/project/remove-user", removedto);
+}
+
+async function getLabelingData(id:string){
+    return await axios.get(`http://localhost:3030/project/user-projects/${id}`);
+
 }
 
 

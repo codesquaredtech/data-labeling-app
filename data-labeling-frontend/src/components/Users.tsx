@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Table} from 'react-bootstrap';
+import { Container, Table, Button} from 'react-bootstrap';
 import { useParams } from 'react-router-dom'
 import { ProjectService } from '../services/ProjectService';
+import { deleteDto } from './Metadatas';
 
 export interface INumber{
     identNumber:string
 }
 
+
+
 const Users: React.FC<INumber> = ({ identNumber }) => {
 
     const [users, setUsers] = useState<any[]>([]);
+    const[deleteUser, setDeleteuser] = useState<deleteDto>({
+      projectId:"",
+      metadataId:""
+    })
 
 
     useEffect(() => {
@@ -17,16 +24,26 @@ const Users: React.FC<INumber> = ({ identNumber }) => {
 
     },[])
 
-    async function fetchMetadatas(id:string) {
-        try{
-          const response = await ProjectService.getUsersByProject(id);
-          console.log(response.data);
-          setUsers(response.data);
-        }catch(e){
-          console.error("Error while getting api")
-        }
-        
+async function fetchMetadatas(id:string) {
+  try{
+    const response = await ProjectService.getUsersByProject(id);
+    console.log(response.data);
+    setUsers(response.data);
+    }catch(e){
+        console.error("Error while getting api")
       }
+        
+  }
+
+
+  async function removeUserFromProject(id:string){
+
+    deleteUser.metadataId = id;
+    deleteUser.projectId = identNumber;
+    setUsers((user)=> users.filter((user)=> user._id !== id));
+    return await ProjectService.removeUser(deleteUser);
+    
+  }
 
 
   return (
@@ -39,6 +56,7 @@ const Users: React.FC<INumber> = ({ identNumber }) => {
           <th>Име</th>
           <th>Презиме</th>
           <th>Корисничко име</th>
+          <th>Акција</th>
 
         </tr>
       </thead>
@@ -53,9 +71,9 @@ const Users: React.FC<INumber> = ({ identNumber }) => {
                   <td>{user.firstname}</td>
                   <td>{user.lastname}</td>
                   <td>{user.username}</td>
-
-
-
+                  <td>
+                    <Button variant="link" onClick={()=> removeUserFromProject(user._id)}>Уклони</Button>
+                  </td>
                 </tr>
               )
             })
