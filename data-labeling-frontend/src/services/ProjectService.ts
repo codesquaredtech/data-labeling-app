@@ -10,7 +10,8 @@ export const ProjectService = {
     addMetadataToProject,
     removeMetadata,
     removeUser,
-    getLabelingData
+    getLabelingData,
+    getProjectsByUser
 }
 
 async function getProjects(){
@@ -47,9 +48,13 @@ async function removeUser(removedto:any){
     return await axios.post("http://localhost:3030/project/remove-user", removedto);
 }
 
-async function getLabelingData(id:string){
-    return await axios.get(`http://localhost:3030/project/user-projects/${id}`);
+async function getLabelingData(id:string | undefined){
+    return await axios.get(`http://localhost:3030/project/label-project/${id}`);
 
+}
+
+async function getProjectsByUser(id:string){
+    return await axios.get(`http://localhost:3030/project/user-project/${id}`);
 }
 
 

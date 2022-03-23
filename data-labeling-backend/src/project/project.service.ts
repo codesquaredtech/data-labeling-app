@@ -32,6 +32,21 @@ export class ProjectService {
         return project;
     }
 
+    async findByUser(id){
+        const projects = await this.getAllProjects();
+        const projectList = [];
+        for(const p of projects){
+            for(const u of p.users){
+                if(u._id.toString() === id){
+                    projectList.push(p);
+                }
+            }
+ 
+
+        }
+        return projects;
+    }
+
 
     async updateProject(id, data):Promise<Project>{
         return await this.projectModel.findOneAndUpdate({identNumber:id}, data, {new:true})

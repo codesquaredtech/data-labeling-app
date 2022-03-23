@@ -4,6 +4,8 @@ import { Field } from '../components/DynamicForm/Element';
 import { ProjectService } from '../services/ProjectService';
 import Element from '../components/DynamicForm/Element';
 import { FormContext } from '../components/DynamicForm/FormContext';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 export interface IElement{
     fields: Field[];
@@ -33,6 +35,8 @@ const LabelingData = () => {
  useEffect(() => {
      fetchProjects();
  },[])
+
+ const {id} = useParams();
 
  const {fields, projectId} = elements??{};
 
@@ -68,13 +72,14 @@ const LabelingData = () => {
  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
    e.preventDefault();
   console.log(elements.fields);
+  axios.post(`http://localhost:3030/project/labeling-accept/${id}`, elements.fields);
  }
 
 
 
  async function fetchProjects() {
     try{
-      const response = await ProjectService.getLabelingData("81c1si");
+      const response = await ProjectService.getLabelingData(id);
       setElements(response.data);
     }catch(e){
       console.error("Error while getting api")

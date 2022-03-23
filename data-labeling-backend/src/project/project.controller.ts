@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { response } from 'express';
 import { User } from 'src/user/model/user.model';
 import { UserService } from 'src/user/user.service';
+import { DataAccepting } from './DTO/DataAccepting.dto';
 import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
 import { RemoveMetadataDTO } from './DTO/removeMetadata.dto';
@@ -26,6 +27,7 @@ export class ProjectController {
     async getAllProjects(){
       return this.projectService.getAllProjects();
     }
+
 
     @Get(":id")
     async getProjectById(@Param("id") id: string){
@@ -113,11 +115,15 @@ export class ProjectController {
       return updated;
     }
 
+    @Get("user-project/:id")
+    async getUsersProject(@Param("id") id: string){
+      return await this.projectService.findByUser(id);
+    }
 
-    @Get("user-projects/:id")
+
+    @Get("label-project/:id")
     async projectByUser(@Param("id") id: string){
       //Ovde će da se namapira na korisnika, sve projekti na kojim je korisnik
-      let korisnikId = "62331a624b920f5e9e4f7ee4"; //za sad zaberoniran korisnik
 
       let project = await this.projectService.findProject(id);
       let metadataProjectDto = new ProjectMetadataDTO();
@@ -139,6 +145,20 @@ export class ProjectController {
 
 
     
+    }
+
+    @Post("labeling-accept/:id")
+    async dataAccepting(@Body() body: DataAccepting[],@Param("id") idProjekta: string){
+      let project = await this.projectService.findProject(idProjekta);
+      project.outputFile = [];
+      for(const b of body){
+        project.outputFile.push(b);
+
+      }
+      console.log(project.outputFile);
+      const updated = await this.projectService.updateProject(project.identNumber,project);
+
+
     }
 
 

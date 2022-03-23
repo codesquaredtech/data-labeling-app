@@ -4,6 +4,7 @@ import { type } from "os";
 import { User } from "src/user/model/user.model";
 import { Metadata } from "./metamodel.model";
 import { Types } from "mongoose";
+import { DataAccepting } from "../DTO/DataAccepting.dto";
 
 export type ProjectDocument = Project & Document;
 
@@ -33,7 +34,7 @@ export class Project{
     inputFile: string;       
     
     @Prop()
-    outputFile: string;                                      ////
+    outputFile: DataAccepting[]                                   ////
     /////////////////////////////////////////////////////////////
 
 
