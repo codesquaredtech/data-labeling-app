@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import mongoose from "mongoose";
 import { Document} from 'mongoose';
 
 import { Types } from "mongoose";
@@ -15,6 +16,8 @@ export class Metadata{
 
     @Prop()
     type: string;  //field_type
+
+    value?:string | boolean;
 
 
 }

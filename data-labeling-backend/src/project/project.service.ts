@@ -9,7 +9,8 @@ export class ProjectService {
 
     constructor(
         @InjectModel("project") private readonly projectModel: Model<ProjectDocument>
-    ){}
+    
+        ){}
 
 
     async createProject(project: Project):Promise<Project>{
@@ -32,19 +33,14 @@ export class ProjectService {
         return project;
     }
 
-    async findByUser(id){
-        const projects = await this.getAllProjects();
-        const projectList = [];
-        for(const p of projects){
-            for(const u of p.users){
-                if(u._id.toString() === id){
-                    projectList.push(p);
-                }
-            }
- 
+    async findByUser(id):Promise<Project[]>{
 
-        }
-        return projects;
+        const ObjectId =require('mongodb').ObjectId;
+        const projectList = <Project[]> await this.projectModel.find({
+            "users":ObjectId(id)
+        }).lean().exec();
+
+        return projectList;
     }
 
 

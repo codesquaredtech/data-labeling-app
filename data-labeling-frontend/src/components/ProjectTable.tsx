@@ -5,7 +5,7 @@ import axios from "axios";
 import { ProjectDetail } from '../pages/ProjectDetail';
 
 
-export const ProjectTable = () => {
+export const ProjectTable = (props: any) => {
 
   const[projects, setProjects] = useState<any[]>([]);
 
@@ -38,6 +38,7 @@ export const ProjectTable = () => {
   return (
     <Container>
       <h1>Сви пројекти</h1>
+      <button onClick={props.onResourceFilled}>Primer</button>
       <Table bordered striped>
         <thead className='thead-dark'>
           <tr>
@@ -45,7 +46,7 @@ export const ProjectTable = () => {
             <th>Опис</th>
             <th>Број лабелара</th>
             <th>Број метаподатака</th>
-            <th>Више</th>
+            <th>Ресурси</th>
           </tr>
         </thead>
         <tbody>

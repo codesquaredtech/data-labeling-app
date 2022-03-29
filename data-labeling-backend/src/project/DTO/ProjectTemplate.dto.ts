@@ -11,7 +11,5 @@ export class ProjectTemplateDTO{
 
     users: string[];
 
-    inputFile: string;
-
 
 }

@@ -19,7 +19,7 @@ export const UserProjectTable = () => {
 
   async function fetchProjects() {
     try{
-      const response = await ProjectService.getProjectsByUser("62331a624b920f5e9e4f7ee4")
+      const response = await ProjectService.getProjectsByUser("62331a874b920f5e9e4f7ee8")
       console.log(response.data);
       setProjects(response.data);
     }catch(e){
@@ -37,7 +37,6 @@ export const UserProjectTable = () => {
 
   return (
     <Container>
-      <h3 style={{textAlign:"center", margin:"25px"}}>Пројекти на којима сте активни</h3>
       <Table bordered striped>
         <thead className='thead-dark'>
           <tr>
@@ -57,7 +56,7 @@ export const UserProjectTable = () => {
                     <td>{project.title}</td>
                     <td>{project.description}</td>
                     <td>
-                    <a href={/labeling-data/+ project.identNumber}>Лабелирај</a>
+                    <a href={project.identNumber+"/labeling-data"}>Лабелирај</a>
                     </td>
 
                   </tr>

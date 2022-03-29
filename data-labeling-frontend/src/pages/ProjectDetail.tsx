@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Container } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import Metadatas from '../components/Metadatas';
 import { ProjectService } from '../services/ProjectService';
 import Users from '../components/Users';
+import ResourceTable from '../components/ResourcesTable';
 
 export interface IProject{
     identNumber:"",
@@ -26,7 +27,7 @@ export const ProjectDetail = () => {
 
     const [ident, setIdent] = useState("");
 
-    let bla1:string = id as string;
+    let idProject:string = id as string;
 
 
 
@@ -55,15 +56,26 @@ export const ProjectDetail = () => {
   return (
       <>
     <Container style={{marginTop:"25px"}} >
-        <h3>{project.title}</h3>
-        <p><i>{project.description}</i></p>
+            <h3>{project.title}</h3>
+            <p><i>{project.description}</i></p>
+            <h3/>
+
+        <Row>
+            <Col>
+            <Metadatas identNumber = {idProject}/>
+
+            </Col>
+            <Col>
+            <Users identNumber = {idProject}/>
+
+            </Col>
+        </Row>
+        <h4>Ресурси</h4>
+        <ResourceTable identNumber = {idProject}/>
 
 
-        <p style={{marginTop:"25px"}}>{project.inputFile}</p>
 
 
-        <Metadatas identNumber = {bla1}/>
-        <Users identNumber = {bla1}/>
 
 
     </Container>

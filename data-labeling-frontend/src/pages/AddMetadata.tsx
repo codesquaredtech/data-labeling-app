@@ -106,17 +106,17 @@ export const AddMetadata = () => {
                         </tbody>
                 </Table>
 
-                <Button style={{marginTop:"20px"}} variant='info' onClick={sendRequest}>
+
+        
+            <Button variant='info' onClick={sendRequest}>
                         Унеси метаподатак
-                </Button>
+            </Button>
 
-                <Button style={{marginLeft: "20px"}} variant='info' onClick={() => window.location.replace("/project/" + id)}>
-                        Заврши
-                </Button>
-
-        
-        
+        <Button style={{marginLeft: "20px"}} variant='info' onClick={() => window.location.replace("/project/resource/" + id)}>
+                        Даље
+        </Button>
         </Col>
+
       
     </Container>
     

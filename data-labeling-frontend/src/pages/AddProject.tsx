@@ -9,8 +9,8 @@ export interface ProjectTemplate{
     title: string;
     description:string;
     users: string[];
-    inputFile: string;
 }
+
 
 export const AddProject = () => {
 
@@ -18,9 +18,9 @@ export const AddProject = () => {
         identNumber: "",
         title: "",
         description : "",
-        users: [],
-        inputFile: "",
+        users: []
     });
+
 
     const [users,setUsers] = useState<any[]>([]);
 
@@ -53,7 +53,7 @@ export const AddProject = () => {
 
     const sendRequest = async () => {
 
-        if(project.description !== "" && project.title !== "" && project.inputFile !== "" && project.users.length != 0){
+        if(project.description !== "" && project.title !== ""  && project.users.length != 0){
             project.identNumber = (Math.random() + 1).toString(36).substring(7);
             await ProjectService.addProject(project);
             window.location.replace("/project/metadata/" + project.identNumber);
@@ -91,18 +91,6 @@ export const AddProject = () => {
                             />
                     </Form.Group>
 
-                    <Form.Group>
-                        <Form.Label>Садржај</Form.Label>
-                        <Form.Control
-                                as="textarea" rows={2}
-                                type="text"
-                                name="inputFile"
-                                value={project.inputFile}
-                                onChange={handleFormInputChange("inputFile")}
-                            />
-                    </Form.Group>
-
-
 
                     <Table bordered striped>
                         <thead className='thead-dark'>
@@ -139,7 +127,6 @@ export const AddProject = () => {
                             }
                         </tbody>
                 </Table>
-
 
 
                     <Button style={{marginTop:"20px"}} variant='info' onClick={sendRequest}>

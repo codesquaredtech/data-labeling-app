@@ -51,8 +51,6 @@ const Metadatas: React.FC<INumber> = ({ identNumber }) => {
 
   return (
 
-    <Container style={{ textAlign: "center"}}>
-    <h5>Додати метаподаци</h5>
     <Table bordered striped>
       <thead className='thead-dark'>
         <tr>
@@ -84,7 +82,6 @@ const Metadatas: React.FC<INumber> = ({ identNumber }) => {
       </tbody>
     </Table>
 
-  </Container>
       
 
 

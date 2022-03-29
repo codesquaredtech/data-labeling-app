@@ -11,6 +11,8 @@ import { AddProject } from './pages/AddProject';
 import { AddMetadata } from './pages/AddMetadata';
 import LabelingData from './pages/LabelingData';
 import UserHome from './pages/UserHome';
+import { AddResourcePage } from './pages/AddResourcePage';
+
 
 function App() {
   return (
@@ -25,11 +27,11 @@ function App() {
 
           <Route path='/add-project' element={<AddProject/>}></Route>
           <Route path='/project/:id' element={<ProjectDetail/>}></Route>
-          <Route path='/labeling-data/:id' element={<LabelingData/>}></Route>
+          <Route path=':id/labeling-data' element={<LabelingData/>}></Route>
+          <Route path='/project/resource/:id' element={<AddResourcePage/>}></Route>
 
         </Routes>
       </Fragment>
-      <Footer/>
     </Router>
 
   );

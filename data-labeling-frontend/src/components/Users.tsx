@@ -48,8 +48,6 @@ async function fetchMetadatas(id:string) {
 
   return (
 
-    <Container style={{ textAlign: "center"}} >
-    <h5>Додати корисници</h5>
     <Table bordered striped>
       <thead className='thead-dark'>
         <tr>
@@ -82,7 +80,6 @@ async function fetchMetadatas(id:string) {
       </tbody>
     </Table>
 
-  </Container>
       
 
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ProjectTemplate } from "../pages/AddProject";
+import { ResourceTemplate } from "../pages/AddResourcePage";
 
 export const ProjectService = {
     getProjects,
@@ -11,7 +12,9 @@ export const ProjectService = {
     removeMetadata,
     removeUser,
     getLabelingData,
-    getProjectsByUser
+    getProjectsByUser,
+    getProjectResources,
+    addResource
 }
 
 async function getProjects(){
@@ -48,13 +51,21 @@ async function removeUser(removedto:any){
     return await axios.post("http://localhost:3030/project/remove-user", removedto);
 }
 
-async function getLabelingData(id:string | undefined){
-    return await axios.get(`http://localhost:3030/project/label-project/${id}`);
+async function getLabelingData(id:string | undefined, resourceNumber: number){
+    return await axios.get(`http://localhost:3030/project/${id}/label-project/${resourceNumber}`);
 
 }
 
 async function getProjectsByUser(id:string){
     return await axios.get(`http://localhost:3030/project/user-project/${id}`);
+}
+
+async function getProjectResources(id:string|undefined){
+    return await axios.get(`http://localhost:3030/project/${id}/resources`);
+}
+
+async function addResource(id: string|undefined, body:ResourceTemplate[]){
+    return await axios.post(`http://localhost:3030/project/${id}/resource`, body);
 }
 
 

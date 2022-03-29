@@ -4,20 +4,29 @@ import { Field } from '../components/DynamicForm/Element';
 import { ProjectService } from '../services/ProjectService';
 import Element from '../components/DynamicForm/Element';
 import { FormContext } from '../components/DynamicForm/FormContext';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export interface IElement{
     fields: Field[];
     projectId: string;
-    projectResource: string;
-    projectTitle: string;
+    text: string;
+    title: string;
+    totalNumber:number;
+    ordinalNumber: number;
+
 }
 
 export interface FieldType{
   _id: string;
   type:string;
   value:string | boolean;
+}
+
+export interface CurrentPage{
+  page: number,
+  total: number;
 }
 
 
@@ -28,17 +37,30 @@ const LabelingData = () => {
  const[elements, setElements] = useState<IElement>({
      fields: [],
      projectId : "",
-     projectTitle: "",
-     projectResource: ""
+     text: "",
+     title: "",
+     totalNumber: 0,
+     ordinalNumber: 1
  });
 
  useEffect(() => {
-     fetchProjects();
+     fetchCurrentNumber();
+     fetchData(currentPage.page)
+
  },[])
 
  const {id} = useParams();
 
+
+ const[currentPage, setCurrentPage] = useState<CurrentPage>({
+   total: 0,
+   page: 0
+ })
+
+
  const {fields, projectId} = elements??{};
+ let navigate = useNavigate();
+
 
 
  const handleChange = (id:any, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,15 +93,31 @@ const LabelingData = () => {
 
  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
    e.preventDefault();
-  console.log(elements.fields);
-  axios.post(`http://localhost:3030/project/labeling-accept/${id}`, elements.fields);
+  axios.post(`http://localhost:3030/project/${id}/data-accept`, elements);
+
+  if(currentPage.page < currentPage.total){
+    fetchData(++currentPage.page);
+  }else{
+    Swal.fire(
+      'Good job!',
+      'Успешно сте лабелисали све податке!',
+      'success'
+    )
+    navigate("/user")
+  }
+  
+    
+    //navigate(`/${id}/labeling-data/${brojStanice+1}`);
+
  }
 
 
 
- async function fetchProjects() {
+
+
+ async function fetchData(nr: number) {
     try{
-      const response = await ProjectService.getLabelingData(id);
+      const response = await ProjectService.getLabelingData(id, nr);
       setElements(response.data);
     }catch(e){
       console.error("Error while getting api")
@@ -87,18 +125,29 @@ const LabelingData = () => {
     
   }
 
+  async function fetchCurrentNumber(){
+    try{
+      const response1 = await axios.get(`http://localhost:3030/project/${id}/current-page`);
+      setCurrentPage(response1.data);
+      fetchData(response1.data.page);
+
+    }catch(e){
+      console.error("Error while getting api")
+    }
+  }
+
   return (
     <FormContext.Provider value={{handleChange}}>
     <Container>
 
-    <h3 style={{textAlign:"center", marginBottom:"25px"}}>{elements.projectTitle}</h3>
+    <h3 style={{textAlign:"center", marginBottom:"25px"}}>{elements.title}</h3>
     <hr/>
 
     <Row style={{marginTop:"50px", marginBottom:"25px"}}>
     <Col>
       <div>
         <h4>Ресурс...</h4>
-        {elements.projectResource}
+        {elements.text}
       </div>
     
     </Col>

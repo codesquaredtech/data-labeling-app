@@ -4,7 +4,8 @@ import { type } from "os";
 import { User } from "src/user/model/user.model";
 import { Metadata } from "./metamodel.model";
 import { Types } from "mongoose";
-import { DataAccepting } from "../DTO/DataAccepting.dto";
+import { OutputData } from "./dataAccepting.model";
+import { UserAndTheirLastResource } from "./userLastResource.model";
 
 export type ProjectDocument = Project & Document;
 
@@ -12,8 +13,14 @@ export type ProjectDocument = Project & Document;
 @Schema()
 export class Project{
 
+    _id: Types.ObjectId;
+
+
     @Prop({ required: true, default: "Some title"}) // Is working
     title: string;
+
+    @Prop({type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'metadata' }] })
+    metadata: Metadata[];
 
     @Prop()
     description: string;
@@ -21,21 +28,19 @@ export class Project{
     @Prop()
     identNumber:string;
 
-    @Prop({type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'metadata' }] })
-    metadata: Metadata[];
-
 
     @Prop({type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }] })
     users: User[];
 
+    //lista
+    @Prop()
+    userAndTheirLastResource : UserAndTheirLastResource[];
 
-    ///neka ovo sad za pocetak obican string koji unosi admin /////
-    @Prop()
-    inputFile: string;       
-    
-    @Prop()
-    outputFile: DataAccepting[]                                   ////
-    /////////////////////////////////////////////////////////////
+    //userAndTheirLastResource => objekat[]
+    //{userId; resourceOrderNumber: prost podatak}
+
+    //resurs da ima redni broj
+
 
 
 }
