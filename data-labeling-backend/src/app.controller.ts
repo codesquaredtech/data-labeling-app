@@ -1,12 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards, Request } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { request } from 'http';
 import { AppService } from './app.service';
+import { FirebaseAuthGuard } from './auth/firebase.guard';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @UseGuards(FirebaseAuthGuard)
+  @Get("/hello")
+  getHello(@Req() request: Request): string {
+    return 'Hello ' + JSON.stringify(request['user']) + "1";
   }
 }

@@ -7,6 +7,7 @@ import { FormContext } from '../components/DynamicForm/FormContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import LabelingAxiosClient from '../services/clients/LabelingAxiosClient';
 
 export interface IElement{
     fields: Field[];
@@ -93,7 +94,7 @@ const LabelingData = () => {
 
  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
    e.preventDefault();
-  axios.post(`http://localhost:3030/project/${id}/data-accept`, elements);
+   LabelingAxiosClient.post(`http://localhost:3030/project/${id}/data-accept`, elements);
 
   if(currentPage.page < currentPage.total){
     fetchData(++currentPage.page);
@@ -127,7 +128,7 @@ const LabelingData = () => {
 
   async function fetchCurrentNumber(){
     try{
-      const response1 = await axios.get(`http://localhost:3030/project/${id}/current-page`);
+      const response1 = await LabelingAxiosClient.get(`http://localhost:3030/project/${id}/current-page`);
       setCurrentPage(response1.data);
       fetchData(response1.data.page);
 

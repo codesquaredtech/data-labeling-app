@@ -1,11 +1,17 @@
 import React from 'react'
-import { Container, Navbar, NavbarBrand } from 'react-bootstrap'
+import { Button, Container, Navbar, NavbarBrand } from 'react-bootstrap'
+import { getAuth, signOut } from "firebase/auth";
 
-export const NavBar = () => {
+
+
+export const NavBar = (props: any) => {
+
+
   return (
     <Navbar bg="dark" variant="dark">
         <Container>
             <NavbarBrand href='/'>Лабелограф</NavbarBrand>
+            <Button onClick={props.signOut}>Sign out</Button>
         </Container>
 
     </Navbar>

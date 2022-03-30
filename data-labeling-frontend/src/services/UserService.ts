@@ -1,4 +1,5 @@
 import axios from "axios"
+import LabelingAxiosClient from "./clients/LabelingAxiosClient"
 
 export const UserService = {
     getAll
@@ -6,5 +7,5 @@ export const UserService = {
 
 
 async function getAll(){
-    return await axios.get("http://localhost:3030/user/all")
+    return await LabelingAxiosClient.get("http://localhost:3030/user/all")
 }
