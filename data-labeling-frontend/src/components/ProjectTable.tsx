@@ -36,9 +36,8 @@ export const ProjectTable = (props: any) => {
 
 
   return (
-    <Container>
-      <h1>Сви пројекти</h1>
-      <button onClick={props.onResourceFilled}>Primer</button>
+    <Container> 
+      <h1 style={{textAlign:"center"}}>Сви пројекти</h1>
       <Table bordered striped>
         <thead className='thead-dark'>
           <tr>

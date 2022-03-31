@@ -7,14 +7,17 @@ const UserHome = () => {
 
 
   return (
-    <Container style={{marginTop:"25px"}} >
+    <Container>
 
-        <div style={{textAlign:"center", marginBottom:"25px"}}>
-            <h4>Здраво, Марко</h4>
-            <h5>Улога: <i>ЛАБЕЛАР</i></h5>
-            <hr/>
-            <UserProjectTable/>
+      <div style={{ marginBottom: "25px" }}>
+        <div style={{ textAlign: "center" }}>
+          <h4>Здраво, Марко</h4>
+          <h5>Улога: <i>ЛАБЕЛАР</i></h5>
         </div>
+        <UserProjectTable />
+
+
+      </div>
 
     </Container>
 

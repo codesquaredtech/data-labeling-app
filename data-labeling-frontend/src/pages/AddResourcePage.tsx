@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { ProjectService } from '../services/ProjectService';
 
 
-export interface ResourceTemplate{
+export interface ResourceTemplate {
 
   title: string;
   text: string;
@@ -12,23 +12,31 @@ export interface ResourceTemplate{
 }
 
 
-export const AddResourcePage = (props:any) => {
+export const AddResourcePage = (props: any) => {
 
   const [resource, setResource] = useState<ResourceTemplate>({
 
     title: "",
-    text : "",
+    text: "",
 
   });
 
   const [resourceList, setResourceList] = useState<any[]>([]);
 
-  const {id} = useParams();
+  const { id } = useParams();
 
 
-  const handleFormInputChange=(name:any)=>(event:any)=>{
+  const handleFormInputChange = (name: any) => (event: any) => {
     const val = event.target.value;
     setResource({ ...resource, [name]: val });
+  }
+
+  const cleanFields = () => {
+    setResource({
+      title: "",
+      text: "",
+    })
+
   }
 
 
@@ -37,17 +45,18 @@ export const AddResourcePage = (props:any) => {
   }
 
   const sendRequest = async () => {
-    if(resource.title !== "" && resource.text !== ""){
+    if (resource.title !== "" && resource.text !== "") {
       const newList = resourceList.concat(resource);
       setResourceList(newList);
+      cleanFields();
 
-    }else{
+    } else {
       alert("Polja nisu uredu!")
+    }
+
+
+
   }
-
-
-  
-}
 
 
 
@@ -55,9 +64,9 @@ export const AddResourcePage = (props:any) => {
   return (
     <>
 
-    <Container>
-      <Col md={{span:6,offset:3}} style={{textAlign:"center"}}>
-      <h2>Нови ресурс</h2>
+      <Container>
+        <Col md={{ span: 8, offset: 2 }}>
+          <h2>Нови ресурс</h2>
           <Form>
             <Form.Group>
               <Form.Label>Наслов</Form.Label>
@@ -66,8 +75,8 @@ export const AddResourcePage = (props:any) => {
                 name="title"
                 value={resource.title}
                 onChange={handleFormInputChange("title")}
-              
-              
+
+
               />
             </Form.Group>
 
@@ -79,8 +88,8 @@ export const AddResourcePage = (props:any) => {
                 name="text"
                 value={resource.text}
                 onChange={handleFormInputChange("text")}
-              
-              
+
+
               />
             </Form.Group>
 
@@ -90,50 +99,52 @@ export const AddResourcePage = (props:any) => {
 
 
 
-          <Table bordered striped>
-                        <thead className='thead-dark'>
-                        <tr>
-                            <th>Назив </th>
-                            <th>Тип податка</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {resourceList.length ===0 ? 
-                            <tr>
-                                <td>{resourceList.length}= No projects added!</td>
-                            </tr> :
-                            resourceList.map((r)=> {
-                                return (
-                                <tr key={r.title}>
-                                    <td>{r.title}</td>
-                                    <td>{r.text}</td>
-                                </tr>
-                                )
-                            })
+          <Table style={{marginTop:"30px"}} bordered striped>
+            <thead className='thead-dark'>
+              <tr>
+                <th>Назив </th>
+                <th>Тип податка</th>
+              </tr>
+            </thead>
+            <tbody>
+              {resourceList.length === 0 ?
+                <tr>
+                  <td>{resourceList.length}= No projects added!</td>
+                </tr> :
+                resourceList.map((r) => {
+                  return (
+                    <tr key={r.title}>
+                      <td>{r.title}</td>
+                      <td>{r.text}</td>
+                    </tr>
+                  )
+                })
 
-                            }
-                        </tbody>
-                </Table>
-
-
-        
-        
-
-        <Button style={{marginTop:"20px"}} variant='info' onClick={sendRequest}>
-                        Унеси resurs
-        </Button>
-        <br/>
-
-        <a onClick={sendToServer} href={"/project/"+ id}>КРАЈ</a>
-
-      </Col>
-
-    </Container>
+              }
+            </tbody>
+          </Table>
 
 
-      
 
-    
+
+          <div style={{textAlign:"center", backgroundColor:"white"}}>
+            <Button style={{ marginTop: "20px" }} variant='info' onClick={sendRequest}>
+              Унеси resurs
+            </Button>
+            <br />
+
+            <a onClick={sendToServer} href={"/project/" + id}>КРАЈ</a>
+
+          </div>
+
+        </Col>
+
+      </Container>
+
+
+
+
+
     </>
   )
 }

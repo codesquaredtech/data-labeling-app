@@ -136,7 +136,27 @@ export class ProjectController {
 
   @Get("user-project/:id")
   async getUsersProject(@Param("id") id: string) {
-    return await this.projectService.findByUser(id);
+
+    const projects = await this.projectService.findByUser(id);
+    console.log(projects);
+    let result = [];
+    for(const p of projects){
+      let resourceNumberTotal = await this.resourceService.findByProject(p._id);
+      if(p.userAndTheirLastResource.length ==0){
+        result.push(p);
+      }else{
+      for(const r of p.userAndTheirLastResource){
+        if(r.ordinalNumber < resourceNumberTotal.length){
+          result.push(p);
+        }
+      }
+    }
+
+    }
+
+    console.log(result);
+
+    return result;
   }
 
   @Get(":id/resources")
@@ -163,12 +183,13 @@ export class ProjectController {
       metadataProjectDTO.fields.push(metadata);
     }
 
-    metadataProjectDTO.projectId = project.identNumber;
-    metadataProjectDTO.text = resource.text;
-    metadataProjectDTO.title = resource.title;
-    metadataProjectDTO.totalNumber = resourceList.length;
-    metadataProjectDTO.ordinalNumber = resource.ordinalNumber;
 
+
+      metadataProjectDTO.projectId = project.identNumber;
+      metadataProjectDTO.text = resource.text;
+      metadataProjectDTO.title = resource.title;
+      metadataProjectDTO.totalNumber = resourceList.length;
+      metadataProjectDTO.ordinalNumber = resource.ordinalNumber;
 
     return metadataProjectDTO;
   }
@@ -212,6 +233,9 @@ export class ProjectController {
       outputFields.name = b.name;
       outputFields.type = b.type;
       outputFields.value = b.value;
+      if(outputFields.value == null){
+        outputFields.value = false;
+      }
       resource.outputFields.push(outputFields);
     }
 

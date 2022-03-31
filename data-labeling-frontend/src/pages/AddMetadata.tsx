@@ -25,6 +25,14 @@ export const AddMetadata = () => {
 
   const {id} = useParams();
 
+  const cleanFields = () =>{
+    setMetadata({
+      name: "",
+      type : ""
+    })
+  }
+
+
 
   const handleFormInputChange=(name:any)=>(event:any)=>{
     const val = event.target.value;
@@ -36,6 +44,7 @@ export const AddMetadata = () => {
       const newList = metadataList.concat(metadata);
       setMetadataList(newList);
       await ProjectService.addMetadataToProject(id, metadata);
+      cleanFields();
 
 
     }else{

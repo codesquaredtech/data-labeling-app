@@ -8,7 +8,7 @@ export const NavBar = (props: any) => {
 
 
   return (
-    <Navbar bg="dark" variant="dark">
+    <Navbar style={{marginBottom:"50px"}} bg="dark" variant="dark">
         <Container>
             <NavbarBrand href='/'>Лабелограф</NavbarBrand>
             <Button onClick={props.signOut}>Sign out</Button>

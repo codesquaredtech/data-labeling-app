@@ -15,7 +15,7 @@ import { AddResourcePage } from './pages/AddResourcePage';
 
 import {getApps, initializeApp} from "firebase/app";
 import { GoogleAuthProvider, getAuth, signInWithPopup, initializeAuth, signOut } from "firebase/auth";
-import { Button, Form } from 'react-bootstrap';
+import { Button, Container, Form } from 'react-bootstrap';
 
 function initializeFirebase(){
   const firebaseConfig = {
@@ -45,13 +45,18 @@ function App() {
 
   const signIn = async () => {
     signInWithPopup(auth, provider)
-      .then(async(result) => {
+      .then( async (result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
+
+        //Oauth token, koristi se za Google API i pozive ka njemu
         const token = credential == null? null : credential.accessToken;
+        
         // The signed-in user info.
         const user = result.user;
+
         if(user){
+          //ID token (vreme od 1h, posle toga se sam refreshuje)
           let tokenJWT = await user.getIdToken()
           localStorage.setItem("jwt-token", tokenJWT);
           setToken(tokenJWT);
@@ -60,14 +65,10 @@ function App() {
         
         // ...
       }).catch((error) => {
-        // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        // The email of the user's account used.
         const email = error.email;
-        // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
       });
 
   }
@@ -111,9 +112,20 @@ function App() {
   }
   else{
     return (
-      <Form>
-        <Button onClick={signIn}>Google Sign-in</Button>
-      </Form>
+      <div>
+        <Container  style={{textAlign:"center", backgroundColor:"white", marginTop:"150px"}}>
+          <h1>Добро дошли на Лабелографа!</h1>
+          <h5>Лабелирајте податке</h5>
+          <hr/>
+          <Form>
+          <Button onClick={signIn}>Google Sign-in</Button>
+        </Form>
+
+        </Container>
+
+
+      </div>
+
     );
   }
   

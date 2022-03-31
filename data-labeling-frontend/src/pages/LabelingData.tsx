@@ -64,6 +64,7 @@ const LabelingData = () => {
 
 
 
+
  const handleChange = (id:any, e: React.ChangeEvent<HTMLInputElement>) => {
    const newElements = {...elements}
    newElements.fields.forEach(field => {
@@ -91,10 +92,22 @@ const LabelingData = () => {
   // console.log(elements);
 
  }
+ 
+ const cleanFields = () =>{
+  setElements({
+    fields: [],
+    projectId : "",
+    text: "",
+    title: "",
+    totalNumber: 0,
+    ordinalNumber: 1
+});
+}
 
  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
    e.preventDefault();
    LabelingAxiosClient.post(`http://localhost:3030/project/${id}/data-accept`, elements);
+   cleanFields();
 
   if(currentPage.page < currentPage.total){
     fetchData(++currentPage.page);
