@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { response } from 'express';
-import { User } from 'src/user/model/user.model';
+import { Role, User } from 'src/user/model/user.model';
 import { UserService } from 'src/user/user.service';
 import { OutputData } from './models/dataAccepting.model';
 import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
@@ -17,6 +17,8 @@ import { ResourceService } from './resource.service';
 import { UserAndTheirLastResource } from './models/userLastResource.model';
 import { currentPageDTO } from './DTO/CurrentPageDTO.dto';
 import { FirebaseAuthGuard } from 'src/auth/firebase.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('project')
 @UseGuards(FirebaseAuthGuard)
@@ -31,18 +33,22 @@ export class ProjectController {
   ) { }
 
 
+  @Roles(Role.Admin)
+  @UseGuards(RolesGuard)
   @Get("/all")
   async getAllProjects() {
     return this.projectService.getAllProjects();
   }
 
+  @Roles(Role.Admin)
   @Get(":id")
-  async getProjectById(@Param("id") id: string) {
+  async getProjectById(@Req() req,@Param("id") id: string) {
     return await this.projectService.findProject(id);
   }
 
 
 
+  @Roles(Role.Admin)
   @Post()
   async createProjectTemplate(@Body() projectTemplate: ProjectTemplateDTO) {
     let project = new Project();
@@ -59,6 +65,7 @@ export class ProjectController {
     this.projectService.createProject(project);
   }
 
+  @Roles(Role.Admin)
   @Post(":id/resource")
   async createResourceForProject(@Param("id") idProjekta: string, @Body() template: ResourceTemplate[]) {
     let number = 0;
@@ -73,6 +80,7 @@ export class ProjectController {
     }
   }
 
+  @Roles(Role.Admin)
   @Post(":id/metadata")
   async createMetadataForProject(@Param("id") idProjekta: string, @Body() metadata: Metadata) {
 
@@ -85,6 +93,7 @@ export class ProjectController {
   }
 
 
+  @Roles(Role.Admin)
   @Get(":id/metadata")
   async getAllMetadatasByProject(@Param("id") idProject: string) {
     let project = await this.projectService.findProject(idProject);
@@ -97,6 +106,7 @@ export class ProjectController {
     return listMetadatas;
   }
 
+  @Roles(Role.Admin)
   @Get(":id/users")
   async getUsersByProject(@Param("id") id: string) {
 
@@ -111,6 +121,7 @@ export class ProjectController {
 
   }
 
+  @Roles(Role.Admin)
   @Post("remove-metadata")
   async removeMetadata(@Body() dto: RemoveMetadataDTO) {
 
@@ -124,6 +135,7 @@ export class ProjectController {
   }
 
 
+  @Roles(Role.Admin)
   @Post("remove-user")
   async removeUser(@Body() dto: RemoveMetadataDTO) {
 
@@ -134,10 +146,12 @@ export class ProjectController {
     return updated;
   }
 
+  @Roles(Role.User)
   @Get("user-project/:id")
-  async getUsersProject(@Param("id") id: string) {
+  async getUsersProject(@Req() req, @Param("id") id: string) {
 
-    const projects = await this.projectService.findByUser(id);
+    let user = await this.userService.findUserByUid(req.user.user_id);
+    const projects = await this.projectService.findByUser(user._id);
     console.log(projects);
     let result = [];
     for(const p of projects){
@@ -169,9 +183,10 @@ export class ProjectController {
 
 
   //1.0 START ZA PROJEKAT DOBIJEŠ METAPODATKE
+  @Roles(Role.User)
   @Get(":id/label-project/:number")
-  async getLabelOptions(@Param("id") id: string, @Param("number") numberOfResource: number) {
-    let user = await this.userService.findUser("62331a624b920f5e9e4f7ee4");
+  async getLabelOptions(@Req() req,@Param("id") id: string, @Param("number") numberOfResource: number) {
+    let user = await this.userService.findUserByUid(req.user.user_id);
     let project = await this.projectService.findProject(id);
     let resource = await this.resourceService.findByOrdinalNumber(numberOfResource, project._id.toString());
     let resourceList = await this.resourceService.findByProject(project._id);
@@ -195,9 +210,10 @@ export class ProjectController {
   }
 
 
+  @Roles(Role.User)
   @Get(":id/current-page")
-  async findCurrentPage(@Param("id") id: string) {
-    let user = await this.userService.findUser("62331a624b920f5e9e4f7ee4");
+  async findCurrentPage(@Req() req, @Param("id") id: string) {
+    let user = await this.userService.findUserByUid(req.user.user_id);
     let project = await this.projectService.findProject(id);
     let currentPage = new currentPageDTO();
 
@@ -218,11 +234,12 @@ export class ProjectController {
   }
 
 
+  @Roles(Role.User)
   @Post(":id/data-accept")
-  async labeledDataAccepting(@Param("id") id: string, @Body() body: ProjectMetadataDTO) {
+  async labeledDataAccepting(@Req() req,@Param("id") id: string, @Body() body: ProjectMetadataDTO) {
     let project = await this.projectService.findProject(id);
     let resource = await this.resourceService.findByOrdinalNumber(body.ordinalNumber, project._id.toString());
-    let user = await this.userService.findUser("62331a624b920f5e9e4f7ee4");
+    let user = await this.userService.findUserByUid(req.user.user_id);
 
     if (resource.outputFields.length == 0) {
       resource.outputFields = [];

@@ -21,8 +21,14 @@ export class User{
     @Prop() 
     password: string;
 
-    @Prop({ required: true, default: 0}) // Is working
-    role: Role
+    @Prop()
+    email: string;
+
+    @Prop()
+    uuid: string;
+
+    @Prop()
+    roles: Role[]
 
 
 
@@ -31,8 +37,9 @@ export class User{
 }
 
 export enum Role{
-    USER, //0
-    ADMIN, //1
+    User = "user",
+    Admin = "admin"
 }
+
 
 export const UserSchema = SchemaFactory.createForClass(User);

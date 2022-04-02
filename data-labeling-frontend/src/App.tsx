@@ -98,7 +98,6 @@ function App() {
             <Route path='/project/metadata/:id' element={<AddMetadata/>}></Route>
             <Route path='/admin' element={<AdminPage/>}></Route>
             <Route path='/user' element={<UserHome/>}></Route>
-  
             <Route path='/add-project' element={<AddProject/>}></Route>
             <Route path='/project/:id' element={<ProjectDetail/>}></Route>
             <Route path=':id/labeling-data' element={<LabelingData/>}></Route>

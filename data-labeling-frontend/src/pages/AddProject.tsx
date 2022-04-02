@@ -95,9 +95,7 @@ export const AddProject = () => {
                     <Table bordered striped>
                         <thead className='thead-dark'>
                         <tr>
-                            <th>Име </th>
                             <th>Корисничко име</th>
-                            <th>Додај у лабеларе</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -108,8 +106,7 @@ export const AddProject = () => {
                             users.map((user)=> {
                                 return (
                                 <tr key={user._id}>
-                                    <td>{user.firstname} {user.lastname}</td>
-                                    <td>{user.username}</td>
+                                    <td>{user.email}</td>
                                     <td>
                                             <Button
                                                 variant="info"
