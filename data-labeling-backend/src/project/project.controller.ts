@@ -51,33 +51,19 @@ export class ProjectController {
   @Roles(Role.Admin)
   @Post()
   async createProjectTemplate(@Body() projectTemplate: ProjectTemplateDTO) {
-    let project = new Project();
-    project.title = projectTemplate.title;
-    project.description = projectTemplate.description;
-    project.identNumber = projectTemplate.identNumber;
-    project.users = [];
-    for (const userId of projectTemplate.users) {
-      let user = await this.userService.findUser(userId);
-      console.log(user);
-      project.users.push(user);
-
-    }
-    this.projectService.createProject(project);
+    this.projectService.createProjectFromTemplate(projectTemplate);
   }
+
 
   @Roles(Role.Admin)
   @Post(":id/resource")
   async createResourceForProject(@Param("id") idProjekta: string, @Body() template: ResourceTemplate[]) {
-    let number = 0;
-    for (const res of template) {
-      number++;
-      let newResource = new Resource();
-      newResource.project = await this.projectService.findProject(idProjekta);
-      newResource.text = res.text;
-      newResource.title = res.title;
-      newResource.ordinalNumber = number;
-      const saved = this.resourceService.createResource(newResource);
-    }
+    let project = await this.projectService.findProject(idProjekta);
+
+    return await this.resourceService.createResourceForService(template, project);
+
+
+
   }
 
   @Roles(Role.Admin)
@@ -97,39 +83,27 @@ export class ProjectController {
   @Get(":id/metadata")
   async getAllMetadatasByProject(@Param("id") idProject: string) {
     let project = await this.projectService.findProject(idProject);
-    let listMetadatas = [];
-    for (const metadata of project.metadata) {
-      listMetadatas.push(await this.metadataService.findById(metadata._id.toString()))
-
-    }
-
-    return listMetadatas;
+    return this.metadataService.getMetadataByProject(project);
   }
 
   @Roles(Role.Admin)
   @Get(":id/users")
   async getUsersByProject(@Param("id") id: string) {
-
     let project = await this.projectService.findProject(id);
     let listUsers = [];
     for (const user of project.users) {
       listUsers.push(await this.userService.findUser(user._id.toString()));
     }
-
     return listUsers;
-
 
   }
 
   @Roles(Role.Admin)
   @Post("remove-metadata")
   async removeMetadata(@Body() dto: RemoveMetadataDTO) {
-
     let project = await this.projectService.findProject(dto.projectId);
     project.metadata = project.metadata.filter(meta => meta._id.toString() !== dto.metadataId);
-    console.log(project.metadata);
     const updated = await this.projectService.updateProject(project.identNumber, project);
-
     return updated;
 
   }
@@ -146,37 +120,11 @@ export class ProjectController {
     return updated;
   }
 
-  @Roles(Role.User)
-  @Get("user-project/:id")
-  async getUsersProject(@Req() req, @Param("id") id: string) {
 
-    let user = await this.userService.findUserByUid(req.user.user_id);
-    const projects = await this.projectService.findByUser(user._id);
-    console.log(projects);
-    let result = [];
-    for(const p of projects){
-      let resourceNumberTotal = await this.resourceService.findByProject(p._id);
-      if(p.userAndTheirLastResource.length ==0){
-        result.push(p);
-      }else{
-      for(const r of p.userAndTheirLastResource){
-        if(r.ordinalNumber < resourceNumberTotal.length){
-          result.push(p);
-        }
-      }
-    }
-
-    }
-
-    console.log(result);
-
-    return result;
-  }
 
   @Get(":id/resources")
   async getProjectResources(@Param("id") id: string) {
     let project = await this.projectService.findProject(id);
-
     return await this.resourceService.findByProject(project._id);
 
   }
@@ -186,27 +134,11 @@ export class ProjectController {
   @Roles(Role.User)
   @Get(":id/label-project/:number")
   async getLabelOptions(@Req() req,@Param("id") id: string, @Param("number") numberOfResource: number) {
-    let user = await this.userService.findUserByUid(req.user.user_id);
     let project = await this.projectService.findProject(id);
     let resource = await this.resourceService.findByOrdinalNumber(numberOfResource, project._id.toString());
     let resourceList = await this.resourceService.findByProject(project._id);
-    let metadataProjectDTO = new ProjectMetadataDTO();
-    metadataProjectDTO.fields = [];
 
-    for (const m of project.metadata) {
-      let metadata = await this.metadataService.findById(m._id.toString());
-      metadataProjectDTO.fields.push(metadata);
-    }
-
-
-
-      metadataProjectDTO.projectId = project.identNumber;
-      metadataProjectDTO.text = resource.text;
-      metadataProjectDTO.title = resource.title;
-      metadataProjectDTO.totalNumber = resourceList.length;
-      metadataProjectDTO.ordinalNumber = resource.ordinalNumber;
-
-    return metadataProjectDTO;
+    return await this.metadataService.getMetadataOptions(project, resource,resourceList);
   }
 
 
@@ -215,23 +147,12 @@ export class ProjectController {
   async findCurrentPage(@Req() req, @Param("id") id: string) {
     let user = await this.userService.findUserByUid(req.user.user_id);
     let project = await this.projectService.findProject(id);
-    let currentPage = new currentPageDTO();
 
-    for (const p of project.userAndTheirLastResource) {
-      if (p.userId === user._id.toString()) {
-        currentPage.page = p.ordinalNumber + 1;
-      }
-    }
+    return await this.resourceService.findCurrentPage(project, user);
 
-    if (project.userAndTheirLastResource.length == 0) {
-      currentPage.page = 1;
-    }
-
-    let resource = await this.resourceService.findByProject(project._id);
-    currentPage.total = resource.length;
-
-    return currentPage;
   }
+
+  
 
 
   @Roles(Role.User)
@@ -241,33 +162,9 @@ export class ProjectController {
     let resource = await this.resourceService.findByOrdinalNumber(body.ordinalNumber, project._id.toString());
     let user = await this.userService.findUserByUid(req.user.user_id);
 
-    if (resource.outputFields.length == 0) {
-      resource.outputFields = [];
-    }
+    return await this.projectService.acceptLabeledData(resource,project,user,body);
 
-    for (const b of body.fields) {
-      let outputFields = new OutputData();
-      outputFields.name = b.name;
-      outputFields.type = b.type;
-      outputFields.value = b.value;
-      if(outputFields.value == null){
-        outputFields.value = false;
-      }
-      resource.outputFields.push(outputFields);
-    }
 
-    const updated = await this.resourceService.updateResource(resource._id, resource);
-    let labeled = await this.projectService.findIfExist(resource, project, user);
-
-    if (labeled == null) {
-      this.projectService.createUserLastResource(resource.ordinalNumber, project, user);
-
-    } else {
-      labeled.ordinalNumber++;
-      const updatedProject = await this.projectService.updateProject(project.identNumber, project);
-      console.log(updatedProject.userAndTheirLastResource.length);
-    }
   }
-
-
 }
+

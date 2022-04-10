@@ -57,8 +57,8 @@ async function getLabelingData(id:string | undefined, resourceNumber: number){
 
 }
 
-async function getProjectsByUser(id:string){
-    return await LabelingAxiosClient.get(`http://localhost:3030/project/user-project/${id}`);
+async function getProjectsByUser(){
+    return await LabelingAxiosClient.get("http://localhost:3030/project/user-project");
 }
 
 async function getProjectResources(id:string|undefined){

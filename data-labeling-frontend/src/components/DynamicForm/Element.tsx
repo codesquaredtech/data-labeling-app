@@ -21,7 +21,7 @@ const Element = (props:any) => {
     case "checkbox":
       return <Checkbox field={props.field}/>
     default:
-      return <>Ne valja nesto</>;
+      return <>Undefined field</>;
   }
 
 

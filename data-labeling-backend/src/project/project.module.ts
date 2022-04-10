@@ -22,6 +22,7 @@ import { ResourceService } from './resource.service';
       ])
     ],
   controllers: [ProjectController],
-  providers: [ProjectService, UserService, MetadataService, ResourceService]
+  providers: [ProjectService, UserService, MetadataService, ResourceService],
+  exports:[ProjectService, ResourceService]
 })
 export class ProjectModule {}

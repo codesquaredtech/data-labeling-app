@@ -14,10 +14,10 @@ import UserHome from './pages/UserHome';
 import { AddResourcePage } from './pages/AddResourcePage';
 
 import {getApps, initializeApp} from "firebase/app";
-import { GoogleAuthProvider, getAuth, signInWithPopup, initializeAuth, signOut } from "firebase/auth";
+import { GoogleAuthProvider, getAuth, signInWithPopup, initializeAuth, signOut, signInWithEmailAndPassword } from "firebase/auth";
 import { Button, Container, Form } from 'react-bootstrap';
 
-function initializeFirebase(){
+export function initializeFirebase(){
   const firebaseConfig = {
     apiKey: "AIzaSyC7zup9va49-8T0Ly1Cx8JQ5Qp-HJTGrU0",
     authDomain: "data-labeling-app.firebaseapp.com",
@@ -42,6 +42,14 @@ let provider = new GoogleAuthProvider();
 function App() {
 
   const [token, setToken] = useState(localStorage.getItem("jwt-token"));
+
+  const logInWithEmailAndPassword = async (email:string, password:string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const signIn = async () => {
     signInWithPopup(auth, provider)
@@ -70,6 +78,10 @@ function App() {
         const email = error.email;
         const credential = GoogleAuthProvider.credentialFromError(error);
       });
+
+  }
+
+  const signInEmailPassword = async() => {
 
   }
 
@@ -118,6 +130,7 @@ function App() {
           <hr/>
           <Form>
           <Button onClick={signIn}>Google Sign-in</Button>
+
         </Form>
 
         </Container>

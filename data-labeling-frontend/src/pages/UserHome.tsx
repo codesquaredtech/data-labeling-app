@@ -11,7 +11,6 @@ const UserHome = () => {
 
       <div style={{ marginBottom: "25px" }}>
         <div style={{ textAlign: "center" }}>
-          <h4>Здраво, Марко</h4>
           <h5>Улога: <i>ЛАБЕЛАР</i></h5>
         </div>
         <UserProjectTable />

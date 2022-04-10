@@ -22,9 +22,8 @@ export class UserService {
 
 
     async readUsers(){
-        return this.userModel.find({})
-        .then((user) => {return user})
-        .catch((err) => console.log(err));
+        let users = <User[]> await this.userModel.find({}).lean().exec();
+        return users;
     }
 
     async findUserByUid(id: string){

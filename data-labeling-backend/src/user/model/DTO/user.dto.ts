@@ -12,3 +12,9 @@ export class UserCreateDTO{
 
 
 }
+
+
+export class UserInfo{
+    isAdmin: boolean;
+    email: string;
+}

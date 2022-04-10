@@ -3,6 +3,7 @@ import { Button, Container, Table } from 'react-bootstrap';
 import { ProjectService } from '../services/ProjectService';
 import axios from "axios";
 import { ProjectDetail } from '../pages/ProjectDetail';
+import LabelingAxiosClient from '../services/clients/LabelingAxiosClient';
 
 
 export const UserProjectTable = () => {
@@ -19,7 +20,7 @@ export const UserProjectTable = () => {
 
   async function fetchProjects() {
     try{
-      const response = await ProjectService.getProjectsByUser("62331a874b920f5e9e4f7ee8")
+      const response = await LabelingAxiosClient.get("http://localhost:3030/user/projects");
       console.log(response.data);
       setProjects(response.data);
     }catch(e){

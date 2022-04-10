@@ -51,10 +51,8 @@ async function fetchMetadatas(id:string) {
     <Table bordered striped>
       <thead className='thead-dark'>
         <tr>
-          <th>Име</th>
-          <th>Презиме</th>
-          <th>Корисничко име</th>
-          <th>Акција</th>
+          <th>Мејл</th>
+          <th>Уклони</th>
 
         </tr>
       </thead>
@@ -66,9 +64,7 @@ async function fetchMetadatas(id:string) {
             users.map((user)=> {
               return (
                 <tr key={user._id}>
-                  <td>{user.firstname}</td>
-                  <td>{user.lastname}</td>
-                  <td>{user.username}</td>
+                  <td>{user.email}</td>
                   <td>
                     <Button variant="link" onClick={()=> removeUserFromProject(user._id)}>Уклони</Button>
                   </td>

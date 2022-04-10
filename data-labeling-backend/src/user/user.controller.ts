@@ -1,8 +1,11 @@
 import { Body, Controller, Get, Param, Post, Req, UseGuards} from '@nestjs/common';
 import { Auth } from 'firebase-admin/lib/auth/auth';
 import { FirebaseAuthGuard } from 'src/auth/firebase.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { ProjectService } from 'src/project/project.service';
 import { userFirebasePost } from './dto/UserFirebasePost.dto';
-import { UserCreateDTO } from './model/DTO/user.dto';
+import { UserCreateDTO, UserInfo } from './model/DTO/user.dto';
 import { Role, User } from './model/user.model';
 import { UserService } from './user.service';
 
@@ -10,7 +13,7 @@ import { UserService } from './user.service';
 export class UserController {
 
 
-    constructor(private readonly userService: UserService){}
+    constructor(private readonly userService: UserService, private readonly projectService: ProjectService){}
 
 
 
@@ -35,15 +38,40 @@ export class UserController {
 
     }
 
-    @Post()
-    createUser2(@Body() user: User):Promise<User>{
-        return this.userService.createUser(user);
+    @Get("/my-info")
+    @UseGuards(FirebaseAuthGuard)
+    async getMyInfo(@Req() req){
+        let user = await this.userService.findUserByUid(req.user.user_id);
+        let userDto = new UserInfo();
+        userDto.email = user.email;
+        if(user.roles.includes(Role.Admin)){
+            userDto.isAdmin = true;
+        }else{
+            userDto.isAdmin = false;
+        }
+
+        return userDto;
+
+
     }
 
 
+    @Get("projects")
+    @UseGuards(FirebaseAuthGuard)
+    @Roles(Role.Admin)
+    @UseGuards(RolesGuard)
+    async getUsersProject(@Req() req) {
+      let user = await this.userService.findUserByUid(req.user.user_id);
+      const projects = await this.projectService.findByUser(user._id);
+      return this.projectService.getProjectByUsers(projects);
+    }
+
     @Get("all")
-    getAllUsers(){
-        return this.userService.readUsers();
+    async getAllUsers(){
+        let users = await this.userService.readUsers();
+        let result = users.filter(f => !f.roles.includes(Role.Admin));
+        return result;
+
     }
 
 

@@ -2,6 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Resource, ResourceDocument } from "./models/resource.model";
 import { Model } from 'mongoose';
+import { ResourceTemplate } from "./DTO/ResourceTemplate.dto";
+import { Project } from "./models/project.model";
+import { currentPageDTO } from "./DTO/CurrentPageDTO.dto";
+import { User } from "src/user/model/user.model";
 
 
 @Injectable()
@@ -11,7 +15,7 @@ export class ResourceService {
 
     constructor(
         @InjectModel("resource") private readonly resourceModel: Model<ResourceDocument>,
-    ) {
+        ) {
 
     }
 
@@ -47,6 +51,39 @@ export class ResourceService {
         const ObjectId = require('mongodb').ObjectId;
         const resource = <Resource>await this.resourceModel.findOne({ ordinalNumber: nr, project: ObjectId(id) }).lean().exec();
         return resource;
+    }
+
+    async createResourceForService(template: ResourceTemplate[], project:Project){
+        let number = 0;
+        for (const res of template) {
+          number++;
+          let newResource = new Resource();
+          newResource.project = project;
+          newResource.text = res.text;
+          newResource.title = res.title;
+          newResource.ordinalNumber = number;
+          const saved = await this.createResource(newResource);
+        }
+    }
+
+    async findCurrentPage(project: Project, user:User){
+
+        let currentPage = new currentPageDTO();
+
+        for (const p of project.userAndTheirLastResource) {
+          if (p.userId === user._id.toString()) {
+            currentPage.page = p.ordinalNumber + 1;
+          }
+        }
+    
+        if (project.userAndTheirLastResource.length == 0) {
+          currentPage.page = 1;
+        }
+    
+        let resource = await this.findByProject(project._id);
+        currentPage.total = resource.length;
+    
+        return currentPage;
     }
 
 

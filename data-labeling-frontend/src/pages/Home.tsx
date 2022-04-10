@@ -5,6 +5,31 @@ import LabelingAxiosClient from '../services/clients/LabelingAxiosClient'
 
 export const Home = () => {
 
+  const [info, setInfo] = useState({
+    email: "",
+    isAdmin:false
+  })
+
+  useEffect(() => {
+    fetchMyInfo();
+
+
+},[])
+
+
+
+  async function fetchMyInfo() {
+    try{
+      const response = await LabelingAxiosClient.get("http://localhost:3030/user/my-info");
+      setInfo(response.data);
+    }catch(e){
+      console.error("Error while getting api")
+    }
+    
+  }
+
+
+
 
   return (
     <Container style={{ textAlign: "center", marginTop:"75px"}}>
@@ -16,8 +41,10 @@ export const Home = () => {
 
         <br/>
 
-          <a href='/user'>Лабелирајте! // КОРИСНИК</a>
-          <a href='/admin'>Креирајте пројекте  // АДМИН</a>
+        {info.isAdmin == true ? <a href='/admin'>Креирајте пројекте  // АДМИН</a>:
+        <a className='button' href='/user'>Лабелирајте! // КОРИСНИК</a>
+        }
+
 
 
     
