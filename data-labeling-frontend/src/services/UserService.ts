@@ -1,11 +1,9 @@
-import axios from "axios"
-import LabelingAxiosClient from "./clients/LabelingAxiosClient"
+import LabelingAxiosClient from "../config/api/axios";
 
 export const UserService = {
-    getAll
-}
+	getAll,
+};
 
-
-async function getAll(){
-    return await LabelingAxiosClient.get("http://localhost:3030/user/all")
+async function getAll() {
+	return await LabelingAxiosClient.get("http://localhost:3030/user/all");
 }
