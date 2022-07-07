@@ -34,7 +34,7 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 						onClick={() => window.location.reload()}
 						className="btn btn-ghost normal-case text-xl font-mono font-thin"
 					>
-						Data<span className="text-primary">Labeling</span>
+						Data<span className="text-primary-focus font-bold">Labeling</span>
 					</button>
 				</div>
 				<div className="flex-none mr-2">
@@ -67,7 +67,7 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 					</ul>
 				</div>
 				<div className="flex-none mr-2">
-					<button onClick={!token ? handleLogin : handleLogout} className="btn btn-outline btn-primary">
+					<button onClick={!token ? handleLogin : handleLogout} className="btn btn-primary">
 						{token ? "Logout" : "Login"}
 					</button>
 				</div>

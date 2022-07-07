@@ -6,7 +6,7 @@ import { AddMetadata } from "./pages/AddMetadata";
 import { AddProject } from "./pages/AddProject";
 import { AddResourcePage } from "./pages/AddResourcePage";
 import { AdminPage } from "./pages/AdminPage";
-import { Home } from "./pages/Home";
+import { DashboardPage } from "./pages/Dashboard/DashboardPage";
 import LabelingData from "./pages/LabelingData";
 import { ProjectDetail } from "./pages/ProjectDetail";
 import { LoginPage } from "./pages/Public/LoginPage";
@@ -30,7 +30,7 @@ export const Routes = () => {
 		<BrowserRouter>
 			<RouterRoutes>
 				<Route path="login" element={<PublicRoute component={LoginPage} />} />
-				<Route path="/" element={<AuthorizedRoute component={Home} />} />
+				<Route path="/" element={<AuthorizedRoute component={DashboardPage} />} />
 				{/* <AuthorizedRoute path="/project/metadata/:id" element={<AddMetadata />} />
 				<AuthorizedRoute path="/admin" element={<AdminPage />} />
 				<AuthorizedRoute path="/user" element={<UserHome />} />

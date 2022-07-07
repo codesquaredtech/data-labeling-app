@@ -1,3 +1,4 @@
+import { getMe } from "./../../actions/auth/index";
 import { RootState } from "../../config/store";
 import { createSlice } from "@reduxjs/toolkit";
 import { getToken } from "../../utils";
@@ -40,6 +41,9 @@ export const authSlice = createSlice({
 			state.token = null;
 			state.user = null;
 			localStorage.removeItem("jwt-token");
+		});
+		builder.addCase(getMe.fulfilled, (state, { payload }) => {
+			state.user = payload;
 		});
 	},
 });
