@@ -1,20 +1,15 @@
+export class UserCreateDTO {
+  firstname: string;
 
+  lastname: string;
 
-export class UserCreateDTO{
+  username: string;
 
-    firstname:string;
-
-    lastname: string;
-
-    username: string;
-
-    password: string;
-
-
+  password: string;
 }
 
-
-export class UserInfo{
-    isAdmin: boolean;
-    email: string;
+export class UserInfo {
+  isAdmin: boolean;
+  email: string;
+  displayName: string;
 }

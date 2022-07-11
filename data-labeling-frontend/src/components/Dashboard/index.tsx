@@ -7,6 +7,7 @@ import { authSliceSelectors } from "../../slices/Auth/authSlice";
 
 export const Dashboard = () => {
 	const user = useSelector(authSliceSelectors.user);
+	const role = user ? (user.isAdmin ? "Admin" : "User") : "Unknown";
 	const dispatch = useDispatch<AppDispatch>();
 
 	useEffect(() => {
@@ -23,10 +24,15 @@ export const Dashboard = () => {
 						<h2 className="card-title text-2xl text-neutral-content">Dashboard</h2>
 					</div>
 					<div className="mt-6">
-						Hello {user?.displayName || "user"}, your role is {user?.role || "unknown"} and you can create
-						and label data.
+						Hello {user?.displayName || "user"}, your role is {role} and you can
+						{role === "Admin" ? " create and" : ""} label the data.
 					</div>
 					<div className="card-actions justify-end">
+						{role === "Admin" && (
+							<button className="btn btn-outline btn-primary mt-4" onClick={handleRedirect}>
+								Create the data
+							</button>
+						)}
 						<button className="btn btn-outline btn-primary mt-4" onClick={handleRedirect}>
 							Label the data
 						</button>

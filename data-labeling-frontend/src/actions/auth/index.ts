@@ -7,11 +7,12 @@ export const login = createAsyncThunk("auth/login", async (_props, { rejectWithV
 	const provider = new GoogleAuthProvider();
 	try {
 		const result = await signInWithPopup(auth, provider);
-		const { uid, email, displayName } = result.user;
+		const { user } = result;
+		let tokenJWT = await user.getIdToken();
+		const { uid, email, displayName } = user;
 		const modifiedUser = { uid, email, displayName };
-		// This gives you a Google Access Token. You can use it to access the Google API.
-		const credential = GoogleAuthProvider.credentialFromResult(result);
-		return { token: credential?.accessToken, user: modifiedUser };
+
+		return { token: tokenJWT, user: modifiedUser };
 	} catch (err: any) {
 		if (!err.response) {
 			throw err;
@@ -35,8 +36,8 @@ export const logout = createAsyncThunk("auth/logout", async (_props, { rejectWit
 
 export const getMe = createAsyncThunk("auth/getMe", async (_props, { rejectWithValue }) => {
 	try {
-		const result = await getMeApi();
-		return result;
+		const { data } = await getMeApi();
+		return data;
 	} catch (err: any) {
 		if (!err.response) {
 			throw err;

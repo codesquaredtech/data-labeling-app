@@ -10,7 +10,7 @@ export const Login = () => {
 	};
 
 	return (
-		<div className="hero min-h-screen bg-base-100">
+		<div className="hero bg-base-100">
 			<div className="hero-content flex-col lg:flex-row-reverse lg:gap-10">
 				<div className="flex flex-col lg:w-3/5">
 					<h1 className="text-4xl">Welcome to</h1>

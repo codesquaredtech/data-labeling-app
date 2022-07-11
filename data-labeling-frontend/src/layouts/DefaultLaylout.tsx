@@ -72,7 +72,7 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 					</button>
 				</div>
 			</div>
-			<div className="min-h-screen flex flex-col justify-around">
+			<div className="min-h-[calc(100vh_-_64px)] flex flex-col justify-around">
 				<Component />
 			</div>
 		</div>

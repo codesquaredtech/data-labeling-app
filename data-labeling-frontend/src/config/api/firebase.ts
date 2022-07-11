@@ -2,13 +2,12 @@ import { getApps, initializeApp } from "firebase/app";
 
 export function initializeFirebase() {
 	const firebaseConfig = {
-		apiKey: "AIzaSyC7zup9va49-8T0Ly1Cx8JQ5Qp-HJTGrU0",
-		authDomain: "data-labeling-app.firebaseapp.com",
-		projectId: "data-labeling-app",
-		storageBucket: "data-labeling-app.appspot.com",
-		messagingSenderId: "1017290257089",
-		appId: "1:1017290257089:web:0e23325d8cd36ac6ea5a40",
-		measurementId: "G-NB7KF0S95B",
+		apiKey: "AIzaSyB5fMHRiRtS2TUWIIKCJxAKBZYrCCR02W0",
+		authDomain: "data-labeling-app-becb9.firebaseapp.com",
+		projectId: "data-labeling-app-becb9",
+		storageBucket: "data-labeling-app-becb9.appspot.com",
+		messagingSenderId: "866178614129",
+		appId: "1:866178614129:web:ee9eda7c9c6141abfeacd0",
 	};
 
 	// Initialize Firebase
