@@ -2,6 +2,8 @@
 /dist
 /node_modules
 
+/src/firebase-config.json
+
 # Logs
 logs
 *.log
