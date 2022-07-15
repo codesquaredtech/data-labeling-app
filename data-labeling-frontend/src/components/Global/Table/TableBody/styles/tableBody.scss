@@ -1,0 +1,17 @@
+.body {
+    position: relative;
+    z-index: 0;
+}
+
+.tr:nth-child(even) {
+    background-color: #eceff1;
+}
+.tr:nth-child(odd) {
+    background-color: white;
+}
+
+.td {
+    padding: 3px;
+    overflow: hidden;
+    align-self: center;
+}

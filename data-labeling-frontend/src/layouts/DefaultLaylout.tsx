@@ -5,6 +5,7 @@ import { authSliceSelectors } from "../slices/Auth/authSlice";
 import { login, logout } from "../actions/auth";
 import { AppDispatch } from "../config/store";
 import { getTheme } from "../utils";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
 	component: FC;
@@ -13,6 +14,7 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 	const [theme, setTheme] = useState<string>(getTheme());
 	const token = useSelector(authSliceSelectors.token);
 	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate();
 
 	const handleLogin = () => {
 		dispatch(login());
@@ -31,14 +33,14 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 			<div className="navbar bg-base-300">
 				<div className="flex-1 ml-2">
 					<button
-						onClick={() => window.location.reload()}
-						className="btn btn-ghost normal-case text-xl font-mono font-thin"
+						onClick={() => navigate("/")}
+						className="btn btn-ghost normal-case text-xl font-mono font-thin hover:text-current"
 					>
 						Data<span className="text-primary-focus font-bold">Labeling</span>
 					</button>
 				</div>
 				<div className="flex-none mr-2">
-					<ul className="menu menu-horizontal p-0">
+					<ul className="menu menu-horizontal p-0 z-20">
 						<li>
 							<div>
 								{theme}

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { getMe } from "../../actions/auth";
 import { AppDispatch } from "../../config/store";
 import { authSliceSelectors } from "../../slices/Auth/authSlice";
@@ -9,12 +10,11 @@ export const Dashboard = () => {
 	const user = useSelector(authSliceSelectors.user);
 	const role = user ? (user.isAdmin ? "Admin" : "User") : "Unknown";
 	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		dispatch(getMe());
 	}, [dispatch]);
-
-	const handleRedirect = () => {};
 
 	return (
 		<div className="flex w-full justify-center">
@@ -29,22 +29,15 @@ export const Dashboard = () => {
 					</div>
 					<div className="card-actions justify-end">
 						{role === "Admin" && (
-							<button className="btn btn-outline btn-primary mt-4" onClick={handleRedirect}>
+							<button className="btn btn-outline btn-primary mt-4" onClick={() => navigate("/admin")}>
 								Create the data
 							</button>
 						)}
-						<button className="btn btn-outline btn-primary mt-4" onClick={handleRedirect}>
+						<button className="btn btn-outline btn-primary mt-4" onClick={() => navigate("/user")}>
 							Label the data
 						</button>
 					</div>
 				</div>
-				{/* {info.isAdmin == true ? (
-					<a href="/admin">Креирајте пројекте // АДМИН</a>
-				) : (
-					<a className="button" href="/user">
-						Лабелирајте! // КОРИСНИК
-					</a>
-				)} */}
 			</div>
 		</div>
 	);

@@ -1,0 +1,36 @@
+.header {
+    top: 0;
+    box-shadow: 0px 3px 3px #ccc;
+    margin-bottom: 5px;
+    position: sticky;
+    z-index: 1;
+    width: fit-content;
+}
+
+.tr:nth-child(even) {
+    background-color: #eceff1;
+}
+.tr:nth-child(odd) {
+    background-color: white;
+}
+
+.th {
+    background-color: #cfd8dc;
+}
+
+.th {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    overflow: hidden;
+}
+
+.resizer {
+    right: 0;
+    width: 10px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    touch-action: none;
+}

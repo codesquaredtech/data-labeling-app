@@ -9,6 +9,7 @@ const SLICE_NAME = "auth";
 interface InitState {
 	token: string | null;
 	loading: boolean;
+	isAdmin: boolean;
 	// TODO: implement user type
 	user: any;
 }
@@ -16,6 +17,7 @@ interface InitState {
 const initialState: InitState = {
 	token: getToken() || null,
 	loading: false,
+	isAdmin: false,
 	user: null,
 };
 
@@ -44,6 +46,7 @@ export const authSlice = createSlice({
 		});
 		builder.addCase(getMe.fulfilled, (state, { payload }) => {
 			state.user = payload;
+			state.isAdmin = payload.isAdmin;
 		});
 	},
 });
@@ -64,5 +67,9 @@ export const authSliceSelectors = {
 	token: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.token;
+	},
+	isAdmin: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.isAdmin;
 	},
 };
