@@ -123,34 +123,40 @@ const Table = ({
 	);
 
 	return (
-		<div className="table sticky">
-			<div {...getTableProps()}>
-				<div className="header bg-base-300 shadow-md">
-					<TableInfo
-						title={title}
-						allColumns={allColumns}
-						getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
-					/>
-					<TableHeader headerGroups={headerGroups} setColumnOrder={setColumnOrder} allColumns={allColumns} />
-				</div>
-				{isLoading ? (
-					<div className="flex w-full h-full align-middle justify-center">
-						<LoadingSpinner size={Size.XL} />
+		<div className="card bg-base-300 h-full w-full text-neutral-content shadow-lg border-0 overflow-scroll">
+			<div className="table sticky">
+				<div {...getTableProps()}>
+					<div className="header bg-base-300 shadow-md">
+						<TableInfo
+							title={title}
+							allColumns={allColumns}
+							getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
+						/>
+						<TableHeader
+							headerGroups={headerGroups}
+							setColumnOrder={setColumnOrder}
+							allColumns={allColumns}
+						/>
 					</div>
-				) : (
-					<TableBody getTableBodyProps={getTableBodyProps} prepareRow={prepareRow} page={page} />
-				)}
+					{isLoading ? (
+						<div className="flex w-full h-full align-middle justify-center">
+							<LoadingSpinner size={Size.XL} />
+						</div>
+					) : (
+						<TableBody getTableBodyProps={getTableBodyProps} prepareRow={prepareRow} page={page} />
+					)}
+				</div>
+				<TableFooter
+					pageOptions={pageOptions}
+					footerText={footerText}
+					currentPage={currentPage}
+					rowsPerPage={rowsPerPage}
+					totalPages={totalPages}
+					pageSizes={pageSizes}
+					setRowsPerPage={setRowsPerPage}
+					setCurrentPage={setCurrentPage}
+				/>
 			</div>
-			<TableFooter
-				pageOptions={pageOptions}
-				footerText={footerText}
-				currentPage={currentPage}
-				rowsPerPage={rowsPerPage}
-				totalPages={totalPages}
-				pageSizes={pageSizes}
-				setRowsPerPage={setRowsPerPage}
-				setCurrentPage={setCurrentPage}
-			/>
 		</div>
 	);
 };

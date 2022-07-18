@@ -1,17 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import axiosInstance from "../../config/api/axios";
 import Table from "../Global/Table";
 import { calculatePageCount } from "../Global/Table/TableUtilities";
+import CreateEditProject from "./CreateEditProject";
 
 export const Admin = () => {
-	let counter = 0;
-	const handler = () => {
-		counter++;
-		alert(`Hanlder called! Counter is: ${counter}`);
-	};
-
 	const [data, setData] = useState([]);
 	const [currentPage, setCurrentPage] = useState(0); // Current page
 	const [pageCount, setPageCount] = useState(1); // Total pages
@@ -69,7 +62,10 @@ export const Admin = () => {
 
 	return (
 		<div className="flex w-full max-h-[calc(100vh_-_64px)] justify-center align-middle">
-			<div className="card w-10/12 bg-base-300 text-neutral-content m-20 shadow-lg border-0 overflow-scroll">
+			<div className="w-10/12 m-20">
+				<div className="mb-4 -mt-10">
+					<CreateEditProject />
+				</div>
 				<Table
 					data={data}
 					columns={columns}
@@ -85,15 +81,6 @@ export const Admin = () => {
 					isLoading={isLoading}
 				/>
 			</div>
-
-			{/* <div style={{ textAlign: "center", marginTop: "50px" }}>
-					<h5>Желите ли додати нови пројекат? </h5>
-					<p></p>
-
-					<Link to="/add-project">
-						<Button>Додај!</Button>
-					</Link>
-				</div> */}
 		</div>
 	);
 };
