@@ -32,7 +32,7 @@ const ColumnSelector = ({ allColumns, getToggleHideAllColumnsProps }: ColumnSele
 				</div>
 			}
 		>
-			<button className="btn btn-outline btn-primary">Toggle</button>
+			<button className="btn btn-primary">Toggle</button>
 		</Popover>
 	);
 };

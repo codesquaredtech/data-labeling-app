@@ -15,8 +15,12 @@ const FooterPagination = ({
 
 	return (
 		<div className="footer-pagination">
-			<div className="footer-row">
-				<button className="btn btn-circle" onClick={() => setCurrentPage(0)} disabled={currentPage === 0}>
+			<div className="footer-row border-0">
+				<button
+					className="btn btn-primary btn-circle"
+					onClick={() => setCurrentPage(0)}
+					disabled={currentPage === 0}
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						width="16"
@@ -36,7 +40,7 @@ const FooterPagination = ({
 					</svg>
 				</button>
 				<button
-					className="btn btn-circle"
+					className="btn btn-primary btn-circle"
 					onClick={() => {
 						setCurrentPage(currentPage - 1);
 					}}
@@ -57,13 +61,13 @@ const FooterPagination = ({
 					</svg>
 				</button>
 			</div>
-			<div className="footer-page-select">
+			<div className="footer-page-select border-0">
 				Page{" "}
 				<strong>
 					{currentPage + 1} of {totalPages}
 				</strong>
 			</div>
-			<div className="footer-page-select">
+			<div className="footer-page-select border-0">
 				<input
 					onChange={onChangeInInput}
 					type="number"
@@ -71,7 +75,7 @@ const FooterPagination = ({
 					className="input w-full max-w-xs footer-page-input"
 				/>
 			</div>
-			<div>
+			<div className="border-0">
 				<select
 					onChange={(e) => {
 						const value = e.target.value;
@@ -93,9 +97,9 @@ const FooterPagination = ({
 					})}
 				</select>
 			</div>
-			<div className="footer-row">
+			<div className="footer-row border-0">
 				<button
-					className="btn btn-circle"
+					className="btn btn-primary btn-circle"
 					onClick={() => {
 						setCurrentPage(currentPage + 1);
 					}}
@@ -116,7 +120,7 @@ const FooterPagination = ({
 					</svg>
 				</button>
 				<button
-					className="btn btn-circle"
+					className="btn btn-primary btn-circle"
 					onClick={() => {
 						setCurrentPage(totalPages - 1);
 					}}

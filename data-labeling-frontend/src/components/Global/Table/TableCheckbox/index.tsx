@@ -12,7 +12,7 @@ const TableCheckbox = forwardRef<HTMLInputElement, TableCheckboxProps>(({ indete
 
 	return (
 		<>
-			<input type="checkbox" ref={resolvedRef} {...rest} />
+			<input type="checkbox" className="checkbox checkbox-primary" ref={resolvedRef} {...rest} />
 		</>
 	);
 });

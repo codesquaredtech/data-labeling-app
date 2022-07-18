@@ -93,9 +93,9 @@ const Table = ({
 					{
 						id: "selection",
 						disableResizing: true,
-						minWidth: 25,
-						width: 25,
-						maxWidth: 25,
+						minWidth: 40,
+						width: 40,
+						maxWidth: 40,
 						// The header can use the table's getToggleAllRowsSelectedProps method
 						// to render a checkbox
 						Header: ({ getToggleAllRowsSelectedProps }) => (
@@ -123,16 +123,20 @@ const Table = ({
 	);
 
 	return (
-		<div>
-			<TableInfo
-				title={title}
-				allColumns={allColumns}
-				getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
-			/>
-			<div {...getTableProps()} className="table sticky">
-				<TableHeader headerGroups={headerGroups} setColumnOrder={setColumnOrder} allColumns={allColumns} />
+		<div className="table sticky">
+			<div {...getTableProps()}>
+				<div className="header bg-base-300 shadow-md">
+					<TableInfo
+						title={title}
+						allColumns={allColumns}
+						getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
+					/>
+					<TableHeader headerGroups={headerGroups} setColumnOrder={setColumnOrder} allColumns={allColumns} />
+				</div>
 				{isLoading ? (
-					<LoadingSpinner size={Size.SM} />
+					<div className="flex w-full h-full align-middle justify-center">
+						<LoadingSpinner size={Size.XL} />
+					</div>
 				) : (
 					<TableBody getTableBodyProps={getTableBodyProps} prepareRow={prepareRow} page={page} />
 				)}

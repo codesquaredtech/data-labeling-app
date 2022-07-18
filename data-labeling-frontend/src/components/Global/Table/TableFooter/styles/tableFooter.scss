@@ -1,32 +1,24 @@
-
-.footer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-end;
-}
-
-.footer-text {
-    font-family: Helvetica;
-    font-weight: 300;
-    font-size: 14px;
+.footer-table {
+	position: sticky;
+	z-index: 1;
+	bottom: 0;
 }
 
 .footer-pagination {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 }
 
 .footer-row {
-    display: flex;
-    flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .footer-page-input {
-    width: 120px;
+	width: 120px;
 }
 
 .footer-page-select {
-    margin-right: 10px;
+	margin-right: 10px;
 }

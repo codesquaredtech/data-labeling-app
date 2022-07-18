@@ -15,7 +15,7 @@ const TableFooter = ({
 	pageSizes,
 }: TableFooterProps) => {
 	return (
-		<div className="footer">
+		<div className="footer-table flex w-full h-full justify-between align-middle bg-base-300 text-base-content border-0">
 			<FooterInfo footerText={footerText} />
 			<FooterPagination
 				currentPage={currentPage}

@@ -35,18 +35,12 @@ export const Admin = () => {
 
 	const columns = useMemo(
 		() => [
-			{ Header: "ID", accessor: "_id", disableFilters: true },
+			{ Header: "Airline ID", accessor: "airline[0].id", disableFilters: true },
 			{ Header: "Name", accessor: "name", disableFilters: true },
 			{ Header: "Trips", accessor: "trips", disableFilters: true },
-			{ Header: "Airline ID", accessor: "airline[0].id", disableFilters: true },
 			{
 				Header: "Airline name",
 				accessor: "airline[0].name",
-				disableFilters: true,
-			},
-			{
-				Header: "Airline logo",
-				accessor: "airline[0].logo",
 				disableFilters: true,
 			},
 			{
@@ -75,7 +69,7 @@ export const Admin = () => {
 
 	return (
 		<div className="flex w-full max-h-[calc(100vh_-_64px)] justify-center align-middle">
-			<div className="card w-10/12 bg-transparent text-neutral-content overflow-auto m-20 shadow-lg">
+			<div className="card w-10/12 bg-base-300 text-neutral-content m-20 shadow-lg border-0 overflow-scroll">
 				<Table
 					data={data}
 					columns={columns}
@@ -90,7 +84,9 @@ export const Admin = () => {
 					pageSizes={pageSizes}
 					isLoading={isLoading}
 				/>
-				{/* <div style={{ textAlign: "center", marginTop: "50px" }}>
+			</div>
+
+			{/* <div style={{ textAlign: "center", marginTop: "50px" }}>
 					<h5>Желите ли додати нови пројекат? </h5>
 					<p></p>
 
@@ -98,7 +94,6 @@ export const Admin = () => {
 						<Button>Додај!</Button>
 					</Link>
 				</div> */}
-			</div>
 		</div>
 	);
 };

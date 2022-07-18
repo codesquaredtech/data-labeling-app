@@ -27,7 +27,7 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 	});
 
 	return (
-		<div className="header">
+		<div className="border-0">
 			{headerGroups.map((headerGroup, index) => (
 				// @ts-ignore
 				<DragDropContext
@@ -49,7 +49,11 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 				>
 					<Droppable droppableId="droppable" direction="horizontal">
 						{(droppableProvided, snapshot) => (
-							<div {...headerGroup.getHeaderGroupProps()} ref={droppableProvided.innerRef} className="tr">
+							<div
+								{...headerGroup.getHeaderGroupProps()}
+								ref={droppableProvided.innerRef}
+								className="bg-transparent text-base-content"
+							>
 								{headerGroup.headers.map((column, index) => (
 									<Draggable
 										key={column.id}
