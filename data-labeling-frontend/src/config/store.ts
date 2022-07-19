@@ -1,9 +1,13 @@
+import { projectsSlice } from "./../slices/Projects/projectsSlice";
+import { usersSlice } from "./../slices/Admin/usersSlice";
 import { authSlice } from "./../slices/Auth/authSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 
 const rootReducer = combineReducers({
 	auth: authSlice.reducer,
+	users: usersSlice.reducer,
+	projects: projectsSlice.reducer,
 });
 
 export const store = configureStore({

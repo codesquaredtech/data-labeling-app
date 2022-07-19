@@ -1,26 +1,44 @@
 import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { getAllUsers } from "../../actions/admin/user";
+import { createProject } from "../../actions/project";
+import { AppDispatch } from "../../config/store";
+import { clearState, usersSliceSelectors } from "../../slices/Admin/usersSlice";
+import { projectsSliceSelectors } from "../../slices/Projects/projectsSlice";
 import Modal from "../Global/Modal";
 
-type Inputs = {
+export type Project = {
 	title: string;
 	description: string;
-	// TODO: implement type
-	user: any;
+	users: string[];
 };
 
 export default function CreateEditProject() {
+	const users = useSelector(usersSliceSelectors.users);
+	const createLoading = useSelector(projectsSliceSelectors.createLoading);
+	const error = useSelector(projectsSliceSelectors.error);
 	const {
 		register,
 		handleSubmit,
 		reset,
 		formState: { errors },
-	} = useForm<Inputs>();
-	const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+	} = useForm<Project>();
+
+	const onSubmit: SubmitHandler<Project> = (data) => {
+		dispatch(createProject(data));
+	};
+
+	const dispatch = useDispatch<AppDispatch>();
 
 	useEffect(() => {
-		return () => reset();
-	}, [reset]);
+		dispatch(getAllUsers());
+		return () => {
+			dispatch(clearState());
+			reset();
+		};
+	}, [dispatch, reset]);
 
 	return (
 		<Modal name="create-project" buttonTitle="Add project" title="Add project" closeButton>
@@ -44,27 +62,33 @@ export default function CreateEditProject() {
 						/>
 						<div className="flex flex-col gap-2">
 							<select
-								{...(register("user"), { required: true })}
+								{...register("users")}
 								defaultValue="default"
 								className="select select-primary w-full"
 							>
 								<option disabled value="default">
 									Select user
 								</option>
-								{[
-									{ name: "Jack", id: 1 },
-									{ name: "Alex", id: 2 },
-								].map((user: any) => {
-									return (
-										<option value={user.id} key={user.id}>
-											{user.name}
-										</option>
-									);
-								})}
+								{users?.length > 0 ? (
+									users.map((user: any) => {
+										return (
+											<option value={user._id} key={user.uuid}>
+												{user.firstname} {user.lastname}
+											</option>
+										);
+									})
+								) : (
+									<option disabled>No options available</option>
+								)}
 							</select>
 						</div>
 					</div>
-					<input className="btn btn-primary w-full" type="submit" />
+					{error && <span className="text-xs text-error mt-4 mb-2">This field is required</span>}
+					<input
+						disabled={createLoading}
+						className={`btn btn-primary w-full ${createLoading && "loading"}`}
+						type="submit"
+					/>
 				</form>
 			</>
 		</Modal>
