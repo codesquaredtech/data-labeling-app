@@ -1,33 +1,53 @@
-import React, { useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import Select from "react-select";
 import { getAllUsers } from "../../actions/admin/user";
-import { createProject } from "../../actions/project";
+import { createProject, getAllProjectsAdmin } from "../../actions/project";
 import { AppDispatch } from "../../config/store";
 import { clearState, usersSliceSelectors } from "../../slices/Admin/usersSlice";
 import { projectsSliceSelectors } from "../../slices/Projects/projectsSlice";
 import Modal from "../Global/Modal";
 
+export type InitData = {
+	title: string;
+	description: string;
+	users: Array<{ label: string; value: string }>;
+};
+
 export type Project = {
+	identNumber: string;
 	title: string;
 	description: string;
 	users: string[];
 };
 
 export default function CreateEditProject() {
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const users = useSelector(usersSliceSelectors.users);
+	const options =
+		users.length > 0 ? users.map((user) => ({ value: user._id, label: `${user.firstname} ${user.lastname}` })) : [];
 	const createLoading = useSelector(projectsSliceSelectors.createLoading);
 	const error = useSelector(projectsSliceSelectors.error);
 	const {
 		register,
 		handleSubmit,
 		reset,
+		control,
 		formState: { errors },
-	} = useForm<Project>();
+	} = useForm<InitData>();
 
-	const onSubmit: SubmitHandler<Project> = (data) => {
-		dispatch(createProject(data));
+	const onSubmit: SubmitHandler<InitData> = (data) => {
+		const onDone = () => {
+			dispatch(getAllProjectsAdmin());
+			setModalOpen(false);
+			reset();
+		};
+		// TODO: implement auto-generated IDs on backend
+		const identNumber = (Math.random() + 1).toString(36).substring(7);
+		const modifiedData = { ...data, identNumber, users: data.users.map((item) => item.value) };
+		dispatch(createProject({ submitData: modifiedData, onDone }));
 	};
 
 	const dispatch = useDispatch<AppDispatch>();
@@ -41,7 +61,14 @@ export default function CreateEditProject() {
 	}, [dispatch, reset]);
 
 	return (
-		<Modal name="create-project" buttonTitle="Add project" title="Add project" closeButton>
+		<Modal
+			open={modalOpen}
+			setOpen={setModalOpen}
+			name="create-project"
+			buttonTitle="Add project"
+			title="Add project"
+			closeButton
+		>
 			<>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="flex flex-col gap-3 mb-8">
@@ -54,39 +81,33 @@ export default function CreateEditProject() {
 							/>
 							{errors.title && <span className="text-xs text-error">This field is required</span>}
 						</div>
-						<input
-							{...register("description")}
-							placeholder="Description"
-							className="textarea textarea-bordered"
-							type="text"
-						/>
 						<div className="flex flex-col gap-2">
-							<select
-								{...register("users")}
-								defaultValue="default"
-								className="select select-primary w-full"
-							>
-								<option disabled value="default">
-									Select user
-								</option>
-								{users?.length > 0 ? (
-									users.map((user: any) => {
-										return (
-											<option value={user._id} key={user.uuid}>
-												{user.firstname} {user.lastname}
-											</option>
-										);
-									})
-								) : (
-									<option disabled>No options available</option>
+							<textarea
+								{...register("description", { required: true })}
+								placeholder="Description"
+								className={`textarea textarea-bordered ${errors.description && "border-error"}`}
+							/>
+							{errors.description && <span className="text-xs text-error">This field is required</span>}
+						</div>
+						<div className="flex flex-col gap-2">
+							<Controller
+								name="users"
+								control={control}
+								render={({ field }) => (
+									<Select
+										{...field}
+										options={options}
+										isMulti
+										noOptionsMessage={() => "No users found"}
+									/>
 								)}
-							</select>
+							/>
 						</div>
 					</div>
 					{error && <span className="text-xs text-error mt-4 mb-2">This field is required</span>}
 					<input
 						disabled={createLoading}
-						className={`btn btn-primary w-full ${createLoading && "loading"}`}
+						className={`btn btn-success w-full ${createLoading && "loading"}`}
 						type="submit"
 					/>
 				</form>

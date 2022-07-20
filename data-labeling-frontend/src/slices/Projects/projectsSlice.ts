@@ -1,5 +1,4 @@
-import { createProject } from "./../../actions/project/index";
-import { getAllProjects } from "../../actions/project";
+import { getAllProjectsAdmin, getAllProjectsUser, createProject } from "../../actions/project";
 import { RootState } from "../../config/store";
 import { createSlice } from "@reduxjs/toolkit";
 import { Project } from "../../components/Admin/CreateEditProject";
@@ -30,14 +29,24 @@ export const projectsSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(getAllProjects.pending, (state) => {
+		builder.addCase(getAllProjectsUser.pending, (state) => {
 			state.fetchLoading = true;
 		});
-		builder.addCase(getAllProjects.fulfilled, (state, { payload }) => {
+		builder.addCase(getAllProjectsUser.fulfilled, (state, { payload }) => {
 			state.fetchLoading = false;
 			state.projects = payload;
 		});
-		builder.addCase(getAllProjects.rejected, (state) => {
+		builder.addCase(getAllProjectsUser.rejected, (state) => {
+			state.fetchLoading = false;
+		});
+		builder.addCase(getAllProjectsAdmin.pending, (state) => {
+			state.fetchLoading = true;
+		});
+		builder.addCase(getAllProjectsAdmin.fulfilled, (state, { payload }) => {
+			state.fetchLoading = false;
+			state.projects = payload;
+		});
+		builder.addCase(getAllProjectsAdmin.rejected, (state) => {
 			state.fetchLoading = false;
 		});
 		builder.addCase(createProject.pending, (state) => {

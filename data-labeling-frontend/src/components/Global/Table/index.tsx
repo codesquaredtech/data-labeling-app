@@ -93,9 +93,9 @@ const Table = ({
 					{
 						id: "selection",
 						disableResizing: true,
-						minWidth: 40,
-						width: 40,
-						maxWidth: 40,
+						minWidth: 60,
+						width: 60,
+						maxWidth: 60,
 						// The header can use the table's getToggleAllRowsSelectedProps method
 						// to render a checkbox
 						Header: ({ getToggleAllRowsSelectedProps }) => (

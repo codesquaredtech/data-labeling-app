@@ -1,21 +1,23 @@
-import { useRef, useEffect } from "react";
+import { RefObject } from "react";
+import useEventListener from "./eventListener";
 
-export const useOutsideClick = (callback: (param?: any) => void) => {
-	const ref = useRef<HTMLDivElement | null>(null);
+type Handler = (event: MouseEvent) => void;
 
-	useEffect(() => {
-		const handleClick = (event: Event) => {
-			if (ref.current && !ref.current.contains(event.target as HTMLDivElement)) {
-				callback();
-			}
-		};
+function useOutsideClick<T extends HTMLElement = HTMLElement>(
+	ref: RefObject<T>,
+	handler: Handler,
+	mouseEvent: "mousedown" | "mouseup" = "mousedown",
+): void {
+	useEventListener(mouseEvent, (event) => {
+		const el = ref?.current;
 
-		document.addEventListener("click", handleClick, true);
+		// Do nothing if clicking ref's element or descendent elements
+		if (!el || el.contains(event.target as Node)) {
+			return;
+		}
 
-		return () => {
-			document.removeEventListener("click", handleClick, true);
-		};
-	}, [callback, ref]);
+		handler(event);
+	});
+}
 
-	return ref;
-};
+export default useOutsideClick;

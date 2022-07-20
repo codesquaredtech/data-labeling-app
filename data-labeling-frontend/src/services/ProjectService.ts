@@ -1,4 +1,3 @@
-import { ProjectTemplate } from "../pages/AddProject";
 import { ResourceTemplate } from "../pages/AddResourcePage";
 import LabelingAxiosClient from "../config/api/axios";
 
@@ -7,7 +6,6 @@ export const ProjectService = {
 	getProjectById,
 	getMetadataByProject,
 	getUsersByProject,
-	addProject,
 	addMetadataToProject,
 	removeMetadata,
 	removeUser,
@@ -31,10 +29,6 @@ async function getMetadataByProject(id: any) {
 
 async function getUsersByProject(id: any) {
 	return await LabelingAxiosClient.get("http://localhost:3030/project/" + id + "/users");
-}
-
-async function addProject(projekat: ProjectTemplate) {
-	return await LabelingAxiosClient.post("http://localhost:3030/project", projekat);
 }
 
 async function addMetadataToProject(id: any, metadata: any) {
