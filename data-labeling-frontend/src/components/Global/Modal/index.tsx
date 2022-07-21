@@ -10,6 +10,7 @@ export default function Modal({
 	buttonColor = "primary",
 	name = "",
 	closeButton = false,
+	hideButton = false,
 	children,
 }: ModalProps) {
 	const handleClose = () => setOpen(false);
@@ -18,13 +19,15 @@ export default function Modal({
 
 	return (
 		<>
-			<label
-				htmlFor={`modal-${name}`}
-				onClick={() => setOpen(!open)}
-				className={`btn btn-${buttonColor} modal-button`}
-			>
-				{buttonTitle}
-			</label>
+			{!hideButton && (
+				<label
+					htmlFor={`modal-${name}`}
+					onClick={() => setOpen(!open)}
+					className={`btn btn-${buttonColor} modal-button`}
+				>
+					{buttonTitle}
+				</label>
+			)}
 			<input type="checkbox" checked={open} id={`modal-${name}`} readOnly className="modal-toggle" />
 			<label htmlFor={`modal-${name}`} className="modal cursor-pointer">
 				<label ref={modalRef} className="modal-box relative" htmlFor="">

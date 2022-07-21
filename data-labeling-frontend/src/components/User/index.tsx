@@ -6,14 +6,20 @@ import { getAllProjectsUser } from "../../actions/project";
 import { AppDispatch } from "../../config/store";
 import { clearState, projectsSliceSelectors } from "../../slices/Projects/projectsSlice";
 import Table from "../Global/Table";
+import LabelData from "./LabelData";
 
 export const User = () => {
+	const [projectId, setProjectId] = useState<string | null>(null);
+	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const data = useSelector(projectsSliceSelectors.projects);
 	const loading = useSelector(projectsSliceSelectors.fetchLoading);
+
+	// table props
 	const [currentPage, setCurrentPage] = useState(0); // Current page
 	const [pageCount, setPageCount] = useState(1); // Total pages
 	const [rowsPerPage, setRowsPerPage] = useState(5); // Number of items in each page
 	const pageSizes = [5, 10, 25, 50, 100]; // Rows per page options
+
 	const dispatch = useDispatch<AppDispatch>();
 
 	useEffect(() => {
@@ -22,6 +28,11 @@ export const User = () => {
 			dispatch(clearState());
 		};
 	}, [dispatch]);
+
+	const handleLabelData = (id: string) => {
+		setProjectId(id);
+		setModalOpen(true);
+	};
 
 	const columns = useMemo(
 		() => [
@@ -33,7 +44,7 @@ export const User = () => {
 					<span style={{ display: "flex", flexDirection: "row" }}>
 						<button
 							className="btn btn-circle btn-primary"
-							onClick={() => console.log("row.original.", row.original._id)}
+							onClick={() => handleLabelData(row.original.identNumber)}
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -88,6 +99,8 @@ export const User = () => {
 					pageSizes={pageSizes}
 					isLoading={loading}
 				/>
+
+				<LabelData projectId={projectId} open={modalOpen} setOpen={setModalOpen} />
 			</div>
 		</div>
 	);

@@ -8,5 +8,6 @@ export type ModalProps = {
 	buttonColor?: string;
 	name?: string;
 	closeButton?: boolean;
+	hideButton?: boolean;
 	children: ReactChild;
 };

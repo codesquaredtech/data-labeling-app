@@ -1,4 +1,5 @@
-import { getAllProjectsAdmin, getAllProjectsUser, createProject } from "../../actions/project";
+import { getLabelingData } from "./../../actions/project/index";
+import { getAllProjectsAdmin, getAllProjectsUser, createProject, getProjectCurrentPage } from "../../actions/project";
 import { RootState } from "../../config/store";
 import { createSlice } from "@reduxjs/toolkit";
 import { Project } from "../../components/Admin/CreateEditProject";
@@ -9,6 +10,8 @@ interface InitState {
 	projects: Project[];
 	fetchLoading: boolean;
 	createLoading: boolean;
+	projectCurrentPage: null;
+	labelingData: null;
 	// TODO: change this
 	error: any;
 }
@@ -17,6 +20,8 @@ const initialState: InitState = {
 	projects: [],
 	fetchLoading: false,
 	createLoading: false,
+	projectCurrentPage: null,
+	labelingData: null,
 	error: null,
 };
 
@@ -59,6 +64,12 @@ export const projectsSlice = createSlice({
 			state.createLoading = false;
 			state.error = payload;
 		});
+		builder.addCase(getProjectCurrentPage.fulfilled, (state, { payload }) => {
+			state.projectCurrentPage = payload.page;
+		});
+		builder.addCase(getLabelingData.fulfilled, (state, { payload }) => {
+			state.labelingData = payload;
+		});
 	},
 });
 
@@ -82,5 +93,13 @@ export const projectsSliceSelectors = {
 	projects: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.projects;
+	},
+	projectCurrentPage: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.projectCurrentPage;
+	},
+	labelingData: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.labelingData;
 	},
 };
