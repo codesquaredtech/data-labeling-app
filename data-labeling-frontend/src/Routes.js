@@ -46,8 +46,6 @@ export const Routes = () => {
 				<Route path="/admin" element={<AdminRoutes component={AdminPage} />} />
 				<Route path="/user" element={<AuthorizedRoute component={UserPage} />} />
 				{/* <AuthorizedRoute path="/project/metadata/:id" element={<AddMetadata />} />
-				<AuthorizedRoute path="/user" element={<UserHome />} />
-				<AuthorizedRoute path="/add-project" element={<AddProject />} />
 				<AuthorizedRoute path="/project/:id" element={<ProjectDetail />} />
 				<AuthorizedRoute path=":id/labeling-data" element={<LabelingData />} />
 				<AuthorizedRoute path="/project/resource/:id" element={<AddResourcePage />} /> */}

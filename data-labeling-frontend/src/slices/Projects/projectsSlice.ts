@@ -1,17 +1,26 @@
+import { FormField } from "./../../components/User/LabelDataForm/Field";
 import { getLabelingData } from "./../../actions/project/index";
 import { getAllProjectsAdmin, getAllProjectsUser, createProject, getProjectCurrentPage } from "../../actions/project";
 import { RootState } from "../../config/store";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Project } from "../../components/Admin/CreateEditProject";
 
 const SLICE_NAME = "projects";
 
+type LabelingData = {
+	fields: FormField[];
+	ordinalNumber: number;
+	projectId: string;
+	text: string;
+	title: string;
+	totalNumber: number;
+};
 interface InitState {
 	projects: Project[];
 	fetchLoading: boolean;
 	createLoading: boolean;
 	projectCurrentPage: null;
-	labelingData: null;
+	labelingData: null | LabelingData;
 	// TODO: change this
 	error: any;
 }
@@ -67,7 +76,7 @@ export const projectsSlice = createSlice({
 		builder.addCase(getProjectCurrentPage.fulfilled, (state, { payload }) => {
 			state.projectCurrentPage = payload.page;
 		});
-		builder.addCase(getLabelingData.fulfilled, (state, { payload }) => {
+		builder.addCase(getLabelingData.fulfilled, (state, { payload }: PayloadAction<LabelingData>) => {
 			state.labelingData = payload;
 		});
 	},

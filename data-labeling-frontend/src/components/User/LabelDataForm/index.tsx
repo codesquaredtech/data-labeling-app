@@ -1,17 +1,12 @@
 import React, { useEffect } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { createProject, getAllProjectsAdmin, getLabelingData, getProjectCurrentPage } from "../../actions/project";
-import { AppDispatch } from "../../config/store";
-import { projectsSliceSelectors } from "../../slices/Projects/projectsSlice";
-import Modal from "../Global/Modal";
-
-export type InitData = {
-	title: string;
-	description: string;
-	users: Array<{ label: string; value: string }>;
-};
+import { createProject, getAllProjectsAdmin, getLabelingData, getProjectCurrentPage } from "../../../actions/project";
+import { AppDispatch } from "../../../config/store";
+import { projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
+import Modal from "../../Global/Modal";
+import { Field } from "./Field";
 
 export type Project = {
 	identNumber: string;
@@ -29,24 +24,37 @@ type LabelDataProps = {
 export default function LabelData({ projectId, open, setOpen }: LabelDataProps) {
 	const createLoading = useSelector(projectsSliceSelectors.createLoading);
 	const projectCurrentPage = useSelector(projectsSliceSelectors.projectCurrentPage);
+	const { fields: reduxFields } = useSelector(projectsSliceSelectors.labelingData) || {};
 
 	const {
 		register,
+		control,
 		handleSubmit,
 		reset,
 		formState: { errors },
-	} = useForm<InitData>();
+	} = useForm();
 
-	const onSubmit: SubmitHandler<InitData> = (data) => {
+	const { fields, append } = useFieldArray({
+		control,
+
+		name: "labelDataForm", // unique name for your Field Array
+	});
+
+	useEffect(() => {
+		if (reduxFields && reduxFields.length > 0) {
+			reduxFields.forEach((field) => {
+				append({ [field.name]: field.value || "" });
+			});
+		}
+	}, [append, reduxFields]);
+
+	const onSubmit: SubmitHandler<any> = (data) => {
+		console.log("data", data);
 		const onDone = () => {
 			dispatch(getAllProjectsAdmin());
 			setOpen(false);
 			reset();
 		};
-		// TODO: implement auto-generated IDs on backend
-		const identNumber = (Math.random() + 1).toString(36).substring(7);
-		const modifiedData = { ...data, identNumber, users: data.users.map((item) => item.value) };
-		dispatch(createProject({ submitData: modifiedData, onDone }));
 	};
 
 	const dispatch = useDispatch<AppDispatch>();
@@ -66,15 +74,17 @@ export default function LabelData({ projectId, open, setOpen }: LabelDataProps) 
 			<>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="flex flex-col gap-3 mb-8">
-						<div className="flex flex-col gap-2">
-							<input
-								{...register("title", { required: true })}
-								placeholder="Project title"
-								className={`input input-bordered ${errors.title && "border-error"}`}
-								type="text"
-							/>
-							{errors.title && <span className="text-xs text-error">This field is required</span>}
-						</div>
+						{fields && fields.length > 0
+							? fields.map((item, i) => (
+									<Field
+										key={item.id}
+										field={reduxFields && reduxFields[i] ? reduxFields[i] : null}
+										index={i}
+										register={register}
+										errors={errors}
+									/>
+							  ))
+							: "No labeling data."}
 					</div>
 					<input
 						disabled={createLoading}

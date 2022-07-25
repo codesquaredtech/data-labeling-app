@@ -6,7 +6,7 @@ import { getAllProjectsUser } from "../../actions/project";
 import { AppDispatch } from "../../config/store";
 import { clearState, projectsSliceSelectors } from "../../slices/Projects/projectsSlice";
 import Table from "../Global/Table";
-import LabelData from "./LabelData";
+import LabelData from "./LabelDataForm";
 
 export const User = () => {
 	const [projectId, setProjectId] = useState<string | null>(null);
