@@ -6,6 +6,7 @@ import {
 	getAllProjectsUserApi,
 	getLabelingDataApi,
 	getProjectCurrentPageApi,
+	labelDataApi,
 } from "./../../services/project/index";
 
 type CreateProjectPayload = {
@@ -86,6 +87,24 @@ export const getLabelingData = createAsyncThunk(
 	async (params: GetProjectByIdPayload, { rejectWithValue }) => {
 		try {
 			const { data } = await getLabelingDataApi(params);
+			return data;
+		} catch (err: any) {
+			if (!err.response) {
+				throw err;
+			}
+			return rejectWithValue(err.response.data);
+		}
+	},
+);
+
+export const labelData = createAsyncThunk(
+	"projects/labelData",
+	async ({ submitData, onDone }: any, { rejectWithValue }) => {
+		try {
+			const { data } = await labelDataApi(submitData);
+			if (onDone) {
+				onDone();
+			}
 			return data;
 		} catch (err: any) {
 			if (!err.response) {

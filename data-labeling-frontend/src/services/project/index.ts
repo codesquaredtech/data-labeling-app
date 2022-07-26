@@ -13,3 +13,6 @@ export const getProjectCurrentPageApi = (id: string) =>
 
 export const getLabelingDataApi = ({ id, resourceNumber }: GetProjectByIdPayload) =>
 	axiosInstance.get(`http://localhost:3030/project/${id}/label-project/${resourceNumber}`);
+
+export const labelDataApi = ({ id, labelingData }: any) =>
+	axiosInstance.post(`http://localhost:3030/project/${id}/data-accept`, labelingData);

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { createProject, getAllProjectsAdmin, getLabelingData, getProjectCurrentPage } from "../../../actions/project";
+import { getLabelingData, getProjectCurrentPage, labelData } from "../../../actions/project";
 import { AppDispatch } from "../../../config/store";
 import { projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
 import Modal from "../../Global/Modal";
@@ -24,7 +24,9 @@ type LabelDataProps = {
 export default function LabelData({ projectId, open, setOpen }: LabelDataProps) {
 	const createLoading = useSelector(projectsSliceSelectors.createLoading);
 	const projectCurrentPage = useSelector(projectsSliceSelectors.projectCurrentPage);
-	const { fields: reduxFields } = useSelector(projectsSliceSelectors.labelingData) || {};
+	const labelingData = useSelector(projectsSliceSelectors.labelingData);
+	const { fields: reduxFields } = labelingData || {};
+	const dispatch = useDispatch<AppDispatch>();
 
 	const {
 		register,
@@ -41,25 +43,7 @@ export default function LabelData({ projectId, open, setOpen }: LabelDataProps) 
 	});
 
 	useEffect(() => {
-		if (reduxFields && reduxFields.length > 0) {
-			reduxFields.forEach((field) => {
-				append({ [field.name]: field.value || "" });
-			});
-		}
-	}, [append, reduxFields]);
-
-	const onSubmit: SubmitHandler<any> = (data) => {
-		console.log("data", data);
-		const onDone = () => {
-			dispatch(getAllProjectsAdmin());
-			setOpen(false);
-			reset();
-		};
-	};
-
-	const dispatch = useDispatch<AppDispatch>();
-
-	useEffect(() => {
+		// first we fetch current page, then we fetch labeling data
 		if (projectId) {
 			if (!projectCurrentPage) {
 				dispatch(getProjectCurrentPage(projectId));
@@ -69,9 +53,34 @@ export default function LabelData({ projectId, open, setOpen }: LabelDataProps) 
 		}
 	}, [dispatch, projectCurrentPage, projectId]);
 
+	useEffect(() => {
+		// upon receiving labeling data we append form fields
+		if (reduxFields && reduxFields.length > 0) {
+			reduxFields.forEach((field) => {
+				append({ [field.name]: field.value || "" });
+			});
+		}
+	}, [append, reduxFields]);
+
+	const onSubmit: SubmitHandler<any> = (data) => {
+		const modifiedFields = reduxFields?.map((field, i) => ({
+			...field,
+			value: data.labelDataForm[i][field.name],
+		}));
+
+		const modifiedLabelingData = { ...labelingData, fields: modifiedFields };
+
+		const onDone = () => {
+			setOpen(false);
+			reset();
+		};
+		dispatch(labelData({ submitData: { id: projectId, labelingData: modifiedLabelingData }, onDone }));
+	};
+
 	return (
 		<Modal open={open} setOpen={setOpen} name="label-data" title="Label data" closeButton hideButton>
 			<>
+				<div className="font-bold flex justify-center mt-2 mb-4">{labelingData?.title || "Resource title"}</div>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="flex flex-col gap-3 mb-8">
 						{fields && fields.length > 0

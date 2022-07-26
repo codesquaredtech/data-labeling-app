@@ -1,31 +1,22 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
-  HttpStatus,
   Param,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { response } from 'express';
-import { Role, User } from 'src/user/model/user.model';
+import { Role } from 'src/user/model/user.model';
 import { UserService } from 'src/user/user.service';
-import { OutputData } from './models/dataAccepting.model';
 import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
 import { RemoveMetadataDTO } from './DTO/removeMetadata.dto';
 import { ResourceTemplate } from './DTO/ResourceTemplate.dto';
 import { MetadataService } from './metadata.service';
-import { Metadata, MetadataDocument } from './models/metamodel.model';
-import { Project } from './models/project.model';
-import { Resource } from './models/resource.model';
+import { Metadata } from './models/metamodel.model';
 import { ProjectService } from './project.service';
 import { ResourceService } from './resource.service';
-import { UserAndTheirLastResource } from './models/userLastResource.model';
-import { currentPageDTO } from './DTO/CurrentPageDTO.dto';
 import { FirebaseAuthGuard } from 'src/auth/firebase.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
