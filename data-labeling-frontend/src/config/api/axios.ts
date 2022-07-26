@@ -20,7 +20,7 @@ axiosInstance.interceptors.response.use(
 	function failure(error) {
 		const token = getToken();
 		if (token) {
-			if (error.response && error.response.status === 403) {
+			if (error.response && [403, 401].includes(error.response.status)) {
 				localStorage.removeItem("jwt-token");
 			}
 		}

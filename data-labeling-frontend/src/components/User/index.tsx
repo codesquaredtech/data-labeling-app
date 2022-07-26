@@ -89,7 +89,6 @@ export const User = () => {
 					data={data}
 					columns={columns}
 					title="Projects"
-					footerText="Project Table Footer"
 					checkbox
 					currentPage={currentPage}
 					setCurrentPage={setCurrentPage}

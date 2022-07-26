@@ -2,15 +2,13 @@ import React from "react";
 import { BrowserRouter, Routes as RouterRoutes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { DefaultLayout } from "./layouts/DefaultLaylout";
-import { AddMetadata } from "./pages/AddMetadata";
-import { AddResourcePage } from "./pages/AddResourcePage";
 import { AdminPage } from "./pages/Admin/AdminPage";
 import { DashboardPage } from "./pages/Dashboard/DashboardPage";
-import LabelingData from "./pages/LabelingData";
-import { ProjectDetail } from "./pages/ProjectDetail";
 import { LoginPage } from "./pages/Public/LoginPage";
-import { authSlice, authSliceSelectors } from "./slices/Auth/authSlice";
+import { authSliceSelectors } from "./slices/Auth/authSlice";
 import { UserPage } from "./pages/User/UserPage";
+import { MetadataPage } from "./pages/Admin/Metadata/MetadataPage";
+import { ResourcesPage } from "./pages/Admin/Resources/ResourcesPage";
 
 const AdminRoutes = (props) => {
 	const token = useSelector(authSliceSelectors.token);
@@ -43,8 +41,10 @@ export const Routes = () => {
 			<RouterRoutes>
 				<Route path="login" element={<PublicRoute component={LoginPage} />} />
 				<Route path="/" element={<AuthorizedRoute component={DashboardPage} />} />
-				<Route path="/admin" element={<AdminRoutes component={AdminPage} />} />
-				<Route path="/user" element={<AuthorizedRoute component={UserPage} />} />
+				<Route path="/admin/projects" element={<AdminRoutes component={AdminPage} />} />
+				<Route path="/admin/projects/:id/metadata" element={<AdminRoutes component={MetadataPage} />} />
+				<Route path="/admin/projects/:id/resources" element={<AdminRoutes component={ResourcesPage} />} />
+				<Route path="/user/projects" element={<AuthorizedRoute component={UserPage} />} />
 				{/* <AuthorizedRoute path="/project/metadata/:id" element={<AddMetadata />} />
 				<AuthorizedRoute path="/project/:id" element={<ProjectDetail />} />
 				<AuthorizedRoute path=":id/labeling-data" element={<LabelingData />} />

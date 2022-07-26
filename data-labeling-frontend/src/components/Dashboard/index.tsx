@@ -31,14 +31,14 @@ export const Dashboard = () => {
 						{role === "Admin" && (
 							<button
 								className="btn btn-outline btn-primary mt-4 lg:w-52 md:w-full"
-								onClick={() => navigate("/admin")}
+								onClick={() => navigate("/admin/projects")}
 							>
 								Create the data
 							</button>
 						)}
 						<button
 							className="btn btn-outline btn-primary mt-4 lg:w-52 md:w-full"
-							onClick={() => navigate("/user")}
+							onClick={() => navigate("/user/projects")}
 						>
 							Label the data
 						</button>
