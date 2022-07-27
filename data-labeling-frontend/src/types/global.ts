@@ -11,3 +11,9 @@ export enum AppTheme {
 	RETRO = "retro",
 	DARK = "dark",
 }
+
+export enum MetadataTypes {
+	BOOLEAN = "boolean",
+	TEXT = "text",
+	NUMBER = "number",
+}

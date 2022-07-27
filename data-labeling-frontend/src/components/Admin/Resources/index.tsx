@@ -66,7 +66,7 @@ export const Resources = () => {
 				disableFilters: true,
 				width: 500,
 			},
-			{ Header: "Ordinal", accessor: "ordinal", disableFilters: true },
+			{ Header: "Ordinal number", accessor: "ordinalNumber", disableFilters: true },
 		],
 		[],
 	);

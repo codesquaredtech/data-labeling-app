@@ -43,6 +43,26 @@ export const Field = ({ index, field, register, errors }: FieldProps) => {
 					)}
 				</div>
 			);
+		case "number":
+			return (
+				<div className="form-group">
+					{name && (
+						<>
+							<label className="label">
+								<span className="label-text">{name}</span>
+							</label>
+							<input
+								{...register(`labelDataForm.${index}.${name}`)}
+								type="number"
+								className={`input w-full input-bordered ${
+									errors.labelDataForm?.[index]?.[name] ? "is-invalid" : ""
+								}`}
+							/>
+							<div className="invalid-feedback">{errors.labelDataForm?.[index]?.[name]?.message}</div>
+						</>
+					)}
+				</div>
+			);
 		case "checkbox":
 			return (
 				<div className="form-group">

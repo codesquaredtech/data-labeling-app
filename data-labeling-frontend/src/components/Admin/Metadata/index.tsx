@@ -7,6 +7,7 @@ import { AppDispatch } from "../../../config/store";
 import Table from "../../Global/Table";
 import { getMetadataByProjectId } from "../../../actions/metadata";
 import { useParams } from "react-router-dom";
+import CreateEditMetadata from "./CreateEditMetadata";
 
 export const Metadata = () => {
 	const data = useSelector(metadataSliceSelectors.metadataList);
@@ -75,7 +76,7 @@ export const Metadata = () => {
 		<div className="flex w-full max-h-[calc(100vh_-_64px)] justify-center align-middle">
 			<div className="w-10/12 m-20">
 				<div className="mb-4 -mt-10">
-					<button className="btn btn-primary">Add metadata</button>
+					<CreateEditMetadata />
 				</div>
 				<Table
 					data={data}

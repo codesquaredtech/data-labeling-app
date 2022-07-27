@@ -1,4 +1,4 @@
-import { getMetadataByProjectId } from "./../../actions/metadata/index";
+import { createMetadata, getMetadataByProjectId } from "./../../actions/metadata/index";
 import { RootState } from "../../config/store";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -15,12 +15,14 @@ interface InitState {
 	metadataList: [] | Metadata[];
 	fetchLoading: boolean;
 	createLoading: boolean;
+	error: any;
 }
 
 const initialState: InitState = {
 	metadataList: [],
 	fetchLoading: false,
 	createLoading: false,
+	error: null,
 };
 
 export const metadataSlice = createSlice({
@@ -42,6 +44,16 @@ export const metadataSlice = createSlice({
 		builder.addCase(getMetadataByProjectId.rejected, (state) => {
 			state.fetchLoading = false;
 		});
+		builder.addCase(createMetadata.pending, (state) => {
+			state.createLoading = true;
+		});
+		builder.addCase(createMetadata.fulfilled, (state) => {
+			state.createLoading = false;
+		});
+		builder.addCase(createMetadata.rejected, (state, { payload }) => {
+			state.createLoading = false;
+			state.error = payload;
+		});
 	},
 });
 
@@ -62,5 +74,9 @@ export const metadataSliceSelectors = {
 	metadataList: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.metadataList;
+	},
+	error: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.error;
 	},
 };

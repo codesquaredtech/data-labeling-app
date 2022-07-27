@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -26,13 +26,19 @@ export const Admin = () => {
 		};
 	}, [dispatch]);
 
-	const navigateMetadata = (projectId: string) => {
-		navigate(`/admin/projects/${projectId}/metadata`);
-	};
+	const navigateMetadata = useCallback(
+		(projectId: string) => {
+			navigate(`/admin/projects/${projectId}/metadata`);
+		},
+		[navigate],
+	);
 
-	const navigateResources = (projectId: string) => {
-		navigate(`/admin/projects/${projectId}/resources`);
-	};
+	const navigateResources = useCallback(
+		(projectId: string) => {
+			navigate(`/admin/projects/${projectId}/resources`);
+		},
+		[navigate],
+	);
 
 	const columns = useMemo(
 		() => [
@@ -88,9 +94,10 @@ export const Admin = () => {
 				disableFilters: true,
 				width: 600,
 			},
-			{ Header: "User IDs", accessor: "users", disableFilters: true, width: 600 },
+			{ Header: "Users", accessor: "users.length", disableFilters: true },
+			{ Header: "Metadata", accessor: "metadata.length", disableFilters: true },
 		],
-		[],
+		[navigateMetadata, navigateResources],
 	);
 
 	return (
