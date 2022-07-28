@@ -4,6 +4,7 @@ import { ModalProps } from "./types";
 
 export default function Modal({
 	setOpen,
+	onClose,
 	open = false,
 	title = "",
 	buttonTitle = "open modal",
@@ -13,7 +14,10 @@ export default function Modal({
 	hideButton = false,
 	children,
 }: ModalProps) {
-	const handleClose = () => setOpen(false);
+	const handleClose = () => {
+		setOpen(false);
+		if (onClose) onClose();
+	};
 	const modalRef = useRef(null);
 	useOutsideClick(modalRef, handleClose);
 

@@ -1,20 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getMe } from "../../actions/auth";
-import { AppDispatch } from "../../config/store";
 import { authSliceSelectors } from "../../slices/Auth/authSlice";
 
 export const Dashboard = () => {
 	const user = useSelector(authSliceSelectors.user);
 	const role = user ? (user.isAdmin ? "Admin" : "User") : "Unknown";
-	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		dispatch(getMe());
-	}, [dispatch]);
 
 	return (
 		<div className="flex w-full justify-center">

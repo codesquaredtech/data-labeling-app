@@ -2,6 +2,7 @@ import { ReactChild } from "react";
 
 export type ModalProps = {
 	setOpen: (open: boolean) => void;
+	onClose?: () => void;
 	open: boolean;
 	title?: string;
 	buttonTitle?: string;

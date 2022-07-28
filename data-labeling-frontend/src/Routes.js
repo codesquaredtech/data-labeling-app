@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes as RouterRoutes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { DefaultLayout } from "./layouts/DefaultLaylout";
@@ -9,22 +9,44 @@ import { authSliceSelectors } from "./slices/Auth/authSlice";
 import { UserPage } from "./pages/User/UserPage";
 import { MetadataPage } from "./pages/Admin/Metadata/MetadataPage";
 import { ResourcesPage } from "./pages/Admin/Resources/ResourcesPage";
+import { getMe } from "./actions/auth";
+import { useDispatch } from "react-redux";
+import LoadingSpinner from "./components/Global/LoadingSpinner";
 
 const AdminRoutes = (props) => {
 	const token = useSelector(authSliceSelectors.token);
 	const isAdmin = useSelector(authSliceSelectors.isAdmin);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (isAdmin === undefined) {
+			dispatch(getMe());
+		}
+	}, [dispatch, isAdmin]);
 
 	if (token) {
-		if (isAdmin) {
-			return <DefaultLayout {...props} />;
+		if (isAdmin !== undefined) {
+			if (isAdmin) {
+				return <DefaultLayout {...props} />;
+			}
+			return <Navigate to="/" replace />;
 		}
-		return <Navigate to="/" replace />;
+
+		return <DefaultLayout component={LoadingSpinner} />;
 	}
 	return <Navigate to="/login" replace />;
 };
 
 const AuthorizedRoute = (props) => {
 	const token = useSelector(authSliceSelectors.token);
+	const isAdmin = useSelector(authSliceSelectors.isAdmin);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (isAdmin === undefined) {
+			dispatch(getMe());
+		}
+	}, [dispatch, isAdmin]);
 
 	return token ? <DefaultLayout {...props} /> : <Navigate to="/login" replace />;
 };

@@ -1,10 +1,20 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Metadata } from "../../components/Admin/Metadata/CreateEditMetadata";
-import { createMetadataApi, getMetadataByProjectIdApi } from "./../../services/metadata";
+import { createMetadataApi, deleteMetadataApi, getMetadataByProjectIdApi } from "./../../services/metadata";
 
 export type CreateMetadataPayload = {
 	id: string;
 	submitData: Metadata;
+	onDone: () => void;
+};
+
+export type DeleteMetadataDTO = {
+	projectId: string;
+	metadataId: string;
+};
+
+export type DeleteMetadataPayload = {
+	data: DeleteMetadataDTO;
 	onDone: () => void;
 };
 
@@ -24,7 +34,7 @@ export const getMetadataByProjectId = createAsyncThunk(
 );
 
 export const createMetadata = createAsyncThunk(
-	"metadata/create",
+	"metadata/createMetadata",
 	async ({ id, submitData, onDone }: CreateMetadataPayload, { rejectWithValue }) => {
 		try {
 			const { data } = await createMetadataApi(id, submitData);
@@ -32,6 +42,23 @@ export const createMetadata = createAsyncThunk(
 				onDone();
 			}
 			return data;
+		} catch (err: any) {
+			if (!err.response) {
+				throw err;
+			}
+			return rejectWithValue(err);
+		}
+	},
+);
+
+export const deleteMetadata = createAsyncThunk(
+	"metadata/deleteMetadata",
+	async ({ data, onDone }: DeleteMetadataPayload, { rejectWithValue }) => {
+		try {
+			await deleteMetadataApi(data);
+			if (onDone) {
+				onDone();
+			}
 		} catch (err: any) {
 			if (!err.response) {
 				throw err;

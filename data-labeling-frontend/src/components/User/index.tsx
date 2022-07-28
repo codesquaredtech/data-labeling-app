@@ -98,7 +98,6 @@ export const User = () => {
 					pageSizes={pageSizes}
 					isLoading={loading}
 				/>
-
 				<LabelData projectId={projectId} open={modalOpen} setOpen={setModalOpen} />
 			</div>
 		</div>

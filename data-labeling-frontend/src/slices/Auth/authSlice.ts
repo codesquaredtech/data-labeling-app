@@ -9,7 +9,7 @@ const SLICE_NAME = "auth";
 interface InitState {
 	token: string | null;
 	loading: boolean;
-	isAdmin: boolean;
+	isAdmin?: boolean;
 	// TODO: implement user type
 	user: any;
 }
@@ -17,7 +17,7 @@ interface InitState {
 const initialState: InitState = {
 	token: getToken() || null,
 	loading: false,
-	isAdmin: false,
+	isAdmin: undefined,
 	user: null,
 };
 
