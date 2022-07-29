@@ -15,12 +15,14 @@ interface InitState {
 	resourceList: [] | Resource[];
 	fetchLoading: boolean;
 	createLoading: boolean;
+	error: any;
 }
 
 const initialState: InitState = {
 	resourceList: [],
 	fetchLoading: false,
 	createLoading: false,
+	error: null,
 };
 
 export const resourcesSlice = createSlice({
@@ -39,8 +41,9 @@ export const resourcesSlice = createSlice({
 			state.fetchLoading = false;
 			state.resourceList = payload;
 		});
-		builder.addCase(getResourcesByProjectId.rejected, (state) => {
+		builder.addCase(getResourcesByProjectId.rejected, (state, { payload }) => {
 			state.fetchLoading = false;
+			state.error = payload;
 		});
 	},
 });
@@ -62,5 +65,10 @@ export const resourcesSliceSelectors = {
 	resourceList: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.resourceList;
+	},
+
+	error: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.error;
 	},
 };

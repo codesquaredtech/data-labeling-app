@@ -1,4 +1,4 @@
-import { ResourceTemplate } from "../pages/AddResourcePage";
+// import { ResourceTemplate } from "../pages/AddResourcePage";
 import LabelingAxiosClient from "../config/api/axios";
 
 export const ProjectService = {
@@ -55,6 +55,6 @@ async function getProjectResources(id: string | undefined) {
 	return await LabelingAxiosClient.get(`http://localhost:3030/project/${id}/resources`);
 }
 
-async function addResource(id: string | undefined, body: ResourceTemplate[]) {
+async function addResource(id: string | undefined, body: any[]) {
 	return await LabelingAxiosClient.post(`http://localhost:3030/project/${id}/resource`, body);
 }

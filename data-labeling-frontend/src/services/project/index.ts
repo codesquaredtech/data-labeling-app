@@ -1,6 +1,6 @@
 import { GetProjectByIdPayload } from "./../../actions/project/index";
 import axiosInstance from "../../config/api/axios";
-import { Project } from "../../components/Admin/CreateEditProject";
+import { Project } from "../../components/Admin/Projects/CreateEditProject";
 
 export const createProjectApi = (project: Project) => axiosInstance.post("http://localhost:3030/project", project);
 

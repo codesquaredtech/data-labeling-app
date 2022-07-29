@@ -3,7 +3,7 @@ import { getLabelingData } from "./../../actions/project/index";
 import { getAllProjectsAdmin, getAllProjectsUser, createProject, getProjectCurrentPage } from "../../actions/project";
 import { RootState } from "../../config/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Project } from "../../components/Admin/CreateEditProject";
+import { Project } from "../../components/Admin/Projects/CreateEditProject";
 
 const SLICE_NAME = "projects";
 

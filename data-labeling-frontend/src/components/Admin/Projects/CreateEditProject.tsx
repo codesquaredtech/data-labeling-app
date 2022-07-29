@@ -3,12 +3,12 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
-import { getAllUsers } from "../../actions/admin/user";
-import { createProject, getAllProjectsAdmin } from "../../actions/project";
-import { AppDispatch } from "../../config/store";
-import { clearState, usersSliceSelectors } from "../../slices/Admin/usersSlice";
-import { projectsSliceSelectors } from "../../slices/Projects/projectsSlice";
-import Modal from "../Global/Modal";
+import { getAllUsers } from "../../../actions/admin/user";
+import { createProject, getAllProjectsAdmin } from "../../../actions/project";
+import { AppDispatch } from "../../../config/store";
+import { clearState, usersSliceSelectors } from "../../../slices/Admin/usersSlice";
+import { projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
+import Modal from "../../Global/Modal";
 
 export type InitData = {
 	title: string;
@@ -104,7 +104,7 @@ export default function CreateEditProject() {
 							/>
 						</div>
 					</div>
-					{error && <span className="text-xs text-error mt-4 mb-2">This field is required</span>}
+					{error && <span className="text-xs text-error mt-4 mb-2">{error.message}</span>}
 					<input
 						disabled={createLoading}
 						className={`btn btn-success w-full ${createLoading && "loading"}`}

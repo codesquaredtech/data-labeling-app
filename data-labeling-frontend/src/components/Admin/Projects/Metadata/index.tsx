@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { CellValue } from "react-table";
-import { clearState, metadataSliceSelectors } from "../../../slices/Metadata/metadataSlice";
-import { AppDispatch } from "../../../config/store";
-import Table from "../../Global/Table";
-import { deleteMetadata, getMetadataByProjectId } from "../../../actions/metadata";
+import { clearState, metadataSliceSelectors } from "../../../../slices/Metadata/metadataSlice";
+import { AppDispatch } from "../../../../config/store";
+import Table from "../../../Global/Table";
+import { deleteMetadata, getMetadataByProjectId } from "../../../../actions/metadata";
 import { useParams } from "react-router-dom";
 import CreateEditMetadata from "./CreateEditMetadata";
-import DeleteModal from "../../Global/DeleteModal";
+import DeleteModal from "../../../Global/DeleteModal";
 
 export const Metadata = () => {
 	const data = useSelector(metadataSliceSelectors.metadataList);

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Project } from "../../components/Admin/CreateEditProject";
+import { Project } from "../../components/Admin/Projects/CreateEditProject";
 import {
 	createProjectApi,
 	getAllProjectsAdminApi,

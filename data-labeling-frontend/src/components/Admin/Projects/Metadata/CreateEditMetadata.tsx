@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Select from "react-select";
-import { createMetadata, getMetadataByProjectId } from "../../../actions/metadata";
-import { AppDispatch } from "../../../config/store";
-import { metadataSliceSelectors } from "../../../slices/Metadata/metadataSlice";
-import { MetadataTypes } from "../../../types/global";
-import Modal from "../../Global/Modal";
+import { createMetadata, getMetadataByProjectId } from "../../../../actions/metadata";
+import { AppDispatch } from "../../../../config/store";
+import { metadataSliceSelectors } from "../../../../slices/Metadata/metadataSlice";
+import { MetadataTypes } from "../../../../types/global";
+import Modal from "../../../Global/Modal";
 
 type InitData = {
 	name: string;
@@ -83,7 +83,7 @@ export default function CreateEditMetadata() {
 							/>
 						</div>
 					</div>
-					{error && <span className="text-xs text-error mt-4 mb-2">This field is required</span>}
+					{error && <span className="text-xs text-error mt-4 mb-2">{error.message}</span>}
 					<input
 						disabled={createLoading}
 						className={`btn btn-success w-full ${createLoading && "loading"}`}

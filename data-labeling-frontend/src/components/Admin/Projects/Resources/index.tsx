@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { CellValue } from "react-table";
-import { AppDispatch } from "../../../config/store";
-import Table from "../../Global/Table";
+import { AppDispatch } from "../../../../config/store";
+import Table from "../../../Global/Table";
 import { useParams } from "react-router-dom";
-import { clearState, resourcesSliceSelectors } from "../../../slices/Resources/resourcesSlice";
-import { getResourcesByProjectId } from "../../../actions/resource";
+import { clearState, resourcesSliceSelectors } from "../../../../slices/Resources/resourcesSlice";
+import { getResourcesByProjectId } from "../../../../actions/resource";
+import CreateEditResource from "./CreateEditResource";
 
 export const Resources = () => {
 	const data = useSelector(resourcesSliceSelectors.resourceList);
@@ -75,7 +76,7 @@ export const Resources = () => {
 		<div className="flex w-full max-h-[calc(100vh_-_64px)] justify-center align-middle">
 			<div className="w-10/12 m-20">
 				<div className="mb-4 -mt-10">
-					<button className="btn btn-primary">Add resource</button>
+					<CreateEditResource />
 				</div>
 				<Table
 					data={data}

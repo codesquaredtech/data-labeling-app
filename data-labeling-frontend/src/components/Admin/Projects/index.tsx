@@ -3,13 +3,13 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { CellValue } from "react-table";
-import { getAllProjectsAdmin } from "../../actions/project";
-import { AppDispatch } from "../../config/store";
-import { clearState, projectsSliceSelectors } from "../../slices/Projects/projectsSlice";
-import Table from "../Global/Table";
+import { getAllProjectsAdmin } from "../../../actions/project";
+import { AppDispatch } from "../../../config/store";
+import { clearState, projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
+import Table from "../../Global/Table";
 import CreateEditProject from "./CreateEditProject";
 
-export const Admin = () => {
+export const Projects = () => {
 	const data = useSelector(projectsSliceSelectors.projects);
 	const loading = useSelector(projectsSliceSelectors.fetchLoading);
 	const [currentPage, setCurrentPage] = useState(0); // Current page
