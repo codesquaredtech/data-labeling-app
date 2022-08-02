@@ -1,57 +1,41 @@
 import { Injectable, NotFoundException, UseInterceptors } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserDocument } from './model/user.model';
-import {Model} from 'mongoose';
+import { Model } from 'mongoose';
 import { User } from './model/user.model';
 import { UserCreateDTO } from './model/DTO/user.dto';
 
 @Injectable()
 export class UserService {
+  constructor(
+    @InjectModel('user') private readonly userModel: Model<UserDocument>,
+  ) {}
 
+  async createUser(user: User): Promise<User> {
+    const newUser = new this.userModel(user);
+    return newUser.save();
+  }
 
-    constructor(
-        @InjectModel("user") private readonly userModel: Model<UserDocument>    ){}
+  async readUsers() {
+    let users = <User[]>await this.userModel.find({}).lean().exec();
+    return users;
+  }
 
+  async findUserByUid(id: string) {
+    const user = <User>await this.userModel.findOne({ uuid: id }).lean().exec();
+    return user;
+  }
 
-    async createUser(user: User):Promise<User>{
+  async findUserByUid2(id: string) {
+    const user = this.userModel.findOne({ uuid: id }).lean().exec();
+    return user;
+  }
 
-        const newUser = new this.userModel(user);
-        return newUser.save();
-
+  async findUser(id: string) {
+    const user = <User>await this.userModel.findOne({ _id: id }).lean().exec();
+    if (!user) {
+      throw new NotFoundException('Could not find user!');
     }
-
-
-    async readUsers(){
-        let users = <User[]> await this.userModel.find({}).lean().exec();
-        return users;
-    }
-
-    async findUserByUid(id: string){
-        const user = <User> await this.userModel.findOne({uuid: id}).lean().exec();
-        return user;
-    }
-
-    async findUserByUid2(id: string){
-        const user = this.userModel.findOne({uuid: id}).lean().exec();
-        return user;
-    }
-
-
-
- 
-
-    async findUser(id: string){
-        const user = <User> await this.userModel.findOne({_id:id}).lean().exec();
-        if (!user){
-            throw new NotFoundException("Could not find user!")
-        }
-        return user;
-
-
-    }
-
-
-
+    return user;
+  }
 }
-
-

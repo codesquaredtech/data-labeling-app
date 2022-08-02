@@ -10,14 +10,20 @@ import { RolesGuard } from './auth/roles.guard';
 
 @Module({
   imports: [
-    MongooseModule.forRoot("mongodb+srv://vlado:123@cluster0.rc3wc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"),
+    MongooseModule.forRoot(
+      'mongodb+srv://luka:mu0YV2Xh2WiY4xdi@cluster0.vgobtyd.mongodb.net/?retryWrites=true&w=majority',
+    ),
     ProjectModule,
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService,AuthStrategy,{
-    provide: APP_GUARD,
-    useClass: RolesGuard
-  }],
+  providers: [
+    AppService,
+    AuthStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}
