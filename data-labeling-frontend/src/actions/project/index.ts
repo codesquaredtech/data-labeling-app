@@ -114,3 +114,15 @@ export const labelData = createAsyncThunk(
 		}
 	},
 );
+
+export const getProjectById = createAsyncThunk("projects/getProjectById", async (id: string, { rejectWithValue }) => {
+	try {
+		const { data } = await getProjectCurrentPageApi(id);
+		return data;
+	} catch (err: any) {
+		if (!err.response) {
+			throw err;
+		}
+		return rejectWithValue(err.response.data);
+	}
+});

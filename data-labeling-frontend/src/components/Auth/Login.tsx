@@ -18,7 +18,13 @@ export const Login = () => {
 						Data
 						<span className="font-bold text-primary-focus hover:animate-pulse">Labeling</span>
 					</h1>
-					<div className="text-3xl mt-6">Who says labeling data can't be fun?</div>
+					<div className="text-3xl mt-6">
+						Who says{" "}
+						<span className="w-full text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary lg:inline">
+							labeling data
+						</span>{" "}
+						can't be fun?
+					</div>
 					<p className="py-6">
 						Our application brings innovative ways of labeling all kinds of data that you can think of. Feel
 						free to try it out for free!
