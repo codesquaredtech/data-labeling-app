@@ -8,6 +8,7 @@ import { AppDispatch } from "../../../config/store";
 import { clearState, projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
 import Table from "../../Global/Table";
 import CreateEditProject from "./CreateEditProject";
+import { ProjectDashboard } from "./ProjectDashboard";
 
 export const Projects = () => {
 	const data = useSelector(projectsSliceSelectors.projects);
@@ -99,6 +100,8 @@ export const Projects = () => {
 		],
 		[navigateMetadata, navigateResources],
 	);
+
+	return <ProjectDashboard />;
 
 	return (
 		<div className="flex w-full max-h-[calc(100vh_-_64px)] justify-center align-middle">
