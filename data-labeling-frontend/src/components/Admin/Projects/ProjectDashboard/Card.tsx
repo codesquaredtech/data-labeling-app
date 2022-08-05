@@ -111,7 +111,7 @@ export default function Card({ type, title, subtitle, icon, onRemove, onEdit }: 
 						<div className="flex w-full h-16 gap-3">
 							<div className="flex align-items-center justify-start">{determineIcon()}</div>
 							<div className="flex flex-col w-full justify-center">
-								<h2 className="text-l font-bold truncate w-32">{title}</h2>
+								<h2 className="text-l font-bold truncate w-full">{title}</h2>
 								<div className="text-m text-accent-focus">{subtitle}</div>
 							</div>
 							<div className="flex flex-col w-full align-items-end justify-between">

@@ -12,6 +12,7 @@ interface Props {
 	component: FC;
 }
 export const DefaultLayout = ({ component: Component }: Props) => {
+	const [open, setOpen] = useState(false);
 	const [theme, setTheme] = useState<string>(getTheme());
 	const token = useSelector(authSliceSelectors.token);
 	const dispatch = useDispatch<AppDispatch>();
@@ -29,13 +30,20 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 		localStorage.setItem("theme", newTheme);
 	};
 
+	const handleClose = () => {
+		setOpen(false);
+	};
+
 	return (
 		<div data-theme={theme}>
-			<Sidebar onLogout={handleLogout}>
+			<Sidebar open={open} onClose={handleClose} onLogout={handleLogout}>
 				<div className="navbar bg-base-300">
 					<div className="flex-1 ml-2">
 						{token && (
-							<label htmlFor="my-drawer" className="btn btn-ghost drawer-button hover:text-primary">
+							<div
+								onClick={() => setOpen(true)}
+								className="btn btn-ghost drawer-button hover:text-primary"
+							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="24"
@@ -45,11 +53,11 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 									viewBox="0 0 16 16"
 								>
 									<path
-										fill-rule="evenodd"
+										fillRule="evenodd"
 										d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
 									/>
 								</svg>
-							</label>
+							</div>
 						)}
 						<div
 							onClick={() => navigate("/")}
@@ -93,7 +101,11 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 						</button>
 					</div>
 				</div>
-				<div className="flex w-full min-h-[calc(100vh_-_64px)] justify-center align-items-center">
+				<div
+					className={`flex w-full min-h-[calc(100vh_-_64px)] justify-center align-items-center duration-100 ${
+						open && "ml-[320px] w-[calc(100vw_-_320px)]"
+					}`}
+				>
 					<Component />
 				</div>
 			</Sidebar>
