@@ -4,7 +4,7 @@ import ColumnSelector from "./ColumnSelector";
 
 const TableInfo = ({ title, allColumns, getToggleHideAllColumnsProps }: TableInfoProps) => {
 	return (
-		<div className="flex justify-between align-middle border-0">
+		<div className="flex justify-between align-middle border-0 p-3">
 			<div className="flex justify-between align-middle">
 				{title ? <div className="card-title text-base-content">{title}</div> : null}
 			</div>

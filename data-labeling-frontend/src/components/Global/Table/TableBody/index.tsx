@@ -4,7 +4,7 @@ import "./styles/tableBody.scss";
 
 const TableBody = ({ getTableBodyProps, prepareRow, page }: TablePropsBody) => {
 	return (
-		<div {...getTableBodyProps()} className="body overflow-auto">
+		<div {...getTableBodyProps()} className="body">
 			{page.map((row) => {
 				prepareRow(row);
 				return (
@@ -14,7 +14,7 @@ const TableBody = ({ getTableBodyProps, prepareRow, page }: TablePropsBody) => {
 					>
 						{row.cells.map((cell) => {
 							return (
-								<div {...cell.getCellProps()} className="td">
+								<div {...cell.getCellProps()} className="td px-[1.05rem] py-2">
 									{cell.render("Cell")}
 								</div>
 							);

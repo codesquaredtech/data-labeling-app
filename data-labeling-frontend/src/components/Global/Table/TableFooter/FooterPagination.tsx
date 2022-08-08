@@ -15,9 +15,9 @@ const FooterPagination = ({
 
 	return (
 		<div className="footer-pagination">
-			<div className="footer-row border-0">
+			<div className="footer-row border-0 gap-2">
 				<button
-					className="btn btn-primary btn-circle"
+					className="btn btn-ghost disabled:btn-ghost hover:text-primary btn-circle"
 					onClick={() => setCurrentPage(0)}
 					disabled={currentPage === 0}
 				>
@@ -40,7 +40,7 @@ const FooterPagination = ({
 					</svg>
 				</button>
 				<button
-					className="btn btn-primary btn-circle"
+					className="btn btn-ghost disabled:btn-ghost hover:text-primary btn-circle"
 					onClick={() => {
 						setCurrentPage(currentPage - 1);
 					}}
@@ -61,21 +61,21 @@ const FooterPagination = ({
 					</svg>
 				</button>
 			</div>
-			<div className="footer-page-select border-0">
+			<div className="footer-page-select border-0 pl-4">
 				Page{" "}
 				<strong>
 					{currentPage + 1} of {totalPages}
 				</strong>
 			</div>
-			<div className="footer-page-select border-0">
+			<div className="footer-page-select border-0 px-2">
 				<input
 					onChange={onChangeInInput}
 					type="number"
 					placeholder="Go to page:"
-					className="input w-full max-w-xs footer-page-input"
+					className="input w-full max-w-xs input-link footer-page-input"
 				/>
 			</div>
-			<div className="border-0">
+			<div className="border-0 pr-4">
 				<select
 					onChange={(e) => {
 						const value = e.target.value;
@@ -83,7 +83,7 @@ const FooterPagination = ({
 						setRowsPerPage(Number(value));
 					}}
 					defaultValue="default"
-					className="select select-primary w-full max-w-xs"
+					className="select select-link w-full max-w-xs"
 				>
 					<option disabled value="default">
 						Select rows per page
@@ -97,9 +97,9 @@ const FooterPagination = ({
 					})}
 				</select>
 			</div>
-			<div className="footer-row border-0">
+			<div className="footer-row border-0 gap-2">
 				<button
-					className="btn btn-primary btn-circle"
+					className="btn btn-ghost disabled:btn-ghost hover:text-primary btn-circle"
 					onClick={() => {
 						setCurrentPage(currentPage + 1);
 					}}
@@ -120,7 +120,7 @@ const FooterPagination = ({
 					</svg>
 				</button>
 				<button
-					className="btn btn-primary btn-circle"
+					className="btn btn-ghost disabled:btn-ghost hover:text-primary btn-circle"
 					onClick={() => {
 						setCurrentPage(totalPages - 1);
 					}}

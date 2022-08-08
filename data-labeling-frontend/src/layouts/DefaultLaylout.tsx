@@ -37,7 +37,7 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 	return (
 		<div data-theme={theme}>
 			<Sidebar open={open} onClose={handleClose} onLogout={handleLogout}>
-				<div className="navbar bg-base-300">
+				<div className="navbar bg-base-300 fixed top-0 z-10">
 					<div className="flex-1 ml-2">
 						{token && (
 							<div
@@ -102,7 +102,7 @@ export const DefaultLayout = ({ component: Component }: Props) => {
 					</div>
 				</div>
 				<div
-					className={`flex w-full min-h-[calc(100vh_-_64px)] justify-center align-items-center duration-100 ${
+					className={`flex w-full min-h-[calc(100vh_-_64px)] justify-center align-items-center duration-100 pt-16 ${
 						open && "ml-[320px] w-[calc(100vw_-_320px)]"
 					}`}
 				>

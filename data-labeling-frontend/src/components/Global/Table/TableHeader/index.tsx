@@ -50,7 +50,7 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 		userSelect: "none",
 
 		// change background colour if dragging
-		background: isDragging ? "#b2dfdb" : "",
+		background: isDragging ? "" : "",
 
 		...(!isDragging && { transform: "translate(0,0)" }),
 		...(isDropAnimating && { transitionDuration: "0.001s" }),
@@ -59,7 +59,7 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 	});
 
 	return (
-		<div className="border-0">
+		<div className="border-0 position-sticky top-0 w-fit z-[2] bg-base-300 shadow-md pl-3 py-2">
 			{headerGroups.map((headerGroup, index) => (
 				// @ts-ignore
 				<DragDropContext
@@ -96,7 +96,7 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 									>
 										{(provided, snapshot) => {
 											return (
-												<div {...column.getHeaderProps()} className="th">
+												<div {...column.getHeaderProps()} className="th font-semibold">
 													<div
 														{...column.getSortByToggleProps()}
 														{...provided.draggableProps}
