@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
 import { getAllUsers } from "../../../actions/admin/user";
-import { createProject, getAllProjectsAdmin } from "../../../actions/project";
+import { createProject, getAllAdminProjects } from "../../../actions/project";
 import { AppDispatch } from "../../../config/store";
 import { clearState, usersSliceSelectors } from "../../../slices/Admin/usersSlice";
 import { projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
@@ -40,7 +40,7 @@ export default function CreateEditProject() {
 
 	const onSubmit: SubmitHandler<InitData> = (data) => {
 		const onDone = () => {
-			dispatch(getAllProjectsAdmin());
+			dispatch(getAllAdminProjects());
 			setModalOpen(false);
 			reset();
 		};

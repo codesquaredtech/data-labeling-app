@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { CellValue } from "react-table";
-import { getAllProjectsUser } from "../../actions/project";
+import { getAllUserProjects } from "../../actions/project";
 import { AppDispatch } from "../../config/store";
 import { clearState, projectsSliceSelectors } from "../../slices/Projects/projectsSlice";
 import Table from "../Global/Table";
@@ -23,7 +23,7 @@ export const User = () => {
 	const dispatch = useDispatch<AppDispatch>();
 
 	useEffect(() => {
-		dispatch(getAllProjectsUser());
+		dispatch(getAllUserProjects());
 		return () => {
 			dispatch(clearState());
 		};

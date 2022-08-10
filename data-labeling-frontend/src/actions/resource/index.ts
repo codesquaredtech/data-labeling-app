@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { ResourceDTO } from "../../components/Admin/Projects/Resources/CreateEditResource";
+import { ResourceDTO } from "../../components/Admin/Projects/Resources/CreateEditResourceForm";
 import { createResourceApi, deleteResourceApi, getResourcesByProjectIdApi } from "./../../services/resource";
 
 export type CreateResourcePayload = {

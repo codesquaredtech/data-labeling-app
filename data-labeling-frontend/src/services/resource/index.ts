@@ -1,5 +1,5 @@
 import { DeleteResourceDTO } from "../../actions/resource";
-import { ResourceDTO } from "../../components/Admin/Projects/Resources/CreateEditResource";
+import { ResourceDTO } from "../../components/Admin/Projects/Resources/CreateEditResourceForm";
 import axiosInstance from "../../config/api/axios";
 
 export const getResourcesByProjectIdApi = (id: string) =>

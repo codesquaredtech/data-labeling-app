@@ -7,11 +7,13 @@ import Table from "../../../Global/Table";
 import { useParams } from "react-router-dom";
 import { clearState, resourcesSliceSelectors } from "../../../../slices/Resources/resourcesSlice";
 import { getResourcesByProjectId } from "../../../../actions/resource";
-import CreateEditResource from "./CreateEditResource";
+import CreateEditResource from "./CreateEditResourceForm";
+import Modal from "../../../Global/Modal";
 
 export const Resources = () => {
 	const data = useSelector(resourcesSliceSelectors.resourceList);
 	const loading = useSelector(resourcesSliceSelectors.fetchLoading);
+	const [createModalOpen, setCreateModalOpen] = useState(false);
 	const { id: projectId } = useParams();
 
 	const [currentPage, setCurrentPage] = useState(0); // Current page
@@ -76,7 +78,14 @@ export const Resources = () => {
 		<div className="flex w-full max-h-[calc(100vh_-_64px)] justify-center align-middle">
 			<div className="w-10/12 m-20">
 				<div className="mb-4 -mt-10">
-					<CreateEditResource />
+					<Modal
+						title="Add resource"
+						buttonTitle="Add resource"
+						setOpen={setCreateModalOpen}
+						open={createModalOpen}
+					>
+						<CreateEditResource onDone={() => setCreateModalOpen(false)} />
+					</Modal>
 				</div>
 				<Table
 					data={data}

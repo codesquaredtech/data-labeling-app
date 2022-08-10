@@ -20,14 +20,13 @@ export type Metadata = {
 	type: string;
 };
 
-export default function CreateEditMetadata() {
+export default function CreateEditMetadataForm({ onDone }: { onDone?: () => void }) {
 	const options = useMemo<any>(() => {
 		return Object.values(MetadataTypes).map((option: string) => ({
 			value: option,
 			label: option[0].toUpperCase() + option.slice(1),
 		}));
 	}, []);
-	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const createLoading = useSelector(metadataSliceSelectors.createLoading);
 	const error = useSelector(metadataSliceSelectors.error);
 	const {
@@ -42,55 +41,44 @@ export default function CreateEditMetadata() {
 
 	const onSubmit: SubmitHandler<InitData> = (data) => {
 		if (projectId) {
-			const onDone = () => {
+			const onDoneHandler = () => {
 				dispatch(getMetadataByProjectId(projectId));
-				setModalOpen(false);
+				if (onDone) onDone();
 				reset();
 			};
 			const modifiedData = { ...data, type: data.type.value };
-			dispatch(createMetadata({ id: projectId, submitData: modifiedData, onDone }));
+			dispatch(createMetadata({ id: projectId, submitData: modifiedData, onDone: onDoneHandler }));
 		}
 	};
 
 	return (
-		<Modal
-			open={modalOpen}
-			setOpen={setModalOpen}
-			name="create-metadata"
-			buttonTitle="Add metadata"
-			title="Add metadata"
-			closeButton
-		>
-			<>
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<div className="flex flex-col gap-3 mb-8">
-						<div className="flex flex-col gap-2">
-							<input
-								{...register("name", { required: true })}
-								placeholder="Metadata name"
-								className={`input input-bordered ${errors.name && "border-error"}`}
-								type="text"
-							/>
-							{errors.name && <span className="text-xs text-error">This field is required</span>}
-						</div>
-						<div className="flex flex-col gap-2">
-							<Controller
-								name="type"
-								control={control}
-								render={({ field }) => (
-									<Select {...field} options={options} noOptionsMessage={() => "No types found"} />
-								)}
-							/>
-						</div>
-					</div>
-					{error && <span className="text-xs text-error mt-4 mb-2">{error.message}</span>}
+		<form onSubmit={handleSubmit(onSubmit)}>
+			<div className="flex flex-col gap-3 mb-8">
+				<div className="flex flex-col gap-2">
 					<input
-						disabled={createLoading}
-						className={`btn btn-success w-full ${createLoading && "loading"}`}
-						type="submit"
+						{...register("name", { required: true })}
+						placeholder="Metadata name"
+						className={`input input-bordered ${errors.name && "border-error"}`}
+						type="text"
 					/>
-				</form>
-			</>
-		</Modal>
+					{errors.name && <span className="text-xs text-error">This field is required</span>}
+				</div>
+				<div className="flex flex-col gap-2">
+					<Controller
+						name="type"
+						control={control}
+						render={({ field }) => (
+							<Select {...field} options={options} noOptionsMessage={() => "No types found"} />
+						)}
+					/>
+				</div>
+			</div>
+			{error && <span className="text-xs text-error mt-4 mb-2">{error.message}</span>}
+			<input
+				disabled={createLoading}
+				className={`btn btn-success w-full ${createLoading && "loading"}`}
+				type="submit"
+			/>
+		</form>
 	);
 }

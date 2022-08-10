@@ -82,9 +82,9 @@ export default function Card({ type, title, subtitle, icon, onRemove, onEdit }: 
 									</div>
 								</div>
 							</div>
-							<div className="flex flex-col w-36 justify-center">
+							<div className="flex flex-col justify-center w-full">
 								<h2 className="text-l font-bold">{title}</h2>
-								<div className="text-m text-accent-focus">{subtitle}</div>
+								<div className="text-m text-accent-focus truncate w-full">{subtitle}</div>
 							</div>
 							<div className="flex flex-col w-full justify-start align-items-end">
 								<button onClick={onRemove} className="btn btn-xs btn-circle btn-error btn-outline">

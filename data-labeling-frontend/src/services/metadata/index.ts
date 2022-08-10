@@ -1,5 +1,5 @@
 import axiosInstance from "../../config/api/axios";
-import { Metadata } from "../../components/Admin/Projects/Metadata/CreateEditMetadata";
+import { Metadata } from "../../components/Admin/Projects/Metadata/CreateEditMetadataForm";
 import { DeleteMetadataDTO } from "../../actions/metadata";
 
 export const getMetadataByProjectIdApi = (id: string) =>

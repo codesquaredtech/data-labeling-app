@@ -81,6 +81,24 @@ export class ProjectController {
   }
 
   @Roles(Role.Admin)
+  @Post(':id/add-users')
+  async addUsersToProject(
+    @Param('id') projectId: string,
+    @Body() users: string[],
+  ) {
+    let project = await this.projectService.findProject(projectId);
+    const userObjectsArr = [];
+
+    for (let userId of users) {
+      const userObj = await this.userService.findUser(userId);
+      userObjectsArr.push(userObj);
+    }
+    project.users = [...project.users, ...userObjectsArr];
+    const updated = await this.projectService.updateProject(projectId, project);
+    return updated;
+  }
+
+  @Roles(Role.Admin)
   @Get(':id/metadata')
   async getAllMetadatasByProject(@Param('id') idProject: string) {
     let project = await this.projectService.findProject(idProject);
@@ -114,10 +132,10 @@ export class ProjectController {
 
   @Roles(Role.Admin)
   @Post('remove-user')
-  async removeUser(@Body() dto: RemoveMetadataDTO) {
+  async removeUser(@Body() dto: { projectId: string; userId: string }) {
     let project = await this.projectService.findProject(dto.projectId);
     project.users = project.users.filter(
-      (user) => user._id.toString() !== dto.metadataId,
+      (user) => user._id.toString() !== dto.userId,
     );
     const updated = await this.projectService.updateProject(
       project.identNumber,

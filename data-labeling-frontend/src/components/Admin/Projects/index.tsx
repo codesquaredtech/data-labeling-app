@@ -4,12 +4,11 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { CellValue } from "react-table";
 import CountUp from "react-countup";
-import { getAllProjectsAdmin } from "../../../actions/project";
+import { getAllAdminProjects } from "../../../actions/project";
 import { AppDispatch } from "../../../config/store";
 import { clearState, projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
 import Table from "../../Global/Table";
 import CreateEditProject from "./CreateEditProject";
-import { ProjectDashboard } from "./ProjectDashboard";
 
 export const Projects = () => {
 	const data = useSelector(projectsSliceSelectors.projects);
@@ -22,7 +21,7 @@ export const Projects = () => {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		dispatch(getAllProjectsAdmin());
+		dispatch(getAllAdminProjects());
 		return () => {
 			dispatch(clearState());
 		};
@@ -121,7 +120,7 @@ export const Projects = () => {
 							viewBox="0 0 16 16"
 						>
 							<path
-								fill-rule="evenodd"
+								fillRule="evenodd"
 								d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
 							/>
 						</svg>
@@ -130,8 +129,10 @@ export const Projects = () => {
 				</div>
 				<div className="divider mt-2 mb-2 w-full h-0.5 before:bg-gradient-to-r before:from-primary before:to-base-100 after:bg-base-100" />
 			</div>
+
+			{/* Progress stats */}
 			<div className="flex flex-wrap w-full h-1/5 gap-4 mb-8">
-				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] lg:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
+				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
 					<h2 className="text-xl text-neutral-content">Overall Progress</h2>
 					<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
 					<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
@@ -151,7 +152,7 @@ export const Projects = () => {
 						<span className="text-neutral-content text-sm font-bold">projects completed</span>
 					</div>
 				</div>
-				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] lg:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
+				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
 					<h2 className="text-xl text-neutral-content">Avg. Time per Project</h2>
 					<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
 					<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
@@ -169,7 +170,7 @@ export const Projects = () => {
 						<span className="text-neutral-content text-sm font-bold">slower</span>
 					</div>
 				</div>
-				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] lg:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
+				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
 					<h2 className="text-xl text-neutral-content">Total Time</h2>
 					<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
 					<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
@@ -187,7 +188,7 @@ export const Projects = () => {
 						<span className="text-neutral-content text-sm font-bold">since last week</span>
 					</div>
 				</div>
-				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] lg:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
+				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
 					<h2 className="text-xl text-neutral-content">Total Reviewed</h2>
 					<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
 					<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
@@ -208,6 +209,8 @@ export const Projects = () => {
 					</div>
 				</div>
 			</div>
+
+			{/* Projects table */}
 			<div className="card flex flex-col w-full h-fit p-4 bg-neutral-focus">
 				<div className="mb-4">
 					<CreateEditProject />

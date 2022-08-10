@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Metadata } from "../../components/Admin/Projects/Metadata/CreateEditMetadata";
+import { Metadata } from "../../components/Admin/Projects/Metadata/CreateEditMetadataForm";
 import { createMetadataApi, deleteMetadataApi, getMetadataByProjectIdApi } from "./../../services/metadata";
 
 export type CreateMetadataPayload = {
