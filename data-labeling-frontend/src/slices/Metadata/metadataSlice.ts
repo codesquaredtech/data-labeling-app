@@ -13,6 +13,7 @@ type Metadata = {
 
 interface InitState {
 	metadataList: [] | Metadata[];
+	editMetadata: Metadata | null;
 	fetchLoading: boolean;
 	createLoading: boolean;
 	error: any;
@@ -20,6 +21,7 @@ interface InitState {
 
 const initialState: InitState = {
 	metadataList: [],
+	editMetadata: null,
 	fetchLoading: false,
 	createLoading: false,
 	error: null,
@@ -29,6 +31,9 @@ export const metadataSlice = createSlice({
 	name: SLICE_NAME,
 	initialState,
 	reducers: {
+		setEditMetadata: (state, action) => {
+			state.editMetadata = action.payload;
+		},
 		clearState(state) {
 			Object.assign(state, initialState);
 		},
@@ -57,7 +62,7 @@ export const metadataSlice = createSlice({
 	},
 });
 
-export const { clearState } = metadataSlice.actions;
+export const { clearState, setEditMetadata } = metadataSlice.actions;
 
 const getAppState = (state: RootState) => state[SLICE_NAME];
 
@@ -74,6 +79,10 @@ export const metadataSliceSelectors = {
 	metadataList: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.metadataList;
+	},
+	editMetadata: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.editMetadata;
 	},
 	error: (rootState: RootState) => {
 		const appState = getAppState(rootState);

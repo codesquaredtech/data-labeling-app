@@ -1,9 +1,9 @@
 import { FormField } from "./../../components/User/LabelDataForm/Field";
-import { getLabelingData } from "./../../actions/project/index";
-import { getAllProjectsAdmin, getAllProjectsUser, createProject, getProjectCurrentPage } from "../../actions/project";
+import { getLabelingData, getProjectById, getUsersByProjectId } from "./../../actions/project/index";
+import { getAllAdminProjects, getAllUserProjects, createProject, getProjectCurrentPage } from "../../actions/project";
 import { RootState } from "../../config/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Project } from "../../components/Admin/Projects/CreateEditProject";
+import { Project } from "../../components/Admin/Projects/CreateEditProjectForm";
 
 const SLICE_NAME = "projects";
 
@@ -17,6 +17,8 @@ type LabelingData = {
 };
 interface InitState {
 	projects: Project[];
+	project: Project | null;
+	projectUsers: any[];
 	fetchLoading: boolean;
 	createLoading: boolean;
 	projectCurrentPage: null;
@@ -27,6 +29,8 @@ interface InitState {
 
 const initialState: InitState = {
 	projects: [],
+	project: null,
+	projectUsers: [],
 	fetchLoading: false,
 	createLoading: false,
 	projectCurrentPage: null,
@@ -43,24 +47,24 @@ export const projectsSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(getAllProjectsUser.pending, (state) => {
+		builder.addCase(getAllUserProjects.pending, (state) => {
 			state.fetchLoading = true;
 		});
-		builder.addCase(getAllProjectsUser.fulfilled, (state, { payload }) => {
+		builder.addCase(getAllUserProjects.fulfilled, (state, { payload }) => {
 			state.fetchLoading = false;
 			state.projects = payload;
 		});
-		builder.addCase(getAllProjectsUser.rejected, (state) => {
+		builder.addCase(getAllUserProjects.rejected, (state) => {
 			state.fetchLoading = false;
 		});
-		builder.addCase(getAllProjectsAdmin.pending, (state) => {
+		builder.addCase(getAllAdminProjects.pending, (state) => {
 			state.fetchLoading = true;
 		});
-		builder.addCase(getAllProjectsAdmin.fulfilled, (state, { payload }) => {
+		builder.addCase(getAllAdminProjects.fulfilled, (state, { payload }) => {
 			state.fetchLoading = false;
 			state.projects = payload;
 		});
-		builder.addCase(getAllProjectsAdmin.rejected, (state) => {
+		builder.addCase(getAllAdminProjects.rejected, (state) => {
 			state.fetchLoading = false;
 		});
 		builder.addCase(createProject.pending, (state) => {
@@ -78,6 +82,12 @@ export const projectsSlice = createSlice({
 		});
 		builder.addCase(getLabelingData.fulfilled, (state, { payload }: PayloadAction<LabelingData>) => {
 			state.labelingData = payload;
+		});
+		builder.addCase(getProjectById.fulfilled, (state, { payload }) => {
+			state.project = payload;
+		});
+		builder.addCase(getUsersByProjectId.fulfilled, (state, { payload }) => {
+			state.projectUsers = payload;
 		});
 	},
 });
@@ -103,6 +113,10 @@ export const projectsSliceSelectors = {
 		const appState = getAppState(rootState);
 		return appState.projects;
 	},
+	project: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.project;
+	},
 	projectCurrentPage: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.projectCurrentPage;
@@ -110,5 +124,9 @@ export const projectsSliceSelectors = {
 	labelingData: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.labelingData;
+	},
+	projectUsers: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.projectUsers;
 	},
 };

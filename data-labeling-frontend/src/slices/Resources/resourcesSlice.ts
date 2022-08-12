@@ -13,6 +13,7 @@ type Resource = {
 
 interface InitState {
 	resourceList: [] | Resource[];
+	editResource: Resource | null;
 	fetchLoading: boolean;
 	createLoading: boolean;
 	error: any;
@@ -20,6 +21,7 @@ interface InitState {
 
 const initialState: InitState = {
 	resourceList: [],
+	editResource: null,
 	fetchLoading: false,
 	createLoading: false,
 	error: null,
@@ -29,6 +31,9 @@ export const resourcesSlice = createSlice({
 	name: SLICE_NAME,
 	initialState,
 	reducers: {
+		setEditResource: (state, action) => {
+			state.editResource = action.payload;
+		},
 		clearState(state) {
 			Object.assign(state, initialState);
 		},
@@ -48,7 +53,7 @@ export const resourcesSlice = createSlice({
 	},
 });
 
-export const { clearState } = resourcesSlice.actions;
+export const { clearState, setEditResource } = resourcesSlice.actions;
 
 const getAppState = (state: RootState) => state[SLICE_NAME];
 
@@ -61,12 +66,14 @@ export const resourcesSliceSelectors = {
 		const appState = getAppState(rootState);
 		return appState.createLoading;
 	},
-
 	resourceList: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.resourceList;
 	},
-
+	editResource: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.editResource;
+	},
 	error: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.error;

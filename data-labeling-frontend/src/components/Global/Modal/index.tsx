@@ -10,7 +10,7 @@ export default function Modal({
 	buttonTitle = "open modal",
 	buttonColor = "primary",
 	name = "",
-	closeButton = false,
+	closeButton = true,
 	hideButton = false,
 	children,
 }: ModalProps) {

@@ -20,7 +20,7 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 					viewBox="0 0 16 16"
 				>
 					<path
-						fill-rule="evenodd"
+						fillRule="evenodd"
 						d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
 					/>
 				</svg>
@@ -34,7 +34,7 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 					viewBox="0 0 16 16"
 				>
 					<path
-						fill-rule="evenodd"
+						fillRule="evenodd"
 						d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"
 					/>
 				</svg>
@@ -50,7 +50,7 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 		userSelect: "none",
 
 		// change background colour if dragging
-		background: isDragging ? "#b2dfdb" : "",
+		background: isDragging ? "" : "",
 
 		...(!isDragging && { transform: "translate(0,0)" }),
 		...(isDropAnimating && { transitionDuration: "0.001s" }),
@@ -59,7 +59,7 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 	});
 
 	return (
-		<div className="border-0">
+		<div className="border-0 position-sticky top-0 w-fit z-[2] bg-base-300 shadow-md pl-3 py-2">
 			{headerGroups.map((headerGroup, index) => (
 				// @ts-ignore
 				<DragDropContext
@@ -96,7 +96,7 @@ const TableHeader = ({ headerGroups, setColumnOrder, allColumns }: TableHeaderPr
 									>
 										{(provided, snapshot) => {
 											return (
-												<div {...column.getHeaderProps()} className="th">
+												<div {...column.getHeaderProps()} className="th font-semibold">
 													<div
 														{...column.getSortByToggleProps()}
 														{...provided.draggableProps}

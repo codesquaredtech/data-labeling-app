@@ -6,7 +6,6 @@ import { UserService } from 'src/user/user.service';
 import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
 import { OutputData } from './models/dataAccepting.model';
-import { Metadata, MetadataDocument } from './models/metamodel.model';
 import { Project, ProjectDocument } from './models/project.model';
 import { Resource } from './models/resource.model';
 import { UserAndTheirLastResource } from './models/userLastResource.model';
@@ -64,7 +63,7 @@ export class ProjectService {
     project: Project,
     user: User,
   ) {
-    let userAndTheirLastResource = new UserAndTheirLastResource();
+    const userAndTheirLastResource = new UserAndTheirLastResource();
     userAndTheirLastResource.ordinalNumber = ordinalNumber;
     userAndTheirLastResource.userId = user._id.toString();
     project.userAndTheirLastResource.push(userAndTheirLastResource);
@@ -89,13 +88,13 @@ export class ProjectService {
   }
 
   async createProjectFromTemplate(projectTemplate: ProjectTemplateDTO) {
-    let project = new Project();
+    const project = new Project();
     project.title = projectTemplate.title;
     project.description = projectTemplate.description;
     project.identNumber = projectTemplate.identNumber;
     project.users = [];
     for (const userId of projectTemplate.users) {
-      let user = await this.userService.findUser(userId);
+      const user = await this.userService.findUser(userId);
       console.log(user);
       project.users.push(user);
     }
@@ -103,9 +102,11 @@ export class ProjectService {
   }
 
   async getProjectByUsers(projects: Project[]) {
-    let result = [];
+    const result = [];
     for (const p of projects) {
-      let resourceNumberTotal = await this.resourceService.findByProject(p._id);
+      const resourceNumberTotal = await this.resourceService.findByProject(
+        p._id,
+      );
       if (p.userAndTheirLastResource.length == 0) {
         result.push(p);
       } else {
@@ -132,7 +133,7 @@ export class ProjectService {
     }
 
     for (const b of body.fields) {
-      let outputFields = new OutputData();
+      const outputFields = new OutputData();
       outputFields.name = b.name;
       outputFields.type = b.type;
       outputFields.value = b.value;
@@ -142,11 +143,8 @@ export class ProjectService {
       resource.outputFields.push(outputFields);
     }
 
-    const updated = await this.resourceService.updateResource(
-      resource._id,
-      resource,
-    );
-    let labeled = await this.findIfExist(resource, project, user);
+    await this.resourceService.updateResource(resource._id, resource);
+    const labeled = await this.findIfExist(resource, project, user);
 
     if (labeled == null) {
       this.createUserLastResource(resource.ordinalNumber, project, user);

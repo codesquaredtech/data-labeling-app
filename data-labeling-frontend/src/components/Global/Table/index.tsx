@@ -123,19 +123,14 @@ const Table = ({
 	);
 
 	return (
-		<div className="card bg-base-300 h-full w-full text-neutral-content shadow-lg border-0 overflow-scroll">
-			<div className="table sticky">
-				<div {...getTableProps()}>
-					<div className="header bg-base-300 shadow-md">
+		<div className="card bg-base-300 flex flex-col w-full text-neutral-content shadow-lg border-0">
+			<div className="flex flex-col">
+				<div {...getTableProps()} className="w-full">
+					<div className="bg-base-300">
 						<TableInfo
 							title={title}
 							allColumns={allColumns}
 							getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
-						/>
-						<TableHeader
-							headerGroups={headerGroups}
-							setColumnOrder={setColumnOrder}
-							allColumns={allColumns}
 						/>
 					</div>
 					{isLoading ? (
@@ -143,7 +138,14 @@ const Table = ({
 							<LoadingSpinner size={Size.XL} />
 						</div>
 					) : (
-						<TableBody getTableBodyProps={getTableBodyProps} prepareRow={prepareRow} page={page} />
+						<div className="flex flex-col overflow-auto">
+							<TableHeader
+								headerGroups={headerGroups}
+								setColumnOrder={setColumnOrder}
+								allColumns={allColumns}
+							/>
+							<TableBody getTableBodyProps={getTableBodyProps} prepareRow={prepareRow} page={page} />
+						</div>
 					)}
 				</div>
 				<TableFooter

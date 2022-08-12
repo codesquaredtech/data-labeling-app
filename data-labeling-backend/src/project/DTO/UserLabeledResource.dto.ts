@@ -1,9 +1,7 @@
-export class UserLabeledResource{
-
-
-    _id: string;
-    idProject: string;
-    isLabeled: boolean;
-    text: string;
-    title:string;
+export class UserLabeledResource {
+  _id: string;
+  idProject: string;
+  isLabeled: boolean;
+  text: string;
+  title: string;
 }

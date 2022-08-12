@@ -37,7 +37,6 @@ export default function DeleteModal({ open, setOpen, entityName, onDelete }: Del
 			setOpen={setOpen}
 			name={`delete-${entityName}`}
 			title={`Delete ${entityName}`}
-			closeButton
 			hideButton
 			onClose={handleCancel}
 		>

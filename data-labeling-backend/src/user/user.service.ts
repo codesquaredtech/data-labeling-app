@@ -1,9 +1,8 @@
-import { Injectable, NotFoundException, UseInterceptors } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserDocument } from './model/user.model';
 import { Model } from 'mongoose';
 import { User } from './model/user.model';
-import { UserCreateDTO } from './model/DTO/user.dto';
 
 @Injectable()
 export class UserService {
@@ -17,7 +16,7 @@ export class UserService {
   }
 
   async readUsers() {
-    let users = <User[]>await this.userModel.find({}).lean().exec();
+    const users = <User[]>await this.userModel.find({}).lean().exec();
     return users;
   }
 

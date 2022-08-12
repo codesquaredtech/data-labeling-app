@@ -12,6 +12,7 @@ import { ResourcesPage } from "./pages/Admin/Projects/Resources/ResourcesPage";
 import { getMe } from "./actions/auth";
 import { useDispatch } from "react-redux";
 import LoadingSpinner from "./components/Global/LoadingSpinner";
+import { ProjectDashboard } from "./components/Admin/Projects/ProjectDashboard";
 
 const AdminRoutes = (props) => {
 	const token = useSelector(authSliceSelectors.token);
@@ -64,6 +65,7 @@ export const Routes = () => {
 				<Route path="login" element={<PublicRoute component={LoginPage} />} />
 				<Route path="/" element={<AuthorizedRoute component={DashboardPage} />} />
 				<Route path="/admin/projects" element={<AdminRoutes component={ProjectsPage} />} />
+				<Route path="/admin/projects/:id" element={<AdminRoutes component={ProjectDashboard} />} />
 				<Route path="/admin/projects/:id/metadata" element={<AdminRoutes component={MetadataPage} />} />
 				<Route path="/admin/projects/:id/resources" element={<AdminRoutes component={ResourcesPage} />} />
 				<Route path="/user/projects" element={<AuthorizedRoute component={UserPage} />} />

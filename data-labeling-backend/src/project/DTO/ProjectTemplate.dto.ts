@@ -1,15 +1,9 @@
+export class ProjectTemplateDTO {
+  identNumber: string;
 
+  title: string;
 
-export class ProjectTemplateDTO{
+  description: string;
 
-
-    identNumber: string;
-
-    title: string;
-
-    description: string;
-
-    users: string[];
-
-
+  users: string[];
 }

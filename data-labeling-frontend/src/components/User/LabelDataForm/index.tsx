@@ -81,6 +81,7 @@ export default function LabelData({ projectId, open, setOpen }: LabelDataProps) 
 		<Modal open={open} setOpen={setOpen} name="label-data" title="Label data" closeButton hideButton>
 			<>
 				<div className="font-bold flex justify-center mt-2 mb-4">{labelingData?.title || "Resource title"}</div>
+				<div className="mt-2 mb-4">{labelingData?.text || ""}</div>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="flex flex-col gap-3 mb-8">
 						{fields && fields.length > 0

@@ -63,7 +63,7 @@ export const Field = ({ index, field, register, errors }: FieldProps) => {
 					)}
 				</div>
 			);
-		case "checkbox":
+		case "boolean":
 			return (
 				<div className="form-group">
 					{name && (
