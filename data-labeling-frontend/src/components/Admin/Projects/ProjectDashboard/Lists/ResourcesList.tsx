@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { deleteResource, getResourcesByProjectId } from "../../../../../actions/resource";
 import { AppDispatch } from "../../../../../config/store";
-import { resourcesSliceSelectors } from "../../../../../slices/Resources/resourcesSlice";
+import { resourcesSliceSelectors, setEditResource } from "../../../../../slices/Resources/resourcesSlice";
 import DeleteModal from "../../../../Global/DeleteModal";
 import Modal from "../../../../Global/Modal";
 import CreateEditResourceForm from "../../Resources/CreateEditResourceForm";
@@ -25,12 +25,19 @@ export default function ResourcesList() {
 			dispatch(getResourcesByProjectId(projectId));
 			setDeleteModalOpen(false);
 		};
-		dispatch(deleteResource({ data: { projectId, resourceId }, onDone }));
+		dispatch(deleteResource({ resourceId, onDone }));
 	};
 
 	const handleOpenDeleteModal = (resourceId: string) => {
 		setDeleteModalOpen(true);
 		setResourceId(resourceId);
+	};
+
+	const handleEdit = (resourceId: string) => {
+		const editResource = resources.find((resource) => resource._id === resourceId);
+		if (!editResource) return;
+		dispatch(setEditResource(editResource));
+		setCreateModalOpen(true);
 	};
 
 	return (
@@ -63,6 +70,7 @@ export default function ResourcesList() {
 									title={resource.title}
 									subtitle={resource.text}
 									onRemove={() => handleOpenDeleteModal(resource._id)}
+									onEdit={() => handleEdit(resource._id)}
 								/>
 							))
 							.reverse()}
@@ -73,15 +81,19 @@ export default function ResourcesList() {
 					</div>
 				)}
 			</div>
-			<Modal hideButton title="Add resource" setOpen={setCreateModalOpen} open={createModalOpen}>
-				<CreateEditResourceForm onDone={() => setCreateModalOpen(false)} />
-			</Modal>
-			<DeleteModal
-				open={deleteModalOpen}
-				setOpen={setDeleteModalOpen}
-				onDelete={handleDeleteResource}
-				entityName="resource"
-			/>
+			{createModalOpen && (
+				<Modal hideButton title="Add resource" setOpen={setCreateModalOpen} open={createModalOpen}>
+					<CreateEditResourceForm onDone={() => setCreateModalOpen(false)} />
+				</Modal>
+			)}
+			{deleteModalOpen && (
+				<DeleteModal
+					open={deleteModalOpen}
+					setOpen={setDeleteModalOpen}
+					onDelete={handleDeleteResource}
+					entityName="resource"
+				/>
+			)}
 		</>
 	);
 }

@@ -1,4 +1,4 @@
-export class userFirebasePost{
-    email: string;
-    uuid: string;
+export class userFirebasePost {
+  email: string;
+  uuid: string;
 }

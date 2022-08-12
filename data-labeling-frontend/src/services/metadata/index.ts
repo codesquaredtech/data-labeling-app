@@ -8,5 +8,8 @@ export const getMetadataByProjectIdApi = (id: string) =>
 export const createMetadataApi = (id: string, metadata: Metadata) =>
 	axiosInstance.post(`http://localhost:3030/project/${id}/metadata`, metadata);
 
+export const updateMetadataApi = (id: string, metadata: Metadata) =>
+	axiosInstance.post(`http://localhost:3030/project/metadata/${id}/update`, metadata);
+
 export const deleteMetadataApi = (data: DeleteMetadataDTO) =>
 	axiosInstance.post("http://localhost:3030/project/remove-metadata", data);

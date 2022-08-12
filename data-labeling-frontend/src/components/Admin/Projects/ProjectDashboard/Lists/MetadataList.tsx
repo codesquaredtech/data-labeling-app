@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { deleteMetadata, getMetadataByProjectId } from "../../../../../actions/metadata";
 import { AppDispatch } from "../../../../../config/store";
-import { metadataSliceSelectors } from "../../../../../slices/Metadata/metadataSlice";
+import { metadataSliceSelectors, setEditMetadata } from "../../../../../slices/Metadata/metadataSlice";
 import DeleteModal from "../../../../Global/DeleteModal";
 import Modal from "../../../../Global/Modal";
 import CreateEditMetadataForm from "../../Metadata/CreateEditMetadataForm";
@@ -32,6 +32,13 @@ export default function MetadataList() {
 	const handleOpenDeleteModal = (metadataId: string) => {
 		setDeleteModalOpen(true);
 		setMetadataId(metadataId);
+	};
+
+	const handleEdit = (metadataId: string) => {
+		const editMetadata = metadata.find((metadata) => metadata._id === metadataId);
+		if (!editMetadata) return;
+		dispatch(setEditMetadata(editMetadata));
+		setCreateModalOpen(true);
 	};
 
 	return (
@@ -64,6 +71,7 @@ export default function MetadataList() {
 									title={meta.name}
 									subtitle={meta.type}
 									onRemove={() => handleOpenDeleteModal(meta._id)}
+									onEdit={() => handleEdit(meta._id)}
 								/>
 							))
 							.reverse()}
@@ -74,15 +82,19 @@ export default function MetadataList() {
 					</div>
 				)}
 			</div>
-			<Modal hideButton title="Add metadata" setOpen={setCreateModalOpen} open={createModalOpen}>
-				<CreateEditMetadataForm onDone={() => setCreateModalOpen(false)} />
-			</Modal>
-			<DeleteModal
-				open={deleteModalOpen}
-				setOpen={setDeleteModalOpen}
-				onDelete={handleDeleteMetadata}
-				entityName="metadata"
-			/>
+			{createModalOpen && (
+				<Modal hideButton title="Add metadata" setOpen={setCreateModalOpen} open={createModalOpen}>
+					<CreateEditMetadataForm onDone={() => setCreateModalOpen(false)} />
+				</Modal>
+			)}
+			{deleteModalOpen && (
+				<DeleteModal
+					open={deleteModalOpen}
+					setOpen={setDeleteModalOpen}
+					onDelete={handleDeleteMetadata}
+					entityName="metadata"
+				/>
+			)}
 		</>
 	);
 }

@@ -7,7 +7,7 @@ import admin from 'firebase-admin';
 
 import * as firebaseConfig from '../firebase-config.json';
 
-var serviceAccount = <ServiceAccount>firebaseConfig;
+const serviceAccount = <ServiceAccount>firebaseConfig;
 
 const firebaseApp = admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

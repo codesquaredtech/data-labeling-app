@@ -1,3 +1,4 @@
+import { updateResourceApi } from "./../../services/resource/index";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ResourceDTO } from "../../components/Admin/Projects/Resources/CreateEditResourceForm";
 import { createResourceApi, deleteResourceApi, getResourcesByProjectIdApi } from "./../../services/resource";
@@ -8,13 +9,14 @@ export type CreateResourcePayload = {
 	onDone: () => void;
 };
 
-export type DeleteResourceDTO = {
-	projectId: string;
-	resourceId: string;
+export type UpdateResourcePayload = {
+	id: string;
+	submitData: ResourceDTO;
+	onDone: () => void;
 };
 
 export type DeleteResourcePayload = {
-	data: DeleteResourceDTO;
+	resourceId: string;
 	onDone: () => void;
 };
 
@@ -34,7 +36,7 @@ export const getResourcesByProjectId = createAsyncThunk(
 );
 
 export const createResource = createAsyncThunk(
-	"resources/createResource",
+	"resources/create",
 	async ({ id, submitData, onDone }: CreateResourcePayload, { rejectWithValue }) => {
 		try {
 			const { data } = await createResourceApi(id, submitData);
@@ -51,11 +53,29 @@ export const createResource = createAsyncThunk(
 	},
 );
 
-export const deleteResource = createAsyncThunk(
-	"resources/deleteResource",
-	async ({ data, onDone }: DeleteResourcePayload, { rejectWithValue }) => {
+export const updateResource = createAsyncThunk(
+	"resources/update",
+	async ({ id, submitData, onDone }: UpdateResourcePayload, { rejectWithValue }) => {
 		try {
-			await deleteResourceApi(data);
+			const { data } = await updateResourceApi(id, submitData);
+			if (onDone) {
+				onDone();
+			}
+			return data;
+		} catch (err: any) {
+			if (!err.response) {
+				throw err;
+			}
+			return rejectWithValue(err);
+		}
+	},
+);
+
+export const deleteResource = createAsyncThunk(
+	"resources/delete",
+	async ({ resourceId, onDone }: DeleteResourcePayload, { rejectWithValue }) => {
+		try {
+			await deleteResourceApi(resourceId);
 			if (onDone) {
 				onDone();
 			}

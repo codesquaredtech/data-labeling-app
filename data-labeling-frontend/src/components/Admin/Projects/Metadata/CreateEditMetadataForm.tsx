@@ -1,14 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Select from "react-select";
-import { createMetadata, getMetadataByProjectId } from "../../../../actions/metadata";
+import { createMetadata, getMetadataByProjectId, updateMetadata } from "../../../../actions/metadata";
 import { AppDispatch } from "../../../../config/store";
-import { metadataSliceSelectors } from "../../../../slices/Metadata/metadataSlice";
+import { metadataSliceSelectors, setEditMetadata } from "../../../../slices/Metadata/metadataSlice";
 import { MetadataTypes } from "../../../../types/global";
-import Modal from "../../../Global/Modal";
 
 type InitData = {
 	name: string;
@@ -16,11 +15,25 @@ type InitData = {
 };
 
 export type Metadata = {
+	_id?: string;
 	name: string;
 	type: string;
 };
 
 export default function CreateEditMetadataForm({ onDone }: { onDone?: () => void }) {
+	const editMetadata = useSelector(metadataSliceSelectors.editMetadata);
+	const {
+		_id: metadataId,
+		name,
+		type,
+	} = useMemo(() => {
+		if (!editMetadata) return { name: "", type: { label: "", value: "" }, _id: "" };
+		return {
+			...editMetadata,
+			type: { label: editMetadata.type[0].toUpperCase() + editMetadata.type.slice(1), value: editMetadata.type },
+		};
+	}, [editMetadata]);
+
 	const options = useMemo<any>(() => {
 		return Object.values(MetadataTypes).map((option: string) => ({
 			value: option,
@@ -29,27 +42,44 @@ export default function CreateEditMetadataForm({ onDone }: { onDone?: () => void
 	}, []);
 	const createLoading = useSelector(metadataSliceSelectors.createLoading);
 	const error = useSelector(metadataSliceSelectors.error);
+	const { id: projectId } = useParams();
+	const dispatch = useDispatch<AppDispatch>();
+
+	const initialValues = {
+		name,
+		type,
+	};
+
 	const {
 		register,
 		handleSubmit,
 		reset,
 		control,
 		formState: { errors },
-	} = useForm<InitData>();
-	const { id: projectId } = useParams();
-	const dispatch = useDispatch<AppDispatch>();
+	} = useForm<typeof initialValues>({
+		defaultValues: initialValues,
+	});
 
 	const onSubmit: SubmitHandler<InitData> = (data) => {
-		if (projectId) {
-			const onDoneHandler = () => {
-				dispatch(getMetadataByProjectId(projectId));
-				if (onDone) onDone();
-				reset();
-			};
-			const modifiedData = { ...data, type: data.type.value };
+		if (!projectId) return;
+		const onDoneHandler = () => {
+			dispatch(getMetadataByProjectId(projectId));
+			if (onDone) onDone();
+			reset();
+		};
+		const modifiedData = { ...data, type: data.type.value };
+		if (editMetadata) {
+			dispatch(updateMetadata({ id: metadataId, submitData: modifiedData, onDone: onDoneHandler }));
+		} else {
 			dispatch(createMetadata({ id: projectId, submitData: modifiedData, onDone: onDoneHandler }));
 		}
 	};
+
+	useEffect(() => {
+		return () => {
+			dispatch(setEditMetadata(null));
+		};
+	}, [dispatch]);
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>

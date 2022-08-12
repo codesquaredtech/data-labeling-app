@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -7,7 +7,6 @@ import { getAllUsers } from "../../../../actions/admin/user";
 import { AppDispatch } from "../../../../config/store";
 import { clearState, usersSliceSelectors } from "../../../../slices/Admin/usersSlice";
 import { projectsSliceSelectors } from "../../../../slices/Projects/projectsSlice";
-import Modal from "../../../Global/Modal";
 import { addUsersToProject, getUsersByProjectId } from "../../../../actions/project";
 import { useParams } from "react-router-dom";
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { Project } from "../../components/Admin/Projects/CreateEditProject";
+import { Project } from "../../components/Admin/Projects/CreateEditProjectForm";
 import {
 	addUsersToProjectApi,
 	createProjectApi,
@@ -11,10 +11,21 @@ import {
 	getProjectCurrentPageApi,
 	getUsersByProjectIdApi,
 	labelDataApi,
+	updateProjectApi,
 } from "./../../services/project/index";
 
 type CreateProjectPayload = {
-	submitData: Project;
+	submitData: Omit<Project, "users">;
+	onDone: () => void;
+};
+
+export type UpdateProjectDTO = {
+	data: Pick<Project, "title" | "description">;
+	projectId: string;
+};
+
+type UpdateProjectPayload = {
+	submitData: UpdateProjectDTO;
 	onDone: () => void;
 };
 
@@ -48,6 +59,24 @@ export const createProject = createAsyncThunk(
 	async ({ submitData, onDone }: CreateProjectPayload, { rejectWithValue }) => {
 		try {
 			const { data } = await createProjectApi(submitData);
+			if (onDone) {
+				onDone();
+			}
+			return data;
+		} catch (err: any) {
+			if (!err.response) {
+				throw err;
+			}
+			return rejectWithValue(err);
+		}
+	},
+);
+
+export const updateProject = createAsyncThunk(
+	`projects/update`,
+	async ({ submitData, onDone }: UpdateProjectPayload, { rejectWithValue }) => {
+		try {
+			const { data } = await updateProjectApi(submitData);
 			if (onDone) {
 				onDone();
 			}

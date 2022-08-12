@@ -8,11 +8,14 @@ import { getAllAdminProjects } from "../../../actions/project";
 import { AppDispatch } from "../../../config/store";
 import { clearState, projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
 import Table from "../../Global/Table";
-import CreateEditProject from "./CreateEditProject";
+import CreateEditProjectForm from "./CreateEditProjectForm";
+import Modal from "../../Global/Modal";
 
 export const Projects = () => {
 	const data = useSelector(projectsSliceSelectors.projects);
 	const loading = useSelector(projectsSliceSelectors.fetchLoading);
+	const [createModalOpen, setCreateModalOpen] = useState(false);
+
 	const [currentPage, setCurrentPage] = useState(0); // Current page
 	const [pageCount, setPageCount] = useState(1); // Total pages
 	const [rowsPerPage, setRowsPerPage] = useState(5); // Number of items in each page
@@ -99,6 +102,7 @@ export const Projects = () => {
 				accessor: "description",
 				disableFilters: true,
 				width: 600,
+				Cell: ({ row }: CellValue) => <div className="truncate">{row.original.description}</div>,
 			},
 			{ Header: "Users", width: 260, accessor: "users.length", disableFilters: true },
 			{ Header: "Metadata", width: 265, accessor: "metadata.length", disableFilters: true },
@@ -107,128 +111,143 @@ export const Projects = () => {
 	);
 
 	return (
-		<div className="flex flex-col w-full h-full pt-8 pb-8 pl-10 pr-10">
-			<div className="flex flex-col w-full h-fit mb-8">
-				<div className="flex items-center gap-2">
-					<button className="btn btn-circle btn-primary btn-sm" onClick={() => navigate("/")}>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="14"
-							height="14"
-							fill="currentColor"
-							className="bi bi-arrow-left"
-							viewBox="0 0 16 16"
-						>
-							<path
-								fillRule="evenodd"
-								d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
-							/>
-						</svg>
-					</button>
-					<h1 className="text-3xl mr-2">Projects</h1>
+		<>
+			<div className="flex flex-col w-full h-full pt-8 pb-8 pl-10 pr-10">
+				<div className="flex flex-col w-full h-fit mb-8">
+					<div className="flex items-center gap-2">
+						<button className="btn btn-circle btn-primary btn-sm" onClick={() => navigate("/")}>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="14"
+								height="14"
+								fill="currentColor"
+								className="bi bi-arrow-left"
+								viewBox="0 0 16 16"
+							>
+								<path
+									fillRule="evenodd"
+									d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"
+								/>
+							</svg>
+						</button>
+						<h1 className="text-3xl mr-2">Projects</h1>
+					</div>
+					<div className="divider mt-2 mb-2 w-full h-0.5 before:bg-gradient-to-r before:from-primary before:to-base-100 after:bg-base-100" />
 				</div>
-				<div className="divider mt-2 mb-2 w-full h-0.5 before:bg-gradient-to-r before:from-primary before:to-base-100 after:bg-base-100" />
-			</div>
 
-			{/* Progress stats */}
-			<div className="flex flex-wrap w-full h-1/5 gap-4 mb-8">
-				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
-					<h2 className="text-xl text-neutral-content">Overall Progress</h2>
-					<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
-					<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
-						<h4 className="text-3xl text-neutral-content font-bold">
-							<CountUp duration={1.3} end={25} />
-							<span className="text-2xl font-bold">%</span>
-						</h4>
-						<div className="text-primary-focus text-3xl font-bold">
-							<CountUp duration={1.3} end={4} />
-							{" / "}
-							<span className="text-sm font-bold text-neutral-content">
-								<CountUp duration={1.3} end={16} />
+				{/* Progress stats */}
+				<div className="flex flex-wrap w-full h-1/5 gap-4 mb-8">
+					<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
+						<h2 className="text-xl text-neutral-content">Overall Progress</h2>
+						<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
+						<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
+							<h4 className="text-3xl text-neutral-content font-bold">
+								<CountUp duration={1.3} end={25} />
+								<span className="text-2xl font-bold">%</span>
+							</h4>
+							<div className="text-primary-focus text-3xl font-bold">
+								<CountUp duration={1.3} end={4} />
+								{" / "}
+								<span className="text-sm font-bold text-neutral-content">
+									<CountUp duration={1.3} end={16} />
+								</span>
+							</div>
+						</div>
+						<div className="flex w-full h-full pr-4 justify-end align-items-center">
+							<span className="text-neutral-content text-sm font-bold">projects completed</span>
+						</div>
+					</div>
+					<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
+						<h2 className="text-xl text-neutral-content">Avg. Time per Project</h2>
+						<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
+						<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
+							<span className="text-3xl text-neutral-content font-bold">
+								<CountUp duration={0.7} end={12} />
+								<span className="text-2xl font-bold">d</span> <CountUp duration={1.3} end={9} />
+								<span className="text-2xl font-bold">h</span>
 							</span>
+							<div className="text-error text-3xl font-bold">
+								-<CountUp duration={1.3} end={4} />
+								<span className="text-2xl font-bold">h</span>
+							</div>
+						</div>
+						<div className="flex w-full h-full pr-4 justify-end align-items-center">
+							<span className="text-neutral-content text-sm font-bold">slower</span>
 						</div>
 					</div>
-					<div className="flex w-full h-full pr-4 justify-end align-items-center">
-						<span className="text-neutral-content text-sm font-bold">projects completed</span>
-					</div>
-				</div>
-				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
-					<h2 className="text-xl text-neutral-content">Avg. Time per Project</h2>
-					<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
-					<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
-						<span className="text-3xl text-neutral-content font-bold">
-							<CountUp duration={0.7} end={12} />
-							<span className="text-2xl font-bold">d</span> <CountUp duration={1.3} end={9} />
-							<span className="text-2xl font-bold">h</span>
-						</span>
-						<div className="text-error text-3xl font-bold">
-							-<CountUp duration={1.3} end={4} />
-							<span className="text-2xl font-bold">h</span>
-						</div>
-					</div>
-					<div className="flex w-full h-full pr-4 justify-end align-items-center">
-						<span className="text-neutral-content text-sm font-bold">slower</span>
-					</div>
-				</div>
-				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
-					<h2 className="text-xl text-neutral-content">Total Time</h2>
-					<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
-					<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
-						<span className="text-3xl text-neutral-content font-bold">
-							<CountUp duration={0.7} end={34} />
-							<span className="text-2xl font-bold">d</span> <CountUp duration={1.3} end={23} />
-							<span className="text-2xl font-bold">h</span>
-						</span>
-						<div className="text-success text-3xl font-bold">
-							+<CountUp duration={1.3} end={44} />
-							<span className="text-2xl font-bold">h</span>
-						</div>
-					</div>
-					<div className="flex w-full h-full pr-4 justify-end align-items-center">
-						<span className="text-neutral-content text-sm font-bold">since last week</span>
-					</div>
-				</div>
-				<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
-					<h2 className="text-xl text-neutral-content">Total Reviewed</h2>
-					<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
-					<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
-						<h4 className="text-3xl text-neutral-content font-bold">
-							<CountUp duration={1.3} decimals={1} end={33.8} />
-							<span className="text-2xl font-bold">%</span>
-						</h4>
-						<div className="text-primary-focus text-3xl font-bold">
-							<CountUp duration={1.3} end={430} />
-							{" / "}
-							<span className="text-sm font-bold text-neutral-content">
-								<CountUp duration={1.3} end={1429} />
+					<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
+						<h2 className="text-xl text-neutral-content">Total Time</h2>
+						<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
+						<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
+							<span className="text-3xl text-neutral-content font-bold">
+								<CountUp duration={0.7} end={34} />
+								<span className="text-2xl font-bold">d</span> <CountUp duration={1.3} end={23} />
+								<span className="text-2xl font-bold">h</span>
 							</span>
+							<div className="text-success text-3xl font-bold">
+								+<CountUp duration={1.3} end={44} />
+								<span className="text-2xl font-bold">h</span>
+							</div>
+						</div>
+						<div className="flex w-full h-full pr-4 justify-end align-items-center">
+							<span className="text-neutral-content text-sm font-bold">since last week</span>
 						</div>
 					</div>
-					<div className="flex w-full h-full pr-4 justify-end align-items-center">
-						<span className="text-neutral-content text-sm font-bold">labeled data</span>
+					<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
+						<h2 className="text-xl text-neutral-content">Total Reviewed</h2>
+						<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
+						<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
+							<h4 className="text-3xl text-neutral-content font-bold">
+								<CountUp duration={1.3} decimals={1} end={33.8} />
+								<span className="text-2xl font-bold">%</span>
+							</h4>
+							<div className="text-primary-focus text-3xl font-bold">
+								<CountUp duration={1.3} end={430} />
+								{" / "}
+								<span className="text-sm font-bold text-neutral-content">
+									<CountUp duration={1.3} end={1429} />
+								</span>
+							</div>
+						</div>
+						<div className="flex w-full h-full pr-4 justify-end align-items-center">
+							<span className="text-neutral-content text-sm font-bold">labeled data</span>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			{/* Projects table */}
-			<div className="card flex flex-col w-full h-fit p-4 bg-neutral-focus">
-				<div className="mb-4">
-					<CreateEditProject />
+				{/* Projects table */}
+				<div className="card flex flex-col w-full h-fit p-4 bg-neutral-focus">
+					<div className="mb-4">
+						<button onClick={() => setCreateModalOpen(true)} className="btn btn-primary">
+							Add project
+						</button>
+					</div>
+					<Table
+						data={data}
+						columns={columns}
+						title="Projects"
+						checkbox
+						currentPage={currentPage}
+						setCurrentPage={setCurrentPage}
+						rowsPerPage={rowsPerPage}
+						setRowsPerPage={setRowsPerPage}
+						totalPages={pageCount}
+						pageSizes={pageSizes}
+						isLoading={loading}
+					/>
 				</div>
-				<Table
-					data={data}
-					columns={columns}
-					title="Projects"
-					checkbox
-					currentPage={currentPage}
-					setCurrentPage={setCurrentPage}
-					rowsPerPage={rowsPerPage}
-					setRowsPerPage={setRowsPerPage}
-					totalPages={pageCount}
-					pageSizes={pageSizes}
-					isLoading={loading}
-				/>
 			</div>
-		</div>
+			{createModalOpen && (
+				<Modal
+					hideButton
+					title="Add project"
+					buttonTitle="Add project"
+					setOpen={setCreateModalOpen}
+					open={createModalOpen}
+				>
+					<CreateEditProjectForm onDone={() => setCreateModalOpen(false)} />
+				</Modal>
+			)}
+		</>
 	);
 };

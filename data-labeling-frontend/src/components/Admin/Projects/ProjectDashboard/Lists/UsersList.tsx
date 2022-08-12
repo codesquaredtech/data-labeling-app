@@ -78,15 +78,19 @@ export default function UsersList() {
 					<div className="flex items-center justify-center h-full text-neutral-content">No users found.</div>
 				)}
 			</div>
-			<Modal hideButton title="Add user" setOpen={setAddModalOpen} open={addModalOpen}>
-				<AddUserForm onDone={() => setAddModalOpen(false)} />
-			</Modal>
-			<DeleteModal
-				open={deleteModalOpen}
-				setOpen={setDeleteModalOpen}
-				onDelete={handleDeleteUser}
-				entityName="user"
-			/>
+			{addModalOpen && (
+				<Modal hideButton title="Add user" setOpen={setAddModalOpen} open={addModalOpen}>
+					<AddUserForm onDone={() => setAddModalOpen(false)} />
+				</Modal>
+			)}
+			{deleteModalOpen && (
+				<DeleteModal
+					open={deleteModalOpen}
+					setOpen={setDeleteModalOpen}
+					onDelete={handleDeleteUser}
+					entityName="user"
+				/>
+			)}
 		</>
 	);
 }

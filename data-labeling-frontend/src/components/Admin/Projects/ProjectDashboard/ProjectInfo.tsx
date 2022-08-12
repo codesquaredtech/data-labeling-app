@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { projectsSliceSelectors } from "../../../../slices/Projects/projectsSlice";
 
-export default function ProjectInfo() {
+export default function ProjectInfo({ setModalOpen }: { setModalOpen: (open: boolean) => void }) {
 	const { title, description } = useSelector(projectsSliceSelectors.project) || {};
 	const [isHovered, setIsHovered] = useState(false);
 	const navigate = useNavigate();
@@ -29,7 +29,8 @@ export default function ProjectInfo() {
 				<div
 					onMouseEnter={() => setIsHovered(true)}
 					onMouseLeave={() => setIsHovered(false)}
-					className="flex w-fit"
+					onClick={() => setModalOpen(true)}
+					className="flex w-fit cursor-pointer"
 				>
 					<h1 className="text-3xl mr-2">{title || "Project name"}</h1>
 					{isHovered && <span className="text-sm text-warning">Edit</span>}

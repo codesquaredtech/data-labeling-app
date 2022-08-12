@@ -1,21 +1,17 @@
-import { Metadata } from "../models/metamodel.model";
+import { Metadata } from '../models/metamodel.model';
 
-export class ProjectMetadataDTO{
+export class ProjectMetadataDTO {
+  text: string;
 
+  title: string;
 
-    text: string;
+  resourceNumber: number;
 
-    title: string;
+  totalNumber: number;
 
-    resourceNumber: number;
+  projectId: string;
 
-    totalNumber: number;
+  ordinalNumber: number;
 
-    projectId: string;
-
-    ordinalNumber: number;
-
-    fields: Metadata[]
-
-
+  fields: Metadata[];
 }

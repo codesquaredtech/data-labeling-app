@@ -1,27 +1,21 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import mongoose from "mongoose";
-import { Document} from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export type MetadataDocument = Metadata & Document;
 
 @Schema()
-export class Metadata{
+export class Metadata {
+  _id: Types.ObjectId;
 
-    _id: Types.ObjectId;
+  @Prop()
+  name: string; //field_label
 
-    @Prop()
-    name: string;  //field_label
+  @Prop()
+  type: string; //field_type
 
-    @Prop()
-    type: string;  //field_type
-
-    value?:string | boolean;
-
-
+  value?: string | boolean;
 }
 
-
-
-export const MetadataSchema = SchemaFactory.createForClass(Metadata); 
+export const MetadataSchema = SchemaFactory.createForClass(Metadata);

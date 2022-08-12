@@ -1,6 +1,4 @@
-
-
-export class RemoveMetadataDTO{
-    projectId: string;
-    metadataId: string;
+export class RemoveMetadataDTO {
+  projectId: string;
+  metadataId: string;
 }

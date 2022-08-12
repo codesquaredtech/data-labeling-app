@@ -1,6 +1,4 @@
-
-
-export class currentPageDTO{
-    page: number;
-    total: number;
+export class currentPageDTO {
+  page: number;
+  total: number;
 }

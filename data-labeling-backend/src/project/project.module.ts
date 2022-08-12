@@ -12,17 +12,15 @@ import { ResourceService } from './resource.service';
 
 @Module({
   imports: [
-      MongooseModule.forFeature(
-      [
-        {name:'project',schema:ProjectSchema},
-        {name:'metadata',schema:MetadataSchema},
-        {name:'user',schema:UserSchema},
-        {name: 'resource',schema: ResourceSchema},
-
-      ])
-    ],
+    MongooseModule.forFeature([
+      { name: 'project', schema: ProjectSchema },
+      { name: 'metadata', schema: MetadataSchema },
+      { name: 'user', schema: UserSchema },
+      { name: 'resource', schema: ResourceSchema },
+    ]),
+  ],
   controllers: [ProjectController],
   providers: [ProjectService, UserService, MetadataService, ResourceService],
-  exports:[ProjectService, ResourceService]
+  exports: [ProjectService, ResourceService],
 })
 export class ProjectModule {}

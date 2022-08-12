@@ -8,18 +8,16 @@ import { ProjectSchema } from 'src/project/models/project.model';
 import { ResourceSchema } from 'src/project/models/resource.model';
 import { ResourceService } from 'src/project/resource.service';
 
-
 @Module({
   imports: [
-    MongooseModule.forFeature([{name:'user',schema:UserSchema},
-    {name:'project',schema:ProjectSchema},
-    {name: 'resource',schema: ResourceSchema},
-
-  ]),
-    
+    MongooseModule.forFeature([
+      { name: 'user', schema: UserSchema },
+      { name: 'project', schema: ProjectSchema },
+      { name: 'resource', schema: ResourceSchema },
+    ]),
   ],
   controllers: [UserController],
   providers: [UserService, ProjectService, ResourceService],
-  exports:[UserService, ResourceService]
+  exports: [UserService, ResourceService],
 })
 export class UserModule {}

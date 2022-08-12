@@ -1,3 +1,4 @@
+import { updateMetadataApi } from "./../../services/metadata/index";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { Metadata } from "../../components/Admin/Projects/Metadata/CreateEditMetadataForm";
 import { createMetadataApi, deleteMetadataApi, getMetadataByProjectIdApi } from "./../../services/metadata";
@@ -34,10 +35,28 @@ export const getMetadataByProjectId = createAsyncThunk(
 );
 
 export const createMetadata = createAsyncThunk(
-	"metadata/createMetadata",
+	"metadata/create",
 	async ({ id, submitData, onDone }: CreateMetadataPayload, { rejectWithValue }) => {
 		try {
 			const { data } = await createMetadataApi(id, submitData);
+			if (onDone) {
+				onDone();
+			}
+			return data;
+		} catch (err: any) {
+			if (!err.response) {
+				throw err;
+			}
+			return rejectWithValue(err);
+		}
+	},
+);
+
+export const updateMetadata = createAsyncThunk(
+	"metadata/update",
+	async ({ id, submitData, onDone }: CreateMetadataPayload, { rejectWithValue }) => {
+		try {
+			const { data } = await updateMetadataApi(id, submitData);
 			if (onDone) {
 				onDone();
 			}
