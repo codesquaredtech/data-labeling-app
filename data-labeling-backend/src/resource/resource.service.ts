@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Resource, ResourceDocument } from './models/resource.model';
 import { Model } from 'mongoose';
+import * as mongodb from 'mongodb';
 import { ResourceTemplate } from './DTO/ResourceTemplate.dto';
-import { Project } from './models/project.model';
 import { currentPageDTO } from './DTO/CurrentPageDTO.dto';
 import { User } from 'src/user/model/user.model';
+import { Resource, ResourceDocument } from './model/resource.model';
+import { Project } from 'src/project/models/project.model';
 
 @Injectable()
 export class ResourceService {
   constructor(
-    @InjectModel('resource')
+    @InjectModel('resource', 'resourcesDb')
     private readonly resourceModel: Model<ResourceDocument>,
   ) {}
 
@@ -33,10 +34,10 @@ export class ResourceService {
   }
 
   async findByProject(id) {
-    const ObjectId = require('mongodb').ObjectId;
+    const ObjectId = mongodb.ObjectId;
     const resources = <Resource[]>await this.resourceModel
       .find({
-        project: ObjectId(id),
+        project: new ObjectId(id),
       })
       .lean()
       .exec();
@@ -45,9 +46,9 @@ export class ResourceService {
   }
 
   async findByOrdinalNumber(nr: number, id: string) {
-    const ObjectId = require('mongodb').ObjectId;
+    const ObjectId = mongodb.ObjectId;
     const resource = <Resource>await this.resourceModel
-      .findOne({ ordinalNumber: nr, project: ObjectId(id) })
+      .findOne({ ordinalNumber: nr, project: new ObjectId(id) })
       .lean()
       .exec();
     return resource;

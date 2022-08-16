@@ -1,0 +1,132 @@
+import { ResourceTemplate } from './DTO/ResourceTemplate.dto';
+import { Role } from './../user/model/user.model';
+import { FirebaseAuthGuard } from './../auth/firebase.guard';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { ResourceService } from './resource.service';
+import { Roles } from 'src/auth/roles.decorator';
+import { ProjectService } from 'src/project/project.service';
+import { UserService } from 'src/user/user.service';
+import { MetadataService } from 'src/project/metadata.service';
+import { ProjectMetadataDTO } from 'src/project/DTO/ProjectMetadata.dto';
+
+@Controller('resource')
+@UseGuards(FirebaseAuthGuard)
+export class ResourceController {
+  constructor(
+    private readonly resourceService: ResourceService,
+    private readonly projectService: ProjectService,
+    private readonly metadataService: MetadataService,
+    private readonly userService: UserService,
+  ) {}
+
+  @Get(':id/resources')
+  async getProjectResources(@Param('id') id: string) {
+    const project = await this.projectService.findProject(id);
+    return await this.resourceService.findByProject(project._id);
+  }
+
+  @Roles(Role.Admin)
+  @Post(':id/resource')
+  async createResourceForProject(
+    @Param('id') projectId: string,
+    @Body() template: ResourceTemplate[],
+  ) {
+    const project = await this.projectService.findProject(projectId);
+
+    return await this.resourceService.createResourceForService(
+      template,
+      project,
+    );
+  }
+
+  @Roles(Role.Admin)
+  @Post(':id/update')
+  async updateResource(
+    @Param('id') resourceId: string,
+    @Body() resourceDTO: { title: string; text: string },
+  ) {
+    const resource = await this.resourceService.findResource(resourceId);
+
+    const modifiedResource = {
+      ...resource,
+      ...resourceDTO,
+    };
+
+    return this.resourceService.updateResource(resourceId, modifiedResource);
+  }
+
+  @Roles(Role.Admin)
+  @Post('remove-resource')
+  async removeResource(@Body() { resourceId }: { resourceId: string }) {
+    const resource = await this.resourceService.findResource(resourceId);
+
+    resource.project = null;
+
+    const updated = await this.resourceService.updateResource(
+      resourceId,
+      resource,
+    );
+
+    return updated;
+  }
+
+  @Roles(Role.User)
+  @Get(':id/label-project/:number')
+  async getLabelOptions(
+    @Req() req,
+    @Param('id') id: string,
+    @Param('number') numberOfResource: number,
+  ) {
+    const project = await this.projectService.findProject(id);
+    const resource = await this.resourceService.findByOrdinalNumber(
+      numberOfResource,
+      project._id.toString(),
+    );
+    const resourceList = await this.resourceService.findByProject(project._id);
+
+    return await this.metadataService.getMetadataOptions(
+      project,
+      resource,
+      resourceList,
+    );
+  }
+
+  @Roles(Role.User)
+  @Get(':id/current-page')
+  async findCurrentPage(@Req() req, @Param('id') projectId: string) {
+    const user = await this.userService.findUserByUid(req.user.user_id);
+    const project = await this.projectService.findProject(projectId);
+
+    return await this.resourceService.findCurrentPage(project, user);
+  }
+
+  @Roles(Role.User)
+  @Post(':id/data-accept')
+  async labeledDataAccepting(
+    @Req() req,
+    @Param('id') projectId: string,
+    @Body() body: ProjectMetadataDTO,
+  ) {
+    const project = await this.projectService.findProject(projectId);
+    const resource = await this.resourceService.findByOrdinalNumber(
+      body.ordinalNumber,
+      project._id.toString(),
+    );
+    const user = await this.userService.findUserByUid(req.user.user_id);
+
+    return await this.projectService.acceptLabeledData(
+      resource,
+      project,
+      user,
+      body,
+    );
+  }
+}

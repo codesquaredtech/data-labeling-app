@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { OutputData } from './dataAccepting.model';
-import { Project } from './project.model';
+import { OutputData } from './outputData.model';
 import { Types } from 'mongoose';
+import { Project } from 'src/project/models/project.model';
 
 export type ResourceDocument = Resource & Document;
 
@@ -24,6 +24,12 @@ export class Resource {
 
   @Prop()
   ordinalNumber: number;
+
+  @Prop()
+  createdAt: Date;
+
+  @Prop()
+  deleted: boolean;
 }
 
 export const ResourceSchema = SchemaFactory.createForClass(Resource);

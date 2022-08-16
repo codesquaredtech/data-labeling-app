@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Resource } from 'src/resource/model/resource.model';
 import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { MetadataDocument } from './models/metamodel.model';
 import { Metadata } from './models/metamodel.model';
 import { Project } from './models/project.model';
-import { Resource } from './models/resource.model';
 
 @Injectable()
 export class MetadataService {
   constructor(
-    @InjectModel('metadata')
+    @InjectModel('metadata', 'testDb')
     private readonly metadataModel: Model<MetadataDocument>,
   ) {}
 

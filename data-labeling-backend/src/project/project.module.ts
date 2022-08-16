@@ -5,22 +5,25 @@ import { UserService } from 'src/user/user.service';
 import { MetadataService } from './metadata.service';
 import { MetadataSchema } from './models/metamodel.model';
 import { ProjectSchema } from './models/project.model';
-import { ResourceSchema } from './models/resource.model';
+import { ResourceSchema } from 'src/resource/model/resource.model';
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
-import { ResourceService } from './resource.service';
+import { ResourceService } from 'src/resource/resource.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: 'project', schema: ProjectSchema },
-      { name: 'metadata', schema: MetadataSchema },
-      { name: 'user', schema: UserSchema },
-      { name: 'resource', schema: ResourceSchema },
-    ]),
+    MongooseModule.forFeature(
+      [
+        { name: 'project', schema: ProjectSchema },
+        { name: 'metadata', schema: MetadataSchema },
+        { name: 'user', schema: UserSchema },
+        { name: 'resource', schema: ResourceSchema },
+      ],
+      'testDb',
+    ),
   ],
   controllers: [ProjectController],
   providers: [ProjectService, UserService, MetadataService, ResourceService],
-  exports: [ProjectService, ResourceService],
+  exports: [ProjectService, MetadataService],
 })
 export class ProjectModule {}

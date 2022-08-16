@@ -1,20 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { OutputData } from 'src/resource/model/outputData.model';
+import { Resource } from 'src/resource/model/resource.model';
+import { ResourceService } from 'src/resource/resource.service';
 import { User } from 'src/user/model/user.model';
 import { UserService } from 'src/user/user.service';
 import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
-import { OutputData } from './models/dataAccepting.model';
 import { Project, ProjectDocument } from './models/project.model';
-import { Resource } from './models/resource.model';
 import { UserAndTheirLastResource } from './models/userLastResource.model';
-import { ResourceService } from './resource.service';
 
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectModel('project')
+    @InjectModel('project', 'testDb')
     private readonly projectModel: Model<ProjectDocument>,
     private readonly userService: UserService,
     private readonly resourceService: ResourceService,

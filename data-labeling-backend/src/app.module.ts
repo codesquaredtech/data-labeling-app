@@ -7,14 +7,25 @@ import { UserModule } from './user/user.module';
 import { AuthStrategy } from './auth/auth.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/roles.guard';
+import { ResourceModule } from './resource/resource.module';
 
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb+srv://luka:mu0YV2Xh2WiY4xdi@cluster0.vgobtyd.mongodb.net/?retryWrites=true&w=majority',
+      'mongodb+srv://luka:mu0YV2Xh2WiY4xdi@cluster0.vgobtyd.mongodb.net/test?retryWrites=true&w=majority',
+      {
+        connectionName: 'testDb',
+      },
+    ),
+    MongooseModule.forRoot(
+      'mongodb+srv://luka:mu0YV2Xh2WiY4xdi@cluster0.vgobtyd.mongodb.net/resources_db?retryWrites=true&w=majority',
+      {
+        connectionName: 'resourcesDb',
+      },
     ),
     ProjectModule,
     UserModule,
+    ResourceModule,
   ],
   controllers: [AppController],
   providers: [
