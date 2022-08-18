@@ -1,44 +1,74 @@
+import { GlobalService } from '../global/global.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import * as mongodb from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { ResourceTemplate } from './DTO/ResourceTemplate.dto';
 import { currentPageDTO } from './DTO/CurrentPageDTO.dto';
 import { User } from 'src/user/model/user.model';
-import { Resource, ResourceDocument } from './model/resource.model';
+import {
+  Resource,
+  ResourceDocument,
+  ResourceSchema,
+} from './model/resource.model';
 import { Project } from 'src/project/models/project.model';
+import { checkResourcesDbConnection } from 'src/global/utils';
 
 @Injectable()
 export class ResourceService {
   constructor(
-    @InjectModel('resource', 'resourcesDb')
+    @InjectModel('resource')
     private readonly resourceModel: Model<ResourceDocument>,
+    private readonly globalService: GlobalService,
   ) {}
 
   async createResource(resource: Resource): Promise<Resource> {
-    const newResource = new this.resourceModel(resource);
-    return await newResource.save();
+    let connection = this.globalService.getConnection();
+    const projectId = resource.project.identNumber;
+    connection = checkResourcesDbConnection(connection, projectId);
+    this.globalService.setConnection(connection);
+    const resourceModel = connection.model('Resource', ResourceSchema);
+
+    const newResource = new resourceModel(resource);
+    return newResource.save();
   }
 
-  async findResource(id: string) {
+  async findResource(resourceId: ObjectId, projectId: string) {
+    let connection = this.globalService.getConnection();
+    connection = checkResourcesDbConnection(connection, projectId);
+    this.globalService.setConnection(connection);
+    const resourceModel = connection.model('Resource', ResourceSchema);
+
     const resource = <Resource>(
-      await this.resourceModel.findById(id).lean().exec()
+      await resourceModel.findById(resourceId).lean().exec()
     );
     return resource;
   }
 
-  async updateResource(id, data): Promise<Resource> {
-    return await this.resourceModel.findOneAndUpdate({ _id: id }, data, {
+  async updateResource(
+    resourceId: ObjectId,
+    data: Resource,
+  ): Promise<Resource> {
+    const connection = this.globalService.getConnection();
+    const resourceModel = connection.model('Resource', ResourceSchema);
+
+    return resourceModel.findOneAndUpdate({ _id: resourceId }, data, {
       new: true,
     });
   }
 
-  async findByProject(id) {
-    const ObjectId = mongodb.ObjectId;
-    const resources = <Resource[]>await this.resourceModel
-      .find({
-        project: new ObjectId(id),
-      })
+  async findByProject(projectId: string) {
+    let connection = this.globalService.getConnection();
+
+    // if connection doesn't exist we create connection or close unused connection
+    connection = checkResourcesDbConnection(connection, projectId);
+    // set connection to globalService
+    this.globalService.setConnection(connection);
+
+    // then find all resources in that database and return them
+    const resourceModel = connection.model('Resource', ResourceSchema);
+    const resources = <Resource[]>await resourceModel
+      .find({ deleted: false || undefined })
       .lean()
       .exec();
 
@@ -46,7 +76,6 @@ export class ResourceService {
   }
 
   async findByOrdinalNumber(nr: number, id: string) {
-    const ObjectId = mongodb.ObjectId;
     const resource = <Resource>await this.resourceModel
       .findOne({ ordinalNumber: nr, project: new ObjectId(id) })
       .lean()
@@ -83,7 +112,7 @@ export class ResourceService {
       currentPage.page = 1;
     }
 
-    const resource = await this.findByProject(project._id);
+    const resource = await this.findByProject(project.identNumber);
     currentPage.total = resource.length;
 
     return currentPage;

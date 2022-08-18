@@ -48,7 +48,7 @@ export default function CreateEditResourceForm({ onDone }: { onDone: () => void 
 			reset();
 		};
 		if (editResource) {
-			dispatch(updateResource({ id: resourceId, submitData: data, onDone: onDoneHandler }));
+			dispatch(updateResource({ resourceId, submitData: { data, projectId }, onDone: onDoneHandler }));
 		} else {
 			dispatch(createResource({ id: projectId, submitData: [data], onDone: onDoneHandler }));
 		}

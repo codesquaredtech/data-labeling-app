@@ -26,7 +26,7 @@ export class Resource {
   ordinalNumber: number;
 
   @Prop()
-  createdAt: Date;
+  dataSource: string;
 
   @Prop()
   deleted: boolean;

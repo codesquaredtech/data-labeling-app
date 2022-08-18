@@ -16,6 +16,7 @@ import { ProjectService } from 'src/project/project.service';
 import { UserService } from 'src/user/user.service';
 import { MetadataService } from 'src/project/metadata.service';
 import { ProjectMetadataDTO } from 'src/project/DTO/ProjectMetadata.dto';
+import { ObjectId } from 'mongodb';
 
 @Controller('resource')
 @UseGuards(FirebaseAuthGuard)
@@ -27,14 +28,13 @@ export class ResourceController {
     private readonly userService: UserService,
   ) {}
 
-  @Get(':id/resources')
-  async getProjectResources(@Param('id') id: string) {
-    const project = await this.projectService.findProject(id);
-    return await this.resourceService.findByProject(project._id);
+  @Get(':id/all')
+  async getProjectResources(@Param('id') projectId: string) {
+    return await this.resourceService.findByProject(projectId);
   }
 
   @Roles(Role.Admin)
-  @Post(':id/resource')
+  @Post(':id/create')
   async createResourceForProject(
     @Param('id') projectId: string,
     @Body() template: ResourceTemplate[],
@@ -50,25 +50,39 @@ export class ResourceController {
   @Roles(Role.Admin)
   @Post(':id/update')
   async updateResource(
-    @Param('id') resourceId: string,
-    @Body() resourceDTO: { title: string; text: string },
+    @Param('id') resourceId: ObjectId,
+    @Body()
+    {
+      data,
+      projectId,
+    }: { data: { title: string; text: string }; projectId: string },
   ) {
-    const resource = await this.resourceService.findResource(resourceId);
+    const resource = await this.resourceService.findResource(
+      resourceId,
+      projectId,
+    );
 
     const modifiedResource = {
       ...resource,
-      ...resourceDTO,
+      ...data,
     };
 
     return this.resourceService.updateResource(resourceId, modifiedResource);
   }
 
   @Roles(Role.Admin)
-  @Post('remove-resource')
-  async removeResource(@Body() { resourceId }: { resourceId: string }) {
-    const resource = await this.resourceService.findResource(resourceId);
+  @Post(':id/remove')
+  async removeResource(
+    @Param('id') resourceId: ObjectId,
+    @Body()
+    { projectId }: { projectId: string },
+  ) {
+    const resource = await this.resourceService.findResource(
+      resourceId,
+      projectId,
+    );
 
-    resource.project = null;
+    resource.deleted = true;
 
     const updated = await this.resourceService.updateResource(
       resourceId,
@@ -90,7 +104,9 @@ export class ResourceController {
       numberOfResource,
       project._id.toString(),
     );
-    const resourceList = await this.resourceService.findByProject(project._id);
+    const resourceList = await this.resourceService.findByProject(
+      project.identNumber,
+    );
 
     return await this.metadataService.getMetadataOptions(
       project,

@@ -10,7 +10,7 @@ import { Project } from './models/project.model';
 @Injectable()
 export class MetadataService {
   constructor(
-    @InjectModel('metadata', 'testDb')
+    @InjectModel('metadata')
     private readonly metadataModel: Model<MetadataDocument>,
   ) {}
 

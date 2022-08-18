@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { ObjectId } from 'mongodb';
 import { OutputData } from 'src/resource/model/outputData.model';
 import { Resource } from 'src/resource/model/resource.model';
 import { ResourceService } from 'src/resource/resource.service';
@@ -14,7 +15,7 @@ import { UserAndTheirLastResource } from './models/userLastResource.model';
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectModel('project', 'testDb')
+    @InjectModel('project')
     private readonly projectModel: Model<ProjectDocument>,
     private readonly userService: UserService,
     private readonly resourceService: ResourceService,
@@ -41,10 +42,9 @@ export class ProjectService {
   }
 
   async findByUser(id): Promise<Project[]> {
-    const ObjectId = require('mongodb').ObjectId;
     const projectList = <Project[]>await this.projectModel
       .find({
-        users: ObjectId(id),
+        users: new ObjectId(id),
       })
       .lean()
       .exec();
@@ -105,7 +105,7 @@ export class ProjectService {
     const result = [];
     for (const p of projects) {
       const resourceNumberTotal = await this.resourceService.findByProject(
-        p._id,
+        p.identNumber,
       );
       if (p.userAndTheirLastResource.length == 0) {
         result.push(p);

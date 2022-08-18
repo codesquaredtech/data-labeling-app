@@ -10,21 +10,22 @@ export type CreateResourcePayload = {
 };
 
 export type UpdateResourcePayload = {
-	id: string;
-	submitData: ResourceDTO;
+	resourceId: string;
+	submitData: { data: ResourceDTO; projectId: string };
 	onDone: () => void;
 };
 
 export type DeleteResourcePayload = {
 	resourceId: string;
+	projectId: string;
 	onDone: () => void;
 };
 
 export const getResourcesByProjectId = createAsyncThunk(
 	"resources/getResourcesByProjectId",
-	async (id: string, { rejectWithValue }) => {
+	async (projectId: string, { rejectWithValue }) => {
 		try {
-			const { data } = await getResourcesByProjectIdApi(id);
+			const { data } = await getResourcesByProjectIdApi(projectId);
 			return data;
 		} catch (err: any) {
 			if (!err.response) {
@@ -55,9 +56,9 @@ export const createResource = createAsyncThunk(
 
 export const updateResource = createAsyncThunk(
 	"resources/update",
-	async ({ id, submitData, onDone }: UpdateResourcePayload, { rejectWithValue }) => {
+	async ({ resourceId, submitData, onDone }: UpdateResourcePayload, { rejectWithValue }) => {
 		try {
-			const { data } = await updateResourceApi(id, submitData);
+			const { data } = await updateResourceApi(resourceId, submitData);
 			if (onDone) {
 				onDone();
 			}
@@ -73,9 +74,9 @@ export const updateResource = createAsyncThunk(
 
 export const deleteResource = createAsyncThunk(
 	"resources/delete",
-	async ({ resourceId, onDone }: DeleteResourcePayload, { rejectWithValue }) => {
+	async ({ resourceId, projectId, onDone }: DeleteResourcePayload, { rejectWithValue }) => {
 		try {
-			await deleteResourceApi(resourceId);
+			await deleteResourceApi(resourceId, projectId);
 			if (onDone) {
 				onDone();
 			}
