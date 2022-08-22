@@ -1,1 +1,1 @@
-export { Projects as ProjectsPage } from "../../../components/Admin/Projects";
+export { ExamplePage as ProjectsPage } from "../../../components/Global/AudioPlayer/ExamplePage";
