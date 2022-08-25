@@ -9,14 +9,11 @@ import {
 } from '@nestjs/common';
 import { Role } from 'src/user/model/user.model';
 import { UserService } from 'src/user/user.service';
-import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
 import { RemoveMetadataDTO } from './DTO/removeMetadata.dto';
-import { ResourceTemplate } from './DTO/ResourceTemplate.dto';
 import { MetadataService } from './metadata.service';
 import { Metadata } from './models/metamodel.model';
 import { ProjectService } from './project.service';
-import { ResourceService } from './resource.service';
 import { FirebaseAuthGuard } from 'src/auth/firebase.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
@@ -28,7 +25,6 @@ export class ProjectController {
     private readonly projectService: ProjectService,
     private readonly userService: UserService,
     private readonly metadataService: MetadataService,
-    private readonly resourceService: ResourceService,
   ) {}
 
   @Roles(Role.Admin)
@@ -48,20 +44,6 @@ export class ProjectController {
   @Post()
   async createProjectTemplate(@Body() projectTemplate: ProjectTemplateDTO) {
     this.projectService.createProjectFromTemplate(projectTemplate);
-  }
-
-  @Roles(Role.Admin)
-  @Post(':id/resource')
-  async createResourceForProject(
-    @Param('id') idProjekta: string,
-    @Body() template: ResourceTemplate[],
-  ) {
-    const project = await this.projectService.findProject(idProjekta);
-
-    return await this.resourceService.createResourceForService(
-      template,
-      project,
-    );
   }
 
   @Roles(Role.Admin)
@@ -110,22 +92,6 @@ export class ProjectController {
     };
 
     return this.metadataService.updateMetadata(metadataId, modifiedMetadata);
-  }
-
-  @Roles(Role.Admin)
-  @Post('resource/:id/update')
-  async updateResource(
-    @Param('id') resourceId: string,
-    @Body() resourceDTO: { title: string; text: string },
-  ) {
-    const resource = await this.resourceService.findResource(resourceId);
-
-    const modifiedResource = {
-      ...resource,
-      ...resourceDTO,
-    };
-
-    return this.resourceService.updateResource(resourceId, modifiedResource);
   }
 
   @Roles(Role.Admin)
@@ -191,79 +157,5 @@ export class ProjectController {
     );
 
     return updated;
-  }
-
-  @Roles(Role.Admin)
-  @Post('remove-resource')
-  async removeResource(@Body() { resourceId }: { resourceId: string }) {
-    const resource = await this.resourceService.findResource(resourceId);
-
-    resource.project = null;
-
-    const updated = await this.resourceService.updateResource(
-      resourceId,
-      resource,
-    );
-
-    return updated;
-  }
-
-  @Get(':id/resources')
-  async getProjectResources(@Param('id') id: string) {
-    const project = await this.projectService.findProject(id);
-    return await this.resourceService.findByProject(project._id);
-  }
-
-  //1.0 START ZA PROJEKAT DOBIJEŠ METAPODATKE
-  @Roles(Role.User)
-  @Get(':id/label-project/:number')
-  async getLabelOptions(
-    @Req() req,
-    @Param('id') id: string,
-    @Param('number') numberOfResource: number,
-  ) {
-    const project = await this.projectService.findProject(id);
-    const resource = await this.resourceService.findByOrdinalNumber(
-      numberOfResource,
-      project._id.toString(),
-    );
-    const resourceList = await this.resourceService.findByProject(project._id);
-
-    return await this.metadataService.getMetadataOptions(
-      project,
-      resource,
-      resourceList,
-    );
-  }
-
-  @Roles(Role.User)
-  @Get(':id/current-page')
-  async findCurrentPage(@Req() req, @Param('id') id: string) {
-    const user = await this.userService.findUserByUid(req.user.user_id);
-    const project = await this.projectService.findProject(id);
-
-    return await this.resourceService.findCurrentPage(project, user);
-  }
-
-  @Roles(Role.User)
-  @Post(':id/data-accept')
-  async labeledDataAccepting(
-    @Req() req,
-    @Param('id') id: string,
-    @Body() body: ProjectMetadataDTO,
-  ) {
-    const project = await this.projectService.findProject(id);
-    const resource = await this.resourceService.findByOrdinalNumber(
-      body.ordinalNumber,
-      project._id.toString(),
-    );
-    const user = await this.userService.findUserByUid(req.user.user_id);
-
-    return await this.projectService.acceptLabeledData(
-      resource,
-      project,
-      user,
-      body,
-    );
   }
 }

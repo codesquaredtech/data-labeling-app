@@ -25,7 +25,7 @@ export default function ResourcesList() {
 			dispatch(getResourcesByProjectId(projectId));
 			setDeleteModalOpen(false);
 		};
-		dispatch(deleteResource({ resourceId, onDone }));
+		dispatch(deleteResource({ resourceId, projectId, onDone }));
 	};
 
 	const handleOpenDeleteModal = (resourceId: string) => {

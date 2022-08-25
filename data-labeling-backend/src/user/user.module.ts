@@ -5,8 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './model/user.model';
 import { ProjectService } from 'src/project/project.service';
 import { ProjectSchema } from 'src/project/models/project.model';
-import { ResourceSchema } from 'src/project/models/resource.model';
-import { ResourceService } from 'src/project/resource.service';
+import { ResourceService } from 'src/resource/resource.service';
+import { ResourceSchema } from './../resource/model/resource.model';
 
 @Module({
   imports: [

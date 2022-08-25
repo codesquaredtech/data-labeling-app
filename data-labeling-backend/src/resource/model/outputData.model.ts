@@ -1,4 +1,3 @@
-//neka bude shema
 export class OutputData {
   resourceId: string;
   type: string;

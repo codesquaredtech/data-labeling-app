@@ -55,10 +55,14 @@ export default function DeleteModal({ open, setOpen, entityName, onDelete }: Del
 					/>
 				</div>
 				<div className="flex justify-end mt-6 gap-2">
-					<button onClick={handleCancel} className={`btn btn-primary ${!isConfirmed && "btn-outline"}`}>
+					<button onClick={handleCancel} className="btn btn-primary btn-outline">
 						Cancel
 					</button>
-					<button disabled={!isConfirmed} onClick={handleDelete} className="btn btn-error btn-outline">
+					<button
+						disabled={!isConfirmed}
+						onClick={handleDelete}
+						className={`btn btn-error ${!isConfirmed && "btn-outline"}`}
+					>
 						Delete
 					</button>
 				</div>
