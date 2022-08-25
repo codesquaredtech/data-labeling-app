@@ -12,3 +12,12 @@ export const updateResourceApi = (resourceId: string, submitData: { data: Resour
 
 export const deleteResourceApi = (resourceId: string, projectId: string) =>
 	axiosInstance.post(`http://localhost:3030/resource/${resourceId}/remove`, { projectId });
+
+export const uploadResourceApi = (projectId: string, data: FormData) => {
+	const config = {
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
+	};
+	return axiosInstance.post(`http://localhost:3030/resource/${projectId}/upload`, data, config);
+};

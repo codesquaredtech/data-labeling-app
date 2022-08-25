@@ -8,7 +8,9 @@ import {
   Param,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ResourceService } from './resource.service';
 import { Roles } from 'src/auth/roles.decorator';
@@ -17,6 +19,8 @@ import { UserService } from 'src/user/user.service';
 import { MetadataService } from 'src/project/metadata.service';
 import { ProjectMetadataDTO } from 'src/project/DTO/ProjectMetadata.dto';
 import { ObjectId } from 'mongodb';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('resource')
 @UseGuards(FirebaseAuthGuard)
@@ -144,5 +148,18 @@ export class ResourceController {
       user,
       body,
     );
+  }
+
+  @Post(':id/upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploadedFiles',
+      }),
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log('heere 2');
+    console.log(file);
   }
 }

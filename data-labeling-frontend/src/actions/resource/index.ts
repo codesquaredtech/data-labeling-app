@@ -1,12 +1,18 @@
-import { updateResourceApi } from "./../../services/resource/index";
+import { updateResourceApi, uploadResourceApi } from "./../../services/resource/index";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ResourceDTO } from "../../components/Admin/Projects/Resources/CreateEditResourceForm";
 import { createResourceApi, deleteResourceApi, getResourcesByProjectIdApi } from "./../../services/resource";
 
 export type CreateResourcePayload = {
-	id: string;
+	projectId: string;
 	submitData: ResourceDTO[];
 	onDone: () => void;
+};
+
+export type UploadResourcePayload = {
+	projectId: string;
+	files: File[];
+	onDone?: () => void;
 };
 
 export type UpdateResourcePayload = {
@@ -38,9 +44,9 @@ export const getResourcesByProjectId = createAsyncThunk(
 
 export const createResource = createAsyncThunk(
 	"resources/create",
-	async ({ id, submitData, onDone }: CreateResourcePayload, { rejectWithValue }) => {
+	async ({ projectId, submitData, onDone }: CreateResourcePayload, { rejectWithValue }) => {
 		try {
-			const { data } = await createResourceApi(id, submitData);
+			const { data } = await createResourceApi(projectId, submitData);
 			if (onDone) {
 				onDone();
 			}
@@ -77,6 +83,29 @@ export const deleteResource = createAsyncThunk(
 	async ({ resourceId, projectId, onDone }: DeleteResourcePayload, { rejectWithValue }) => {
 		try {
 			await deleteResourceApi(resourceId, projectId);
+			if (onDone) {
+				onDone();
+			}
+		} catch (err: any) {
+			if (!err.response) {
+				throw err;
+			}
+			return rejectWithValue(err);
+		}
+	},
+);
+
+export const uploadResources = createAsyncThunk(
+	"resources/upload",
+	async ({ projectId, files, onDone }: UploadResourcePayload, { rejectWithValue }) => {
+		try {
+			const bodyFormData = new FormData();
+
+			files.forEach((file) => {
+				bodyFormData.append("file", file);
+			});
+
+			await uploadResourceApi(projectId, bodyFormData);
 			if (onDone) {
 				onDone();
 			}
