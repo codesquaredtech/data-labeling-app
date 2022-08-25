@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProjectModule } from './project/project.module';
 import { UserModule } from './user/user.module';
 import { AuthStrategy } from './auth/auth.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './auth/roles.guard';
+import { ResourceModule } from './resource/resource.module';
+import { GlobalModule } from './global/global.module';
 
 @Module({
   imports: [
@@ -15,10 +15,11 @@ import { RolesGuard } from './auth/roles.guard';
     ),
     ProjectModule,
     UserModule,
+    ResourceModule,
+    GlobalModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [
-    AppService,
     AuthStrategy,
     {
       provide: APP_GUARD,

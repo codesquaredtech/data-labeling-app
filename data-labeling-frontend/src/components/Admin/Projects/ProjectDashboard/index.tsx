@@ -12,7 +12,10 @@ import ResourcesList from "./Lists/ResourcesList";
 import { getResourcesByProjectId } from "../../../../actions/resource";
 import CreateEditProjectForm from "../CreateEditProjectForm";
 import Modal from "../../../Global/Modal";
-import { clearState } from "../../../../slices/Projects/projectsSlice";
+import { clearState as clearProjectState } from "../../../../slices/Projects/projectsSlice";
+import { clearState as clearResourceState } from "../../../../slices/Resources/resourcesSlice";
+import { clearState as clearMetadataState } from "../../../../slices/Metadata/metadataSlice";
+import { clearState as clearUserState } from "../../../../slices/Admin/usersSlice";
 
 export const ProjectDashboard = () => {
 	const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -31,7 +34,10 @@ export const ProjectDashboard = () => {
 
 	useEffect(() => {
 		return () => {
-			dispatch(clearState());
+			dispatch(clearProjectState());
+			dispatch(clearUserState());
+			dispatch(clearResourceState());
+			dispatch(clearMetadataState());
 		};
 	}, [dispatch]);
 
