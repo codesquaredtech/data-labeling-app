@@ -26,9 +26,6 @@ export const authSlice = createSlice({
 	initialState,
 	reducers: {},
 	extraReducers: (builder) => {
-		builder.addCase(login.pending, (state) => {
-			state.loading = true;
-		});
 		builder.addCase(login.fulfilled, (state, { payload }) => {
 			const { user, token } = payload;
 			state.loading = false;
@@ -36,17 +33,25 @@ export const authSlice = createSlice({
 			state.user = user;
 			if (token) localStorage.setItem("jwt-token", token);
 		});
-		builder.addCase(login.rejected, (state) => {
-			state.loading = false;
-		});
+
 		builder.addCase(logout.fulfilled, (state) => {
 			state.token = null;
 			state.user = null;
+			state.isAdmin = undefined;
 			localStorage.removeItem("jwt-token");
 		});
 		builder.addCase(getMe.fulfilled, (state, { payload }) => {
 			state.user = payload;
+			state.loading = false;
 			state.isAdmin = payload.isAdmin;
+		});
+		builder.addMatcher((action) => [login.pending.type, getMe.pending.type].includes(action.type),
+		(state) => {
+			state.loading = true;
+		});
+		builder.addMatcher((action) => [login.rejected.type, getMe.rejected.type].includes(action.type),
+		(state) => {
+			state.loading = false;
 		});
 	},
 });
