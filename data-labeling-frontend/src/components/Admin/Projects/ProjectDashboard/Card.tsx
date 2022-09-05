@@ -75,18 +75,18 @@ export default function Card({ type, title, subtitle, icon, onRemove, onEdit }: 
 				<div className="card bg-base-100 shadow-xl mb-2">
 					<div className="card-body p-3">
 						<div className="flex w-full h-16 gap-3">
-							<div className="flex align-items-center justify-start w-1/4">
+							<div className="flex align-items-center justify-start flex-0 shrink-0">
 								<div className="avatar">
 									<div className="w-10 rounded-full">
 										<img src={icon} alt="avatar" />
 									</div>
 								</div>
 							</div>
-							<div className="flex flex-col justify-center w-full">
-								<h2 className="text-l font-bold">{title}</h2>
+							<div className="flex flex-col justify-center flex-1 min-w-0">
+								<h2 className="text-l font-bold truncate">{title}</h2>
 								<div className="text-m text-accent-focus truncate w-full">{subtitle}</div>
 							</div>
-							<div className="flex flex-col w-full justify-start align-items-end">
+							<div className="flex flex-col justify-start align-items-end flex-0 shrink-0">
 								<button onClick={onRemove} className="btn btn-xs btn-circle btn-error btn-outline">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -109,12 +109,12 @@ export default function Card({ type, title, subtitle, icon, onRemove, onEdit }: 
 				<div className="card bg-base-100 shadow-xl mb-2">
 					<div className="card-body p-3">
 						<div className="flex w-full h-16 gap-3">
-							<div className="flex align-items-center justify-start">{determineIcon()}</div>
-							<div className="flex flex-col w-full justify-center">
-								<h2 className="text-l font-bold truncate w-56">{title}</h2>
+							<div className="flex align-items-center justify-start flex-0 shrink-0">{determineIcon()}</div>
+							<div className="flex flex-col flex-1 min-w-0 justify-center">
+								<h2 className="text-l font-bold truncate w-full">{title}</h2>
 								<div className="text-m text-accent-focus">{subtitle}</div>
 							</div>
-							<div className="flex flex-col w-full align-items-end justify-between">
+							<div className="flex flex-col align-items-end justify-between flex-0 shrink-0">
 								<div className="flex align-items-start">
 									<button onClick={onRemove} className="btn btn-xs btn-circle btn-error btn-outline">
 										<svg
@@ -153,7 +153,7 @@ export default function Card({ type, title, subtitle, icon, onRemove, onEdit }: 
 				<div className="card bg-base-100 shadow-xl mb-2">
 					<div className="card-body p-3">
 						<div className="flex w-full h-16 gap-3">
-							<div className="flex align-items-center justify-start">
+							<div className="flex align-items-center justify-start flex-0 shrink-0">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="36"
@@ -166,11 +166,11 @@ export default function Card({ type, title, subtitle, icon, onRemove, onEdit }: 
 									<path d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6zm0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" />
 								</svg>
 							</div>
-							<div className="flex flex-col w-full justify-center">
+							<div className="flex flex-col flex-1 min-w-0 justify-center">
 								<h2 className="text-l font-bold truncate w-full">{title}</h2>
-								<div className="text-m text-accent-focus truncate w-32">{subtitle}</div>
+								<div className="text-m text-accent-focus truncate w-full">{subtitle}</div>
 							</div>
-							<div className="flex flex-col w-full align-items-end justify-between">
+							<div className="flex flex-col align-items-end justify-between flex-0 shrink-0">
 								<div className="flex align-items-start">
 									<button onClick={onRemove} className="btn btn-xs btn-circle btn-error btn-outline">
 										<svg
