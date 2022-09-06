@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Routes as RouterRoutes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes as ReactRouterRoutes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { DefaultLayout } from "./layouts/DefaultLaylout";
 import { ProjectsPage } from "./pages/Admin/Projects/ProjectsPage";
@@ -13,17 +13,11 @@ import { getMe } from "./actions/auth";
 import { useDispatch } from "react-redux";
 import LoadingSpinner from "./components/Global/LoadingSpinner";
 import { ProjectDashboard } from "./components/Admin/Projects/ProjectDashboard";
+import { setupAxiosInterceptors } from './config/api/axios'
 
 const AdminRoutes = (props) => {
 	const token = useSelector(authSliceSelectors.token);
 	const isAdmin = useSelector(authSliceSelectors.isAdmin);
-	const dispatch = useDispatch();
-
-	useEffect(() => {
-		if (isAdmin === undefined) {
-			dispatch(getMe());
-		}
-	}, [dispatch, isAdmin]);
 
 	if (token) {
 		if (isAdmin !== undefined) {
@@ -40,15 +34,6 @@ const AdminRoutes = (props) => {
 
 const AuthorizedRoute = (props) => {
 	const token = useSelector(authSliceSelectors.token);
-	const isAdmin = useSelector(authSliceSelectors.isAdmin);
-	const dispatch = useDispatch();
-
-	useEffect(() => {
-		if (isAdmin === undefined) {
-			dispatch(getMe());
-		}
-	}, [dispatch, isAdmin]);
-
 	return token ? <DefaultLayout {...props} /> : <Navigate to="/login" replace />;
 };
 
@@ -58,7 +43,26 @@ const PublicRoute = (props) => {
 	return !token ? <DefaultLayout {...props} /> : <Navigate to="/" replace />;
 };
 
+
+const RouterRoutes = props => {
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	useEffect(() => {
+		setupAxiosInterceptors(navigate, dispatch);
+	}, [])
+	return <ReactRouterRoutes {...props} />
+}
+
 export const Routes = () => {
+	const token = useSelector(authSliceSelectors.token);
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		if (token) {
+			dispatch(getMe());
+		}
+	}, [dispatch, token]);
+
 	return (
 		<BrowserRouter>
 			<RouterRoutes>

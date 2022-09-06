@@ -83,7 +83,8 @@ export default function MetadataList() {
 				)}
 			</div>
 			{createModalOpen && (
-				<Modal hideButton title="Add metadata" setOpen={setCreateModalOpen} open={createModalOpen}>
+				<Modal visibleOverflow hideButton title="Add metadata" setOpen={setCreateModalOpen} open={createModalOpen}>
+					{/* Overflow visible added because of the dropdown inside the modal*/}
 					<CreateEditMetadataForm onDone={() => setCreateModalOpen(false)} />
 				</Modal>
 			)}

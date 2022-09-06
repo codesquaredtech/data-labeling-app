@@ -79,7 +79,7 @@ export default function UsersList() {
 				)}
 			</div>
 			{addModalOpen && (
-				<Modal hideButton title="Add user" setOpen={setAddModalOpen} open={addModalOpen}>
+				<Modal visibleOverflow hideButton title="Add user" setOpen={setAddModalOpen} open={addModalOpen}>
 					<AddUserForm onDone={() => setAddModalOpen(false)} />
 				</Modal>
 			)}

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { CellValue } from "react-table";
-import CountUp from "react-countup";
+import StatsCard from "./ProjectDashboard/StatsCard";
 import { getAllAdminProjects } from "../../../actions/project";
 import { AppDispatch } from "../../../config/store";
 import { clearState, projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
@@ -137,82 +137,42 @@ export const Projects = () => {
 
 				{/* Progress stats */}
 				<div className="flex flex-wrap w-full h-1/5 gap-4 mb-8">
-					<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
-						<h2 className="text-xl text-neutral-content">Overall Progress</h2>
-						<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
-						<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
-							<h4 className="text-3xl text-neutral-content font-bold">
-								<CountUp duration={1.3} end={25} />
-								<span className="text-2xl font-bold">%</span>
-							</h4>
-							<div className="text-primary-focus text-3xl font-bold">
-								<CountUp duration={1.3} end={4} />
-								{" / "}
-								<span className="text-sm font-bold text-neutral-content">
-									<CountUp duration={1.3} end={16} />
-								</span>
-							</div>
-						</div>
-						<div className="flex w-full h-full pr-4 justify-end align-items-center">
-							<span className="text-neutral-content text-sm font-bold">projects completed</span>
-						</div>
-					</div>
-					<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
-						<h2 className="text-xl text-neutral-content">Avg. Time per Project</h2>
-						<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
-						<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
-							<span className="text-3xl text-neutral-content font-bold">
-								<CountUp duration={0.7} end={12} />
-								<span className="text-2xl font-bold">d</span> <CountUp duration={1.3} end={9} />
-								<span className="text-2xl font-bold">h</span>
-							</span>
-							<div className="text-error text-3xl font-bold">
-								-<CountUp duration={1.3} end={4} />
-								<span className="text-2xl font-bold">h</span>
-							</div>
-						</div>
-						<div className="flex w-full h-full pr-4 justify-end align-items-center">
-							<span className="text-neutral-content text-sm font-bold">slower</span>
-						</div>
-					</div>
-					<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
-						<h2 className="text-xl text-neutral-content">Total Time</h2>
-						<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
-						<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
-							<span className="text-3xl text-neutral-content font-bold">
-								<CountUp duration={0.7} end={34} />
-								<span className="text-2xl font-bold">d</span> <CountUp duration={1.3} end={23} />
-								<span className="text-2xl font-bold">h</span>
-							</span>
-							<div className="text-success text-3xl font-bold">
-								+<CountUp duration={1.3} end={44} />
-								<span className="text-2xl font-bold">h</span>
-							</div>
-						</div>
-						<div className="flex w-full h-full pr-4 justify-end align-items-center">
-							<span className="text-neutral-content text-sm font-bold">since last week</span>
-						</div>
-					</div>
-					<div className="card flex flex-col w-full md:w-[calc(50%_-_0.75rem)] xl:w-[calc(25%_-_1.2rem)] p-4 bg-neutral-focus">
-						<h2 className="text-xl text-neutral-content">Total Reviewed</h2>
-						<div className="divider mt-2 mb-4 w-80 h-0.5 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
-						<div className="flex w-full h-full pl-4 pr-4 justify-between align-items-center">
-							<h4 className="text-3xl text-neutral-content font-bold">
-								<CountUp duration={1.3} decimals={1} end={33.8} />
-								<span className="text-2xl font-bold">%</span>
-							</h4>
-							<div className="text-primary-focus text-3xl font-bold">
-								<CountUp duration={1.3} end={430} />
-								{" / "}
-								<span className="text-sm font-bold text-neutral-content">
-									<CountUp duration={1.3} end={1429} />
-								</span>
-							</div>
-						</div>
-						<div className="flex w-full h-full pr-4 justify-end align-items-center">
-							<span className="text-neutral-content text-sm font-bold">labeled data</span>
-						</div>
-					</div>
+					<StatsCard
+						title={"Overall Progress"}
+						type={"percentage"}
+						countupDuration={1.3}
+						currentValue={4}
+						totalValue={16}
+						extraText={'projects completed'}
+					/>
+					<StatsCard
+						title={"Avg. Time per Project"}
+						type={"time"}
+						countupDuration={1.3}
+						days={12}
+						hours={9}
+						progressValue={-4}
+						progressTimeUnit={"h"}
+						extraText={'slower'}
+					/>
+					<StatsCard
+						title={"Total Time"}
+						type={"time"}
+						countupDuration={1.3}
+						days={34}
+						hours={23}
+						progressValue={44}
+						progressTimeUnit={"h"}
+						extraText={'since last week'}
+					/>
+					<StatsCard
+						title={"Total Reviewed"}
+						type={"percentage"}
+						countupDuration={1.3}
+						currentValue={430}
+						totalValue={1429}
+						extraText={'labeled data'}
+					/>
 				</div>
 
 				{/* Projects table */}

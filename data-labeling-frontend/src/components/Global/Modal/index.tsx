@@ -7,6 +7,7 @@ export default function Modal({
 	onClose,
 	open = false,
 	title = "",
+	visibleOverflow = false,
 	buttonTitle = "open modal",
 	buttonColor = "primary",
 	name = "",
@@ -34,7 +35,7 @@ export default function Modal({
 			)}
 			<input type="checkbox" checked={open} id={`modal-${name}`} readOnly className="modal-toggle" />
 			<label htmlFor={`modal-${name}`} className="modal cursor-pointer">
-				<label ref={modalRef} className="modal-box relative" htmlFor="">
+				<label ref={modalRef} className={`modal-box relative ${visibleOverflow ? 'overflow-visible' : ''}`} htmlFor="">
 					<div className="text-xl text-base-content absolute left-6 top-4">{title}</div>
 					<div className="divider mt-4 before:bg-gradient-to-r before:from-primary before:to-base-100 after:bg-transparent" />
 					{closeButton && (

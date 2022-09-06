@@ -120,7 +120,7 @@ export const Metadata = () => {
 		<div className="flex w-full max-h-[calc(100vh_-_64px)] justify-center align-middle">
 			<div className="w-10/12 m-20">
 				<div className="mb-4 -mt-10">
-					<Modal title="Add metadata" setOpen={setCreateModalOpen} open={createModalOpen}>
+					<Modal title="Add metadata" buttonTitle="Add metadata" setOpen={setCreateModalOpen} open={createModalOpen}>
 						<CreateEditMetadataForm onDone={() => setCreateModalOpen(false)} />
 					</Modal>
 				</div>
