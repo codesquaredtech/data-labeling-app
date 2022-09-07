@@ -6,11 +6,8 @@ import {
 	deleteUserApi,
 	getAllAdminProjectsApi,
 	getAllUserProjectsApi,
-	getLabelingDataApi,
 	getProjectByIdApi,
-	getProjectCurrentPageApi,
 	getUsersByProjectIdApi,
-	labelDataApi,
 	updateProjectApi,
 } from "./../../services/project/index";
 
@@ -27,11 +24,6 @@ export type UpdateProjectDTO = {
 type UpdateProjectPayload = {
 	submitData: UpdateProjectDTO;
 	onDone: () => void;
-};
-
-export type GetProjectByIdPayload = {
-	id: string;
-	resourceNumber: number;
 };
 
 export type DeleteUserDTO = {
@@ -110,54 +102,6 @@ export const getAllUserProjects = createAsyncThunk(
 	async (_props, { rejectWithValue }) => {
 		try {
 			const { data } = await getAllUserProjectsApi();
-			return data;
-		} catch (err: any) {
-			if (!err.response) {
-				throw err;
-			}
-			return rejectWithValue(err.response.data);
-		}
-	},
-);
-
-export const getProjectCurrentPage = createAsyncThunk(
-	"projects/getProjectCurrentPage",
-	async (id: string, { rejectWithValue }) => {
-		try {
-			const { data } = await getProjectCurrentPageApi(id);
-			return data;
-		} catch (err: any) {
-			if (!err.response) {
-				throw err;
-			}
-			return rejectWithValue(err.response.data);
-		}
-	},
-);
-
-export const getLabelingData = createAsyncThunk(
-	"projects/getLabelingData",
-	async (params: GetProjectByIdPayload, { rejectWithValue }) => {
-		try {
-			const { data } = await getLabelingDataApi(params);
-			return data;
-		} catch (err: any) {
-			if (!err.response) {
-				throw err;
-			}
-			return rejectWithValue(err.response.data);
-		}
-	},
-);
-
-export const labelData = createAsyncThunk(
-	"projects/labelData",
-	async ({ submitData, onDone }: any, { rejectWithValue }) => {
-		try {
-			const { data } = await labelDataApi(submitData);
-			if (onDone) {
-				onDone();
-			}
 			return data;
 		} catch (err: any) {
 			if (!err.response) {
