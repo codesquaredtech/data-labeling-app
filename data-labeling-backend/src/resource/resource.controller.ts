@@ -67,7 +67,11 @@ export class ResourceController {
       ...data,
     };
 
-    return this.resourceService.updateResource(resourceId, modifiedResource);
+    return this.resourceService.updateResource(
+      projectId,
+      resourceId,
+      modifiedResource,
+    );
   }
 
   @Roles(Role.Admin)
@@ -85,6 +89,7 @@ export class ResourceController {
     resource.deleted = true;
 
     const updated = await this.resourceService.updateResource(
+      projectId,
       resourceId,
       resource,
     );

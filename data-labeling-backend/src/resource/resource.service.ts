@@ -12,7 +12,6 @@ import {
   ResourceSchema,
 } from './model/resource.model';
 import { Project } from 'src/project/models/project.model';
-import { checkResourcesDbConnection } from 'src/global/utils';
 
 @Injectable()
 export class ResourceService {
@@ -23,22 +22,18 @@ export class ResourceService {
   ) {}
 
   async createResource(resource: Resource): Promise<Resource> {
-    let connection = this.globalService.getConnection();
     const projectId = resource.project.identNumber;
-    connection = checkResourcesDbConnection(connection, projectId);
-    this.globalService.setConnection(connection);
-    const resourceModel = connection.model('Resource', ResourceSchema);
+    const connection = await this.globalService.getConnection(projectId);
 
+    const resourceModel = connection.model('Resource', ResourceSchema);
     const newResource = new resourceModel(resource);
     return newResource.save();
   }
 
   async findResource(resourceId: ObjectId, projectId: string) {
-    let connection = this.globalService.getConnection();
-    connection = checkResourcesDbConnection(connection, projectId);
-    this.globalService.setConnection(connection);
-    const resourceModel = connection.model('Resource', ResourceSchema);
+    const connection = await this.globalService.getConnection(projectId);
 
+    const resourceModel = connection.model('Resource', ResourceSchema);
     const resource = <Resource>(
       await resourceModel.findById(resourceId).lean().exec()
     );
@@ -46,10 +41,11 @@ export class ResourceService {
   }
 
   async updateResource(
+    projectId: string,
     resourceId: ObjectId,
     data: Resource,
   ): Promise<Resource> {
-    const connection = this.globalService.getConnection();
+    const connection = await this.globalService.getConnection(projectId);
     const resourceModel = connection.model('Resource', ResourceSchema);
 
     return resourceModel.findOneAndUpdate({ _id: resourceId }, data, {
@@ -58,14 +54,8 @@ export class ResourceService {
   }
 
   async findByProject(projectId: string) {
-    let connection = this.globalService.getConnection();
+    const connection = await this.globalService.getConnection(projectId);
 
-    // if connection doesn't exist we create connection or close unused connection
-    connection = checkResourcesDbConnection(connection, projectId);
-    // set connection to globalService
-    this.globalService.setConnection(connection);
-
-    // then find all resources in that database and return them
     const resourceModel = connection.model('Resource', ResourceSchema);
     const resources = <Resource[]>await resourceModel
       .find({ deleted: false || undefined })
