@@ -49,8 +49,8 @@ export class UserController {
   @UseGuards(RolesGuard)
   async getUsersProject(@Req() req) {
     const user = await this.userService.findUserByUid(req.user.uid);
-    const projects = await this.projectService.findByUser(user._id);
-    return this.projectService.getProjectByUsers(projects);
+    return await this.projectService.findByUser(user._id);
+    // return this.projectService.getProjectByUsers(projects);
   }
 
   @Get('all')

@@ -2,9 +2,10 @@ import React, { useEffect } from "react";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { getLabelingData, getProjectCurrentPage, labelData } from "../../../actions/project";
+import { getLabelingData, getProjectCurrentPage, labelData } from "../../../actions/resource";
 import { AppDispatch } from "../../../config/store";
 import { projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
+import { resourcesSliceSelectors } from "../../../slices/Resources/resourcesSlice";
 import Modal from "../../Global/Modal";
 import { Field } from "./Field";
 
@@ -23,8 +24,8 @@ type LabelDataProps = {
 
 export default function LabelData({ projectId, open, setOpen }: LabelDataProps) {
 	const createLoading = useSelector(projectsSliceSelectors.createLoading);
-	const projectCurrentPage = useSelector(projectsSliceSelectors.projectCurrentPage);
-	const labelingData = useSelector(projectsSliceSelectors.labelingData);
+	const projectCurrentPage = useSelector(resourcesSliceSelectors.projectCurrentPage);
+	const labelingData = useSelector(resourcesSliceSelectors.labelingData);
 	const { fields: reduxFields } = labelingData || {};
 	const dispatch = useDispatch<AppDispatch>();
 

@@ -1,6 +1,7 @@
-import { getResourcesByProjectId } from "./../../actions/resource";
+import { getResourcesByProjectId, getProjectCurrentPage, getLabelingData } from "./../../actions/resource";
 import { RootState } from "../../config/store";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { FormField } from "../../components/User/LabelDataForm/Field";
 
 const SLICE_NAME = "resources";
 
@@ -11,11 +12,22 @@ type Resource = {
 	ordinalNumber: number;
 };
 
+type LabelingData = {
+	fields: FormField[];
+	ordinalNumber: number;
+	projectId: string;
+	text: string;
+	title: string;
+	totalNumber: number;
+};
+
 interface InitState {
 	resourceList: [] | Resource[];
 	editResource: Resource | null;
 	fetchLoading: boolean;
 	createLoading: boolean;
+	projectCurrentPage: null;
+	labelingData: null | LabelingData;
 	error: any;
 }
 
@@ -24,6 +36,8 @@ const initialState: InitState = {
 	editResource: null,
 	fetchLoading: false,
 	createLoading: false,
+	projectCurrentPage: null,
+	labelingData: null,
 	error: null,
 };
 
@@ -50,6 +64,12 @@ export const resourcesSlice = createSlice({
 			state.fetchLoading = false;
 			state.error = payload;
 		});
+		builder.addCase(getProjectCurrentPage.fulfilled, (state, { payload }) => {
+			state.projectCurrentPage = payload.page;
+		});
+		builder.addCase(getLabelingData.fulfilled, (state, { payload }: PayloadAction<LabelingData>) => {
+			state.labelingData = payload;
+		});
 	},
 });
 
@@ -73,6 +93,14 @@ export const resourcesSliceSelectors = {
 	editResource: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.editResource;
+	},
+	projectCurrentPage: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.projectCurrentPage;
+	},
+	labelingData: (rootState: RootState) => {
+		const appState = getAppState(rootState);
+		return appState.labelingData;
 	},
 	error: (rootState: RootState) => {
 		const appState = getAppState(rootState);

@@ -1,28 +1,16 @@
-import { FormField } from "./../../components/User/LabelDataForm/Field";
-import { getLabelingData, getProjectById, getUsersByProjectId } from "./../../actions/project/index";
-import { getAllAdminProjects, getAllUserProjects, createProject, getProjectCurrentPage } from "../../actions/project";
+import { getProjectById, getUsersByProjectId, getAllAdminProjects, getAllUserProjects, createProject } from "../../actions/project";
 import { RootState } from "../../config/store";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { Project } from "../../components/Admin/Projects/CreateEditProjectForm";
 
 const SLICE_NAME = "projects";
 
-type LabelingData = {
-	fields: FormField[];
-	ordinalNumber: number;
-	projectId: string;
-	text: string;
-	title: string;
-	totalNumber: number;
-};
 interface InitState {
 	projects: Project[];
 	project: Project | null;
 	projectUsers: any[];
 	fetchLoading: boolean;
 	createLoading: boolean;
-	projectCurrentPage: null;
-	labelingData: null | LabelingData;
 	// TODO: change this
 	error: any;
 }
@@ -33,8 +21,6 @@ const initialState: InitState = {
 	projectUsers: [],
 	fetchLoading: false,
 	createLoading: false,
-	projectCurrentPage: null,
-	labelingData: null,
 	error: null,
 };
 
@@ -77,12 +63,6 @@ export const projectsSlice = createSlice({
 			state.createLoading = false;
 			state.error = payload;
 		});
-		builder.addCase(getProjectCurrentPage.fulfilled, (state, { payload }) => {
-			state.projectCurrentPage = payload.page;
-		});
-		builder.addCase(getLabelingData.fulfilled, (state, { payload }: PayloadAction<LabelingData>) => {
-			state.labelingData = payload;
-		});
 		builder.addCase(getProjectById.fulfilled, (state, { payload }) => {
 			state.project = payload;
 		});
@@ -116,14 +96,6 @@ export const projectsSliceSelectors = {
 	project: (rootState: RootState) => {
 		const appState = getAppState(rootState);
 		return appState.project;
-	},
-	projectCurrentPage: (rootState: RootState) => {
-		const appState = getAppState(rootState);
-		return appState.projectCurrentPage;
-	},
-	labelingData: (rootState: RootState) => {
-		const appState = getAppState(rootState);
-		return appState.labelingData;
 	},
 	projectUsers: (rootState: RootState) => {
 		const appState = getAppState(rootState);
