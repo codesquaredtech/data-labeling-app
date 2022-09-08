@@ -143,7 +143,11 @@ export class ProjectService {
       resource.outputFields.push(outputFields);
     }
 
-    await this.resourceService.updateResource(resource._id, resource);
+    await this.resourceService.updateResource(
+      project.identNumber,
+      resource._id,
+      resource,
+    );
     const labeled = await this.findIfExist(resource, project, user);
 
     if (labeled == null) {
