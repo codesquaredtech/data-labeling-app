@@ -7,15 +7,15 @@ import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 
 const rootReducer = combineReducers({
-	auth: authSlice.reducer,
-	users: usersSlice.reducer,
-	projects: projectsSlice.reducer,
-	metadata: metadataSlice.reducer,
-	resources: resourcesSlice.reducer,
+  auth: authSlice.reducer,
+  users: usersSlice.reducer,
+  projects: projectsSlice.reducer,
+  metadata: metadataSlice.reducer,
+  resources: resourcesSlice.reducer,
 });
 
 export const store = configureStore({
-	reducer: rootReducer,
+  reducer: rootReducer,
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

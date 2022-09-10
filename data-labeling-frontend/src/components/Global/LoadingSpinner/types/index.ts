@@ -1,10 +1,10 @@
 export type LoadingSpinnerProps = {
-	size: Size;
+  size: Size;
 };
 
 export enum Size {
-	SM = 2,
-	M = 4,
-	L = 6,
-	XL = 8,
+  SM = 2,
+  M = 4,
+  L = 6,
+  XL = 8,
 }
