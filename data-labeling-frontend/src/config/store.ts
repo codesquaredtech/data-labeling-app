@@ -3,6 +3,7 @@ import { metadataSlice } from "./../slices/Metadata/metadataSlice";
 import { projectsSlice } from "./../slices/Projects/projectsSlice";
 import { usersSlice } from "./../slices/Admin/usersSlice";
 import { authSlice } from "./../slices/Auth/authSlice";
+import { audioLabelingSlice } from "../slices/Labeling/audioSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
 	projects: projectsSlice.reducer,
 	metadata: metadataSlice.reducer,
 	resources: resourcesSlice.reducer,
+	audioLabeling: audioLabelingSlice.reducer,
 });
 
 export const store = configureStore({

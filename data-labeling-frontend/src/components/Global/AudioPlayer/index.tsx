@@ -6,10 +6,21 @@ import CursorPlugin from "wavesurfer.js/src/plugin/cursor";
 import { FaPlay, FaPause, FaVolumeMute, FaForward, FaBackward, FaVolumeUp } from "react-icons/fa";
 import daisyuiColors from "daisyui/src/colors/themes";
 import { getTheme } from "../../../utils";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../config/store";
+import { addRegion } from "../../../slices/Labeling/audioSlice";
 
 const PLAYBACK_SPEED_OPTIONS = [0.25, 0.5, 1, 1.5, 2];
 
-export const AudioPlayer = ({ url, zoomEnabled = false }: { url: string; zoomEnabled?: boolean }) => {
+export const AudioPlayer = ({
+	url,
+	activeLabelColor,
+	zoomEnabled = false,
+}: {
+	url: string;
+	activeLabelColor?: { color: string; rgbColor: string };
+	zoomEnabled?: boolean;
+}) => {
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
 	const waveformRef = useRef<WaveSurfer | null>(null);
@@ -17,6 +28,7 @@ export const AudioPlayer = ({ url, zoomEnabled = false }: { url: string; zoomEna
 	const themeColors = daisyuiColors[`[data-theme=${theme}]`];
 	const primaryColor = themeColors.primary;
 	const primaryFocusColor = themeColors["primary-focus"];
+	const dispatch = useDispatch<AppDispatch>();
 
 	// it will trigger on initial render and on every update of the url prop or theme
 	useEffect(() => {
@@ -26,10 +38,10 @@ export const AudioPlayer = ({ url, zoomEnabled = false }: { url: string; zoomEna
 		waveformRef.current = WaveSurfer.create({
 			container: "#waveform",
 			progressColor: primaryColor,
-			barGap: 2,
-			barWidth: 3,
+			// barGap: 2,
+			// barWidth: 3,
+			// barRadius: 3,
 			barHeight: 3,
-			barRadius: 3,
 			cursorWidth: 2,
 			cursorColor: primaryColor,
 			backgroundColor: primaryFocusColor,
@@ -60,15 +72,21 @@ export const AudioPlayer = ({ url, zoomEnabled = false }: { url: string; zoomEna
 			maxLength: 90,
 		});
 		// Perform action when new region is created
-		waveformRef.current.on("region-created", (e) => {
-			// let color = randomColor({
-			// 	luminosity: "light",
-			// 	alpha: 0.3,
-			// 	format: "rgba",
-			// });
-			// e.color = color;
-		});
 	}, [primaryColor, primaryFocusColor, url]);
+
+	useEffect(() => {
+		if (waveformRef.current && activeLabelColor) {
+			waveformRef.current.on("region-created", (e) => {
+				// let color = randomColor({
+				// 	luminosity: "light",
+				// 	alpha: 0.3,
+				// 	format: "rgba",
+				// });
+				e.color = `rgb(${activeLabelColor.rgbColor}, 0.3)`;
+				dispatch(addRegion({ id: e.id, color: activeLabelColor.color }));
+			});
+		}
+	}, [dispatch, activeLabelColor]);
 
 	// handle key events
 	useEffect(() => {
@@ -128,25 +146,47 @@ export const AudioPlayer = ({ url, zoomEnabled = false }: { url: string; zoomEna
 		}
 	};
 
-	const handleZoom = (zoom: number) => {
+	const handleZoom = (zoom: number, isHorizontal = true) => {
 		if (waveformRef.current) {
-			waveformRef.current.zoom(zoom);
+			if (isHorizontal) {
+				waveformRef.current.zoom(zoom);
+			} else {
+				waveformRef.current.params.barHeight = zoom;
+				// waveformRef.current.empty();
+				waveformRef.current.drawBuffer();
+			}
 		}
 	};
 
 	return (
-		<div className="flex flex-col w-full bg-neutral p-4 card">
-			<div id="waveform" />
-			<div id="wave-timeline" className="mt-2 mb-8" />
+		<div className="flex flex-col w-full bg-neutral p-4 rounded-sm">
+			<div className="flex w-full">
+				<div className="w-full">
+					<div id="waveform" />
+					<div id="wave-timeline" className="mt-2 mb-4" />
+				</div>
+				{zoomEnabled && (
+					<div className="w-[30px] rotate-270 mt-14">
+						<input
+							type="range"
+							min="3"
+							max="50"
+							defaultValue={0}
+							onChange={(e) => handleZoom(Number(e.target.value), false)}
+							className="range range-primary range-xs w-32 -ml-10 -rotate-90"
+						/>
+					</div>
+				)}
+			</div>
 			{zoomEnabled && (
 				<div className="flex items-center mb-8">
 					<input
 						type="range"
-						min="40"
-						max="200"
+						min="50"
+						max="500"
 						defaultValue={0}
 						onChange={(e) => handleZoom(Number(e.target.value))}
-						className="range range-primary range-sm"
+						className="range range-primary range-xs"
 					/>
 				</div>
 			)}

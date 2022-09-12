@@ -5,7 +5,7 @@ import { uploadResources } from "../../../actions/resource";
 import { AppDispatch } from "../../../config/store";
 import { Dropzone } from "../Dropzone";
 
-export const ExamplePage = () => {
+export const ExampleAudioPlayer = () => {
 	const [files, setFiles] = useState<File[]>([]);
 	const dispatch = useDispatch<AppDispatch>();
 

@@ -1,1 +1,1 @@
-export { ExamplePage as ProjectsPage } from "../../../components/Global/AudioPlayer/ExamplePage";
+export { AudioLabelingPage as ProjectsPage } from "../../../components/Global/AudioPlayer/AudioLabelingPage";
