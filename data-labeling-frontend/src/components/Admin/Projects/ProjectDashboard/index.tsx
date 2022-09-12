@@ -18,46 +18,46 @@ import { clearState as clearMetadataState } from "../../../../slices/Metadata/me
 import { clearState as clearUserState } from "../../../../slices/Admin/usersSlice";
 
 export const ProjectDashboard = () => {
-	const [createModalOpen, setCreateModalOpen] = useState(false);
-	const { id: projectId } = useParams();
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const { id: projectId } = useParams();
 
-	const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
 
-	useEffect(() => {
-		if (projectId) {
-			dispatch(getProjectById(projectId));
-			dispatch(getMetadataByProjectId(projectId));
-			dispatch(getUsersByProjectId(projectId));
-			dispatch(getResourcesByProjectId(projectId));
-		}
-	}, [dispatch, projectId]);
+  useEffect(() => {
+    if (projectId) {
+      dispatch(getProjectById(projectId));
+      dispatch(getMetadataByProjectId(projectId));
+      dispatch(getUsersByProjectId(projectId));
+      dispatch(getResourcesByProjectId(projectId));
+    }
+  }, [dispatch, projectId]);
 
-	useEffect(() => {
-		return () => {
-			dispatch(clearProjectState());
-			dispatch(clearUserState());
-			dispatch(clearResourceState());
-			dispatch(clearMetadataState());
-		};
-	}, [dispatch]);
+  useEffect(() => {
+    return () => {
+      dispatch(clearProjectState());
+      dispatch(clearUserState());
+      dispatch(clearResourceState());
+      dispatch(clearMetadataState());
+    };
+  }, [dispatch]);
 
-	return (
-		<>
-			<div className="flex flex-col w-full h-full pt-8 pb-8 pl-10 pr-10">
-				<ProjectInfo setModalOpen={setCreateModalOpen} />
-				<ProjectStats />
-				{/* Users, Metadata, Resources lists */}
-				<div className="flex flex-wrap w-full gap-4 h-96">
-					<UsersList />
-					<MetadataList />
-					<ResourcesList />
-				</div>
-			</div>
-			{createModalOpen && (
-				<Modal hideButton title="Edit project" setOpen={setCreateModalOpen} open={createModalOpen}>
-					<CreateEditProjectForm onDone={() => setCreateModalOpen(false)} />
-				</Modal>
-			)}
-		</>
-	);
+  return (
+    <>
+      <div className="flex flex-col w-full h-full pt-8 pb-8 pl-10 pr-10">
+        <ProjectInfo setModalOpen={setCreateModalOpen} />
+        <ProjectStats />
+        {/* Users, Metadata, Resources lists */}
+        <div className="flex flex-wrap w-full gap-4 h-96">
+          <UsersList />
+          <MetadataList />
+          <ResourcesList />
+        </div>
+      </div>
+      {createModalOpen && (
+        <Modal hideButton title="Edit project" setOpen={setCreateModalOpen} open={createModalOpen}>
+          <CreateEditProjectForm onDone={() => setCreateModalOpen(false)} />
+        </Modal>
+      )}
+    </>
+  );
 };

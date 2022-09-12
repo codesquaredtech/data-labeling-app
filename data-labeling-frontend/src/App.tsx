@@ -5,7 +5,7 @@ import { initializeFirebase } from "./config/api/firebase";
 initializeFirebase();
 
 function App() {
-	return <Routes />;
+  return <Routes />;
 }
 
 export default App;
