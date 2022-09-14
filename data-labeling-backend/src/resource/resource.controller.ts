@@ -106,6 +106,7 @@ export class ResourceController {
   ) {
     const project = await this.projectService.findProject(id);
     const resource = await this.resourceService.findByOrdinalNumber(
+      project.identNumber,
       numberOfResource,
       project._id.toString(),
     );
@@ -138,6 +139,7 @@ export class ResourceController {
   ) {
     const project = await this.projectService.findProject(projectId);
     const resource = await this.resourceService.findByOrdinalNumber(
+      project.identNumber,
       body.ordinalNumber,
       project._id.toString(),
     );

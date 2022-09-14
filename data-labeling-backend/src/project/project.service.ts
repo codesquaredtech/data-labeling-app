@@ -11,6 +11,7 @@ import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
 import { Project, ProjectDocument } from './models/project.model';
 import { UserAndTheirLastResource } from './models/userLastResource.model';
+import {UsersProjectDto} from "./DTO/UsersProject.dto";
 
 @Injectable()
 export class ProjectService {
@@ -65,7 +66,7 @@ export class ProjectService {
   ) {
     const userAndTheirLastResource = new UserAndTheirLastResource();
     userAndTheirLastResource.ordinalNumber = ordinalNumber;
-    userAndTheirLastResource.userId = user._id.toString();
+    userAndTheirLastResource.userId = user._id;
     project.userAndTheirLastResource.push(userAndTheirLastResource);
     const updatedProject = await this.updateProject(
       project.identNumber,
@@ -74,11 +75,27 @@ export class ProjectService {
     console.log(updatedProject);
   }
 
+  async updateUsersLastResource(resource: Resource, project: Project, user: User) {
+    let usersLastResource = project.userAndTheirLastResource.find(u => u.userId == user._id);
+    if (!usersLastResource) {
+      usersLastResource = new UserAndTheirLastResource();
+      usersLastResource.userId = user._id;
+      project.userAndTheirLastResource.push(usersLastResource);
+    }
+
+    if(resource.ordinalNumber <= usersLastResource.ordinalNumber) {
+      return;
+    }
+
+    usersLastResource.ordinalNumber = resource.ordinalNumber;
+    await this.updateProject(project.identNumber, project,);
+  }
+
   async findIfExist(resource: Resource, project: Project, user: User) {
     for (const labeled of project.userAndTheirLastResource) {
       if (
         labeled.ordinalNumber + 1 == resource.ordinalNumber &&
-        labeled.userId == user._id.toString()
+        labeled.userId == user._id
       ) {
         return labeled;
       } else {
@@ -101,25 +118,18 @@ export class ProjectService {
     this.createProject(project);
   }
 
-  async getProjectByUsers(projects: Project[]) {
-    const result = [];
-    for (const p of projects) {
-      const resourceNumberTotal = await this.resourceService.findByProject(
-        p.identNumber,
-      );
-      if (p.userAndTheirLastResource.length == 0) {
-        result.push(p);
-      } else {
-        for (const r of p.userAndTheirLastResource) {
-          if (r.ordinalNumber < resourceNumberTotal.length) {
-            result.push(p);
-          }
-        }
-      }
-    }
-
-    console.log(result);
-    return result;
+  async getProjectByUsers(userId: ObjectId) {
+    const projects = await this.findByUser(userId);
+    return projects.map(p => {
+      const usersLastResource = p.userAndTheirLastResource.find(u => u.userId == userId)
+      const dto = new UsersProjectDto();
+      dto.id = p.identNumber;
+      dto.title = p.title;
+      dto.description = p.description;
+      // dto.numberOfResources = p.numberOfResources; // if we have a filter for completed projects
+      dto.usersLastResource = usersLastResource?.ordinalNumber || 0;
+      return dto;
+    })
   }
 
   async acceptLabeledData(
@@ -132,11 +142,12 @@ export class ProjectService {
       resource.outputFields = [];
     }
 
-    for (const b of body.fields) {
+    for (const metadata of body.fields) {
       const outputFields = new OutputData();
-      outputFields.name = b.name;
-      outputFields.type = b.type;
-      outputFields.value = b.value;
+      outputFields.name = metadata.name;
+      outputFields.type = metadata.type;
+      outputFields.value = metadata.value;
+      outputFields.userId = user._id;
       if (outputFields.value == null) {
         outputFields.value = false;
       }
@@ -148,17 +159,6 @@ export class ProjectService {
       resource._id,
       resource,
     );
-    const labeled = await this.findIfExist(resource, project, user);
-
-    if (labeled == null) {
-      this.createUserLastResource(resource.ordinalNumber, project, user);
-    } else {
-      labeled.ordinalNumber++;
-      const updatedProject = await this.updateProject(
-        project.identNumber,
-        project,
-      );
-      console.log(updatedProject.userAndTheirLastResource.length);
-    }
+    await this.updateUsersLastResource(resource, project, user);
   }
 }

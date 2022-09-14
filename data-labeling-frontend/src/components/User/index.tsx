@@ -42,7 +42,7 @@ export const User = () => {
         width: 150,
         Cell: ({ row }: CellValue) => (
           <span style={{ display: "flex", flexDirection: "row" }}>
-            <button className="btn btn-circle btn-primary" onClick={() => handleLabelData(row.original.identNumber)}>
+            <button className="btn btn-circle btn-primary" onClick={() => handleLabelData(row.original.id)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -61,7 +61,7 @@ export const User = () => {
           </span>
         ),
       },
-      { Header: "ID", accessor: "identNumber", disableFilters: true },
+      { Header: "ID", accessor: "id", disableFilters: true },
       { Header: "Title", accessor: "title", disableFilters: true, width: 300 },
       {
         Header: "Description",

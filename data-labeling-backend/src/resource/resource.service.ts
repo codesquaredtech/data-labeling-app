@@ -65,8 +65,10 @@ export class ResourceService {
     return resources;
   }
 
-  async findByOrdinalNumber(nr: number, id: string) {
-    const resource = <Resource>await this.resourceModel
+  async findByOrdinalNumber(projectId: string, nr: number, id: string) {
+    const connection = await this.globalService.getConnection(projectId);
+    const resourceModel = connection.model('Resource', ResourceSchema);
+    const resource = <Resource>await resourceModel
       .findOne({ ordinalNumber: nr, project: new ObjectId(id) })
       .lean()
       .exec();
@@ -91,19 +93,14 @@ export class ResourceService {
 
   async findCurrentPage(project: Project, user: User) {
     const currentPage = new currentPageDTO();
+    const usersLastResource = project.userAndTheirLastResource.find(r => r.userId === user._id);
+    currentPage.page = (usersLastResource?.ordinalNumber || 0) + 1;
 
-    for (const p of project.userAndTheirLastResource) {
-      if (p.userId === user._id.toString()) {
-        currentPage.page = p.ordinalNumber + 1;
-      }
-    }
-
-    if (project.userAndTheirLastResource.length == 0) {
-      currentPage.page = 1;
-    }
-
-    const resource = await this.findByProject(project.identNumber);
-    currentPage.total = resource.length;
+    const resources = await this.findByProject(project.identNumber);
+    resources.forEach(r => {
+      r.outputFields = r.outputFields.filter(f => f.userId === user._id);
+    })
+    currentPage.resources = resources;
 
     return currentPage;
   }

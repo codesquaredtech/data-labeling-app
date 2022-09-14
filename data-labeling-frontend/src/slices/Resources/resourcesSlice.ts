@@ -5,11 +5,12 @@ import { FormField } from "../../components/User/LabelDataForm/Field";
 
 const SLICE_NAME = "resources";
 
-type Resource = {
+export type Resource = {
   _id: string;
   title: string;
   text: string;
   ordinalNumber: number;
+  outputFields: FormField[];
 };
 
 type LabelingData = {
@@ -26,8 +27,10 @@ interface InitState {
   editResource: Resource | null;
   fetchLoading: boolean;
   createLoading: boolean;
-  projectCurrentPage: null;
+  projectCurrentPage: number | null;
   labelingData: null | LabelingData;
+  labelingDataLoading: boolean;
+  labelingResources: any[];
   error: any;
 }
 
@@ -38,6 +41,8 @@ const initialState: InitState = {
   createLoading: false,
   projectCurrentPage: null,
   labelingData: null,
+  labelingDataLoading: false,
+  labelingResources: [],
   error: null,
 };
 
@@ -64,8 +69,16 @@ export const resourcesSlice = createSlice({
       state.fetchLoading = false;
       state.error = payload;
     });
+    builder.addCase(getProjectCurrentPage.pending, (state) => {
+      state.labelingDataLoading = true;
+    });
     builder.addCase(getProjectCurrentPage.fulfilled, (state, { payload }) => {
-      state.projectCurrentPage = payload.page;
+      state.labelingDataLoading = false;
+      state.projectCurrentPage = payload.page || 1;
+      state.labelingResources = payload.resources;
+    });
+    builder.addCase(getProjectCurrentPage.rejected, (state) => {
+      state.labelingDataLoading = false;
     });
     builder.addCase(getLabelingData.fulfilled, (state, { payload }: PayloadAction<LabelingData>) => {
       state.labelingData = payload;
@@ -102,6 +115,8 @@ export const resourcesSliceSelectors = {
     const appState = getAppState(rootState);
     return appState.labelingData;
   },
+  labelingResources: (rootState: RootState) => getAppState(rootState).labelingResources,
+  labelingDataLoading: (rootState: RootState) => getAppState(rootState).labelingDataLoading,
   error: (rootState: RootState) => {
     const appState = getAppState(rootState);
     return appState.error;

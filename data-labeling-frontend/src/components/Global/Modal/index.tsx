@@ -14,13 +14,16 @@ export default function Modal({
   closeButton = true,
   hideButton = false,
   children,
+  preventClickOutside = false,
 }: ModalProps) {
   const handleClose = () => {
     setOpen(false);
     if (onClose) onClose();
   };
   const modalRef = useRef(null);
-  useOutsideClick(modalRef, handleClose);
+  if (!preventClickOutside) {
+    useOutsideClick(modalRef, handleClose);
+  }
 
   return (
     <>

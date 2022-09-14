@@ -23,6 +23,9 @@ export class Project {
   @Prop()
   identNumber: string;
 
+  // @Prop() // if we have a filter for completed projects
+  // numberOfResources: number;
+
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }] })
   users: User[];
 
