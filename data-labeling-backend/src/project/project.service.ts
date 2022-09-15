@@ -11,7 +11,8 @@ import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
 import { Project, ProjectDocument } from './models/project.model';
 import { UserAndTheirLastResource } from './models/userLastResource.model';
-import {UsersProjectDto} from "./DTO/UsersProject.dto";
+import { UsersProjectDto } from './DTO/UsersProject.dto';
+import { Metadata } from './models/metamodel.model';
 
 @Injectable()
 export class ProjectService {
@@ -75,20 +76,26 @@ export class ProjectService {
     console.log(updatedProject);
   }
 
-  async updateUsersLastResource(resource: Resource, project: Project, user: User) {
-    let usersLastResource = project.userAndTheirLastResource.find(u => u.userId == user._id);
+  async updateUsersLastResource(
+    resource: Resource,
+    project: Project,
+    user: User,
+  ) {
+    let usersLastResource = project.userAndTheirLastResource.find(
+      (u) => u.userId == user._id,
+    );
     if (!usersLastResource) {
       usersLastResource = new UserAndTheirLastResource();
       usersLastResource.userId = user._id;
       project.userAndTheirLastResource.push(usersLastResource);
     }
 
-    if(resource.ordinalNumber <= usersLastResource.ordinalNumber) {
+    if (resource.ordinalNumber <= usersLastResource.ordinalNumber) {
       return;
     }
 
     usersLastResource.ordinalNumber = resource.ordinalNumber;
-    await this.updateProject(project.identNumber, project,);
+    await this.updateProject(project.identNumber, project);
   }
 
   async findIfExist(resource: Resource, project: Project, user: User) {
@@ -120,8 +127,10 @@ export class ProjectService {
 
   async getProjectByUsers(userId: ObjectId) {
     const projects = await this.findByUser(userId);
-    return projects.map(p => {
-      const usersLastResource = p.userAndTheirLastResource.find(u => u.userId == userId)
+    return projects.map((p) => {
+      const usersLastResource = p.userAndTheirLastResource.find(
+        (u) => u.userId == userId,
+      );
       const dto = new UsersProjectDto();
       dto.id = p.identNumber;
       dto.title = p.title;
@@ -129,7 +138,7 @@ export class ProjectService {
       // dto.numberOfResources = p.numberOfResources; // if we have a filter for completed projects
       dto.usersLastResource = usersLastResource?.ordinalNumber || 0;
       return dto;
-    })
+    });
   }
 
   async acceptLabeledData(
@@ -148,6 +157,7 @@ export class ProjectService {
       outputFields.type = metadata.type;
       outputFields.value = metadata.value;
       outputFields.userId = user._id;
+      // outputFields.metadataId = metadata._id;
       if (outputFields.value == null) {
         outputFields.value = false;
       }
@@ -160,5 +170,55 @@ export class ProjectService {
       resource,
     );
     await this.updateUsersLastResource(resource, project, user);
+  }
+
+  async createMetadata(projectId: string, metadata: Metadata) {
+    const project = await this.findProject(projectId);
+    metadata._id = new ObjectId();
+    project.metadata.push(metadata);
+    // const newMetadata = new this.metadataModel(metadata);
+    return await this.updateProject(projectId, project);
+  }
+
+  async deleteMetadata(projectId: string, id: string) {
+    const project = await this.findProject(projectId);
+    project.metadata = project.metadata.filter(
+      (md) => md._id.toString() !== id,
+    );
+    // return await this.metadataModel.deleteOne({ _id: id });
+    return await this.updateProject(projectId, project);
+  }
+
+  async updateMetadata(projectId, id, dto): Promise<Project> {
+    const project = await this.findProject(projectId);
+    project.metadata = project.metadata.map((md) =>
+      md._id.toString() === id ? { ...md, ...dto } : md,
+    );
+    return await this.updateProject(projectId, project);
+  }
+
+  // async getMetadataByProject(project: Project) {
+  //   const listMetadatas = [];
+  //   for (const metadata of project.metadata) {
+  //     listMetadatas.push(await this.findById(metadata._id.toString()));
+  //   }
+  //
+  //   return listMetadatas;
+  // }
+
+  async getMetadataOptions(
+    project: Project,
+    resource: Resource,
+    resourceList: Resource[],
+  ) {
+    const metadataProjectDTO = new ProjectMetadataDTO();
+    metadataProjectDTO.fields = project.metadata;
+    metadataProjectDTO.projectId = project.identNumber;
+    metadataProjectDTO.text = resource.text;
+    metadataProjectDTO.title = resource.title;
+    metadataProjectDTO.totalNumber = resourceList.length;
+    metadataProjectDTO.ordinalNumber = resource.ordinalNumber;
+
+    return metadataProjectDTO;
   }
 }

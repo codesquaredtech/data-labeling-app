@@ -1,4 +1,4 @@
-import {Metadata} from "../../project/models/metamodel.model";
+import { Metadata } from '../../project/models/metamodel.model';
 
 export class currentPageDTO {
   page: number;

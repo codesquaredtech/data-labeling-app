@@ -14,7 +14,7 @@ export class Project {
   @Prop({ required: true, default: 'Some title' }) // Is working
   title: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'metadata' }] })
+  @Prop({ type: Types.Array })
   metadata: Metadata[];
 
   @Prop()

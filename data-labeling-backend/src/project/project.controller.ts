@@ -1,35 +1,34 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { Role } from 'src/user/model/user.model';
 import { UserService } from 'src/user/user.service';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
-import { RemoveMetadataDTO } from './DTO/removeMetadata.dto';
-import { MetadataService } from './metadata.service';
 import { Metadata } from './models/metamodel.model';
 import { ProjectService } from './project.service';
 import { FirebaseAuthGuard } from 'src/auth/firebase.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 
-@Controller('project')
+@Controller('projects')
 @UseGuards(FirebaseAuthGuard)
 export class ProjectController {
   constructor(
     private readonly projectService: ProjectService,
     private readonly userService: UserService,
-    private readonly metadataService: MetadataService,
   ) {}
 
   @Roles(Role.Admin)
   @UseGuards(RolesGuard)
-  @Get('/all')
+  @Get('/')
   async getAllProjects() {
     return this.projectService.getAllProjects();
   }
@@ -49,21 +48,14 @@ export class ProjectController {
   @Roles(Role.Admin)
   @Post(':id/metadata')
   async createMetadataForProject(
-    @Param('id') idProjekta: string,
+    @Param('id') projectId: string,
     @Body() metadata: Metadata,
   ) {
-    const project = await this.projectService.findProject(idProjekta);
-    const newMetadata = await this.metadataService.createMetadata(metadata);
-    project.metadata.push(newMetadata);
-    const updated = await this.projectService.updateProject(
-      idProjekta,
-      project,
-    );
-    return updated;
+    return this.projectService.createMetadata(projectId, metadata);
   }
 
   @Roles(Role.Admin)
-  @Post(':id/update')
+  @Put(':id')
   async updateProject(
     @Param('id') projectId: string,
     @Body() projectDTO: Pick<ProjectTemplateDTO, 'title' | 'description'>,
@@ -79,23 +71,21 @@ export class ProjectController {
   }
 
   @Roles(Role.Admin)
-  @Post('metadata/:id/update')
+  @Put(':projectId/metadata/:id')
   async updateMetadata(
+    @Param('projectId') projectId: string,
     @Param('id') metadataId: string,
     @Body() metadataDTO: { name: string; type: string },
   ) {
-    const metadata = await this.metadataService.findById(metadataId);
-
-    const modifiedMetadata = {
-      ...metadata,
-      ...metadataDTO,
-    };
-
-    return this.metadataService.updateMetadata(metadataId, modifiedMetadata);
+    return this.projectService.updateMetadata(
+      projectId,
+      metadataId,
+      metadataDTO,
+    );
   }
 
   @Roles(Role.Admin)
-  @Post(':id/add-users')
+  @Post(':id/users')
   async addUsersToProject(
     @Param('id') projectId: string,
     @Body() users: string[],
@@ -111,13 +101,13 @@ export class ProjectController {
     const updated = await this.projectService.updateProject(projectId, project);
     return updated;
   }
-
-  @Roles(Role.Admin)
-  @Get(':id/metadata')
-  async getAllMetadatasByProject(@Param('id') idProject: string) {
-    const project = await this.projectService.findProject(idProject);
-    return this.metadataService.getMetadataByProject(project);
-  }
+  //
+  // @Roles(Role.Admin)
+  // @Get(':id/metadata')
+  // async getAllMetadatasByProject(@Param('id') idProject: string) {
+  //   const project = await this.projectService.findProject(idProject);
+  //   return this.metadataService.getMetadataByProject(project);
+  // }
 
   @Roles(Role.Admin)
   @Get(':id/users')
@@ -131,25 +121,23 @@ export class ProjectController {
   }
 
   @Roles(Role.Admin)
-  @Post('remove-metadata')
-  async removeMetadata(@Body() dto: RemoveMetadataDTO) {
-    const project = await this.projectService.findProject(dto.projectId);
-    project.metadata = project.metadata.filter(
-      (meta) => meta._id.toString() !== dto.metadataId,
-    );
-    const updated = await this.projectService.updateProject(
-      project.identNumber,
-      project,
-    );
-    return updated;
+  @Delete(':projectId/metadata/:id')
+  async removeMetadata(
+    @Param('projectId') projectId: string,
+    @Param('id') metadataId: string,
+  ) {
+    return this.projectService.deleteMetadata(projectId, metadataId);
   }
 
   @Roles(Role.Admin)
-  @Post('remove-user')
-  async removeUser(@Body() dto: { projectId: string; userId: string }) {
-    const project = await this.projectService.findProject(dto.projectId);
+  @Delete(':projectId/users/:id')
+  async removeUser(
+    @Param('projectId') projectId: string,
+    @Param('id') userId: string,
+  ) {
+    const project = await this.projectService.findProject(projectId);
     project.users = project.users.filter(
-      (user) => user._id.toString() !== dto.userId,
+      (user) => user._id.toString() !== userId,
     );
     const updated = await this.projectService.updateProject(
       project.identNumber,

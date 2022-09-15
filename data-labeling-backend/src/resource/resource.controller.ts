@@ -14,7 +14,6 @@ import { ResourceService } from './resource.service';
 import { Roles } from 'src/auth/roles.decorator';
 import { ProjectService } from 'src/project/project.service';
 import { UserService } from 'src/user/user.service';
-import { MetadataService } from 'src/project/metadata.service';
 import { ProjectMetadataDTO } from 'src/project/DTO/ProjectMetadata.dto';
 import { ObjectId } from 'mongodb';
 
@@ -24,7 +23,6 @@ export class ResourceController {
   constructor(
     private readonly resourceService: ResourceService,
     private readonly projectService: ProjectService,
-    private readonly metadataService: MetadataService,
     private readonly userService: UserService,
   ) {}
 
@@ -114,7 +112,7 @@ export class ResourceController {
       project.identNumber,
     );
 
-    return await this.metadataService.getMetadataOptions(
+    return await this.projectService.getMetadataOptions(
       project,
       resource,
       resourceList,

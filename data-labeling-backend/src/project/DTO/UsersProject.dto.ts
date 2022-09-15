@@ -1,11 +1,11 @@
 export class UsersProjectDto {
-    id: string;
+  id: string;
 
-    title: string;
+  title: string;
 
-    description: string;
+  description: string;
 
-    numberOfResources: number;
+  numberOfResources: number;
 
-    usersLastResource: number;
+  usersLastResource: number;
 }

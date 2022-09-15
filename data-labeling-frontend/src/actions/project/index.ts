@@ -12,7 +12,7 @@ import {
 } from "./../../services/project/index";
 
 type CreateProjectPayload = {
-  submitData: Omit<Project, "users">;
+  submitData: Omit<Project, "users" | "metadata">;
   onDone: () => void;
 };
 
@@ -31,8 +31,7 @@ export type DeleteUserDTO = {
   userId: string;
 };
 
-export type DeleteUserPayload = {
-  data: DeleteUserDTO;
+export type DeleteUserPayload = DeleteUserDTO & {
   onDone: () => void;
 };
 
@@ -158,9 +157,9 @@ export const addUsersToProject = createAsyncThunk(
 
 export const deleteUser = createAsyncThunk(
   "projects/deleteUser",
-  async ({ data, onDone }: DeleteUserPayload, { rejectWithValue }) => {
+  async ({ projectId, userId, onDone }: DeleteUserPayload, { rejectWithValue }) => {
     try {
-      await deleteUserApi(data);
+      await deleteUserApi(projectId, userId);
       if (onDone) {
         onDone();
       }

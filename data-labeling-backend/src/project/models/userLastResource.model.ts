@@ -1,6 +1,6 @@
-import {Types} from "mongoose";
+import { Types } from 'mongoose';
 
 export class UserAndTheirLastResource {
-  ordinalNumber: number = 0;
+  ordinalNumber = 0;
   userId: Types.ObjectId;
 }

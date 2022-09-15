@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../config/store";
 import { getProjectById, getUsersByProjectId } from "../../../../actions/project";
-import { getMetadataByProjectId } from "../../../../actions/metadata";
 import MetadataList from "./Lists/MetadataList";
 import UsersList from "./Lists/UsersList";
 import ProjectStats from "./ProjectStats";
@@ -26,7 +25,6 @@ export const ProjectDashboard = () => {
   useEffect(() => {
     if (projectId) {
       dispatch(getProjectById(projectId));
-      dispatch(getMetadataByProjectId(projectId));
       dispatch(getUsersByProjectId(projectId));
       dispatch(getResourcesByProjectId(projectId));
     }

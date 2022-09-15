@@ -8,6 +8,7 @@ import {
 import { RootState } from "../../config/store";
 import { createSlice } from "@reduxjs/toolkit";
 import { Project } from "../../components/Admin/Projects/CreateEditProjectForm";
+import { createMetadata, deleteMetadata, updateMetadata } from "../../actions/metadata";
 
 const SLICE_NAME = "projects";
 
@@ -69,12 +70,21 @@ export const projectsSlice = createSlice({
       state.createLoading = false;
       state.error = payload;
     });
-    builder.addCase(getProjectById.fulfilled, (state, { payload }) => {
-      state.project = payload;
-    });
     builder.addCase(getUsersByProjectId.fulfilled, (state, { payload }) => {
       state.projectUsers = payload;
     });
+    builder.addMatcher(
+      (action) =>
+        [
+          getProjectById.fulfilled.type,
+          createMetadata.fulfilled.type,
+          updateMetadata.fulfilled.type,
+          deleteMetadata.fulfilled.type,
+        ].includes(action.type),
+      (state, { payload }) => {
+        state.project = payload;
+      },
+    );
   },
 });
 
@@ -102,6 +112,10 @@ export const projectsSliceSelectors = {
   project: (rootState: RootState) => {
     const appState = getAppState(rootState);
     return appState.project;
+  },
+  projectMetadata: (rootState: RootState) => {
+    const appState = getAppState(rootState);
+    return appState.project?.metadata?.filter((md) => typeof md !== "string") || [];
   },
   projectUsers: (rootState: RootState) => {
     const appState = getAppState(rootState);

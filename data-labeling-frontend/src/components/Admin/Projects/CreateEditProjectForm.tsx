@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { createProject, getAllAdminProjects, getProjectById, updateProject } from "../../../actions/project";
 import { AppDispatch } from "../../../config/store";
 import { projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
+import { Metadata } from "../../../slices/Metadata/metadataSlice";
 
 export type InitData = {
   title: string;
@@ -17,6 +18,7 @@ export type Project = {
   title: string;
   description: string;
   users: string[];
+  metadata: Metadata[];
 };
 
 export default function CreateEditProjectForm({ onDone }: { onDone: () => void }) {

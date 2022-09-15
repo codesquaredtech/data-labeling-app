@@ -1,13 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-
-import { Types } from 'mongoose';
-
-export type MetadataDocument = Metadata & Document;
+import { ObjectId } from 'mongodb';
 
 @Schema()
 export class Metadata {
-  _id: Types.ObjectId;
+  _id: ObjectId;
 
   @Prop()
   name: string; //field_label
@@ -17,5 +13,3 @@ export class Metadata {
 
   value?: string | boolean;
 }
-
-export const MetadataSchema = SchemaFactory.createForClass(Metadata);

@@ -93,13 +93,15 @@ export class ResourceService {
 
   async findCurrentPage(project: Project, user: User) {
     const currentPage = new currentPageDTO();
-    const usersLastResource = project.userAndTheirLastResource.find(r => r.userId === user._id);
+    const usersLastResource = project.userAndTheirLastResource.find(
+      (r) => r.userId === user._id,
+    );
     currentPage.page = (usersLastResource?.ordinalNumber || 0) + 1;
 
     const resources = await this.findByProject(project.identNumber);
-    resources.forEach(r => {
-      r.outputFields = r.outputFields.filter(f => f.userId === user._id);
-    })
+    resources.forEach((r) => {
+      r.outputFields = r.outputFields.filter((f) => f.userId === user._id);
+    });
     currentPage.resources = resources;
 
     return currentPage;

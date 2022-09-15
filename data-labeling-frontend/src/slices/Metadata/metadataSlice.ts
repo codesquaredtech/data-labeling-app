@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const SLICE_NAME = "metadata";
 
-type Metadata = {
+export type Metadata = {
   _id: string;
   name: string;
   type: string;
@@ -75,7 +75,6 @@ export const metadataSliceSelectors = {
     const appState = getAppState(rootState);
     return appState.createLoading;
   },
-
   metadataList: (rootState: RootState) => {
     const appState = getAppState(rootState);
     return appState.metadataList;
