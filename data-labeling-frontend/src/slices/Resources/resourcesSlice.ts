@@ -1,4 +1,4 @@
-import { getResourcesByProjectId, getProjectCurrentPage, getLabelingData } from "./../../actions/resource";
+import { getResourcesByProjectId, getProjectCurrentPage, getLabelingData, labelData } from "./../../actions/resource";
 import { RootState } from "../../config/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { FormField } from "../../components/User/LabelDataForm/Field";
@@ -31,6 +31,7 @@ interface InitState {
   labelingData: null | LabelingData;
   labelingDataLoading: boolean;
   labelingResources: any[];
+  outputFields: any[];
   error: any;
 }
 
@@ -43,6 +44,7 @@ const initialState: InitState = {
   labelingData: null,
   labelingDataLoading: false,
   labelingResources: [],
+  outputFields: [],
   error: null,
 };
 
@@ -76,12 +78,16 @@ export const resourcesSlice = createSlice({
       state.labelingDataLoading = false;
       state.projectCurrentPage = payload.page || 1;
       state.labelingResources = payload.resources;
+      state.outputFields = payload.metadata;
     });
     builder.addCase(getProjectCurrentPage.rejected, (state) => {
       state.labelingDataLoading = false;
     });
     builder.addCase(getLabelingData.fulfilled, (state, { payload }: PayloadAction<LabelingData>) => {
       state.labelingData = payload;
+    });
+    builder.addCase(labelData.fulfilled, (state, { payload }: PayloadAction<number>) => {
+      state.projectCurrentPage = payload;
     });
   },
 });
@@ -116,6 +122,7 @@ export const resourcesSliceSelectors = {
     return appState.labelingData;
   },
   labelingResources: (rootState: RootState) => getAppState(rootState).labelingResources,
+  labelingFields: (rootState: RootState) => getAppState(rootState).outputFields,
   labelingDataLoading: (rootState: RootState) => getAppState(rootState).labelingDataLoading,
   error: (rootState: RootState) => {
     const appState = getAppState(rootState);

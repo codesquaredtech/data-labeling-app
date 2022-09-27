@@ -82,7 +82,7 @@ export class ProjectService {
     user: User,
   ) {
     let usersLastResource = project.userAndTheirLastResource.find(
-      (u) => u.userId == user._id,
+      (u) => user._id.equals(u.userId)
     );
     if (!usersLastResource) {
       usersLastResource = new UserAndTheirLastResource();
@@ -98,30 +98,13 @@ export class ProjectService {
     await this.updateProject(project.identNumber, project);
   }
 
-  async findIfExist(resource: Resource, project: Project, user: User) {
-    for (const labeled of project.userAndTheirLastResource) {
-      if (
-        labeled.ordinalNumber + 1 == resource.ordinalNumber &&
-        labeled.userId == user._id
-      ) {
-        return labeled;
-      } else {
-        return null;
-      }
-    }
-  }
-
   async createProjectFromTemplate(projectTemplate: ProjectTemplateDTO) {
     const project = new Project();
     project.title = projectTemplate.title;
     project.description = projectTemplate.description;
     project.identNumber = projectTemplate.identNumber;
     project.users = [];
-    for (const userId of projectTemplate.users) {
-      const user = await this.userService.findUser(userId);
-      console.log(user);
-      project.users.push(user);
-    }
+    project.metadata = [];
     this.createProject(project);
   }
 
@@ -147,9 +130,7 @@ export class ProjectService {
     user: User,
     body: ProjectMetadataDTO,
   ) {
-    if (!resource.outputFields || resource.outputFields.length === 0) {
-      resource.outputFields = [];
-    }
+    resource.outputFields = resource.outputFields?.filter((f) => !user._id.equals(f.userId)) || []
 
     for (const metadata of body.fields) {
       const outputFields = new OutputData();
@@ -157,7 +138,6 @@ export class ProjectService {
       outputFields.type = metadata.type;
       outputFields.value = metadata.value;
       outputFields.userId = user._id;
-      // outputFields.metadataId = metadata._id;
       if (outputFields.value == null) {
         outputFields.value = false;
       }
@@ -176,7 +156,6 @@ export class ProjectService {
     const project = await this.findProject(projectId);
     metadata._id = new ObjectId();
     project.metadata.push(metadata);
-    // const newMetadata = new this.metadataModel(metadata);
     return await this.updateProject(projectId, project);
   }
 
@@ -185,7 +164,6 @@ export class ProjectService {
     project.metadata = project.metadata.filter(
       (md) => md._id.toString() !== id,
     );
-    // return await this.metadataModel.deleteOne({ _id: id });
     return await this.updateProject(projectId, project);
   }
 
@@ -196,15 +174,6 @@ export class ProjectService {
     );
     return await this.updateProject(projectId, project);
   }
-
-  // async getMetadataByProject(project: Project) {
-  //   const listMetadatas = [];
-  //   for (const metadata of project.metadata) {
-  //     listMetadatas.push(await this.findById(metadata._id.toString()));
-  //   }
-  //
-  //   return listMetadatas;
-  // }
 
   async getMetadataOptions(
     project: Project,

@@ -79,6 +79,7 @@ export class ResourceService {
     template: ResourceTemplate[],
     project: Project,
   ) {
+    // fix ordinal number
     let number = 0;
     for (const res of template) {
       number++;
@@ -94,15 +95,20 @@ export class ResourceService {
   async findCurrentPage(project: Project, user: User) {
     const currentPage = new currentPageDTO();
     const usersLastResource = project.userAndTheirLastResource.find(
-      (r) => r.userId === user._id,
+      (r) => user._id.equals(r.userId),
     );
-    currentPage.page = (usersLastResource?.ordinalNumber || 0) + 1;
 
     const resources = await this.findByProject(project.identNumber);
     resources.forEach((r) => {
-      r.outputFields = r.outputFields.filter((f) => f.userId === user._id);
+      r.outputFields = r.outputFields.filter((f) => user._id.equals(f.userId));
     });
+
+    currentPage.page = (usersLastResource?.ordinalNumber || 0);
+    if(currentPage.page < resources.length) {
+      currentPage.page = currentPage.page + 1;
+    }
     currentPage.resources = resources;
+    currentPage.metadata = project.metadata;
 
     return currentPage;
   }

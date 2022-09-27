@@ -51,6 +51,7 @@ export const metadataSlice = createSlice({
     });
     builder.addCase(createMetadata.pending, (state) => {
       state.createLoading = true;
+      state.error = null;
     });
     builder.addCase(createMetadata.fulfilled, (state) => {
       state.createLoading = false;

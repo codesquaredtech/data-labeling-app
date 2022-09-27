@@ -3,5 +3,10 @@
 @tailwind utilities;
 
 .drawer-overlay {
-	@apply transition-opacity !important;
+  @apply transition-opacity !important;
+}
+
+#modal-label-data + label .modal-box {
+  width: 60%;
+  max-width: 900px;
 }

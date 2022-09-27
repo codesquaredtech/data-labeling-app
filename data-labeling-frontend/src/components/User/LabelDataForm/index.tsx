@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
-import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { getLabelingData, getProjectCurrentPage, labelData } from "../../../actions/resource";
+import React, { useEffect, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { getProjectCurrentPage, labelData } from "../../../actions/resource";
 import { AppDispatch } from "../../../config/store";
 import { projectsSliceSelectors } from "../../../slices/Projects/projectsSlice";
 import { Resource, resourcesSliceSelectors } from "../../../slices/Resources/resourcesSlice";
@@ -27,13 +26,15 @@ type LabelDataProps = {
 export default function LabelData({ projectId, open, setOpen }: LabelDataProps) {
   const createLoading = useSelector(projectsSliceSelectors.createLoading);
   const projectCurrentPage = useSelector(resourcesSliceSelectors.projectCurrentPage);
-  const labelingData = useSelector(resourcesSliceSelectors.labelingData);
   const labelingResources = useSelector(resourcesSliceSelectors.labelingResources);
+  const labelingFields = useSelector(resourcesSliceSelectors.labelingFields);
   const labelingDataLoading = useSelector(resourcesSliceSelectors.labelingDataLoading);
   const dispatch = useDispatch<AppDispatch>();
 
-  const currentResource: Resource = labelingResources.find((r) => r.ordinalNumber === projectCurrentPage) || {};
-  const { outputFields: reduxFields } = currentResource || {};
+  const [currentResourceNumber, setCurrentResourceNumber] = useState(projectCurrentPage || 1);
+
+  const currentResource: Resource = labelingResources.find((r) => r.ordinalNumber === currentResourceNumber) || {};
+  const reduxFields = currentResource.outputFields?.length > 0 ? currentResource.outputFields : labelingFields;
 
   const {
     register,
@@ -43,37 +44,34 @@ export default function LabelData({ projectId, open, setOpen }: LabelDataProps) 
     formState: { errors },
   } = useForm();
 
-  const { fields, append } = useFieldArray({
-    control,
-    name: "labelDataForm", // unique name for your Field Array
-  });
-
   useEffect(() => {
-    // first we fetch current page, then we fetch labeling data
+    if (projectCurrentPage) {
+      setCurrentResourceNumber(projectCurrentPage || 1);
+    }
     if (projectId && !projectCurrentPage) {
       dispatch(getProjectCurrentPage(projectId));
     }
   }, [dispatch, projectCurrentPage, projectId]);
 
   useEffect(() => {
-    // upon receiving labeling data we append form fields
     if (reduxFields && reduxFields.length > 0) {
-      reduxFields.forEach((field) => {
-        append({ [field.name]: field.value || "" });
-      });
+      const formValues = reduxFields.reduce((form, field) => ({ ...form, [field.name]: field.value || "" }), {});
+      reset(formValues);
     }
-  }, [append, reduxFields]);
+  }, [reset, reduxFields]);
 
   const onSubmit: SubmitHandler<any> = (data) => {
     const modifiedFields = reduxFields?.map((field, i) => ({
       ...field,
-      value: data.labelDataForm[i][field.name],
+      value: data[field.name],
     }));
 
-    const modifiedLabelingData = { ...labelingData, fields: modifiedFields };
+    const modifiedLabelingData = { ...currentResource, fields: modifiedFields };
 
     const onDone = () => {
-      setOpen(false);
+      if (currentResourceNumber === labelingResources.length) {
+        setOpen(false);
+      }
       reset();
     };
     dispatch(labelData({ submitData: { id: projectId, labelingData: modifiedLabelingData }, onDone }));
@@ -92,32 +90,50 @@ export default function LabelData({ projectId, open, setOpen }: LabelDataProps) 
       {labelingDataLoading || !projectCurrentPage ? (
         <LoadingSpinner size={Size.XL} />
       ) : (
-        <>
-          <div className="font-bold flex justify-center mt-2 mb-4">{labelingData?.title || "Resource title"}</div>
-          <div className="mt-2 mb-4">{labelingData?.text || ""}</div>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-3 mb-8">
-              {fields && fields.length > 0
-                ? fields.map((item, i) => (
-                    <Field
-                      key={item.id}
-                      field={reduxFields && reduxFields[i] ? reduxFields[i] : null}
-                      index={i}
-                      register={register}
-                      errors={errors}
-                    />
-                  ))
-                : "No labeling data."}
-            </div>
-            {labelingResources.length > 0 && labelingResources.length > projectCurrentPage && (
-              <input
-                disabled={createLoading}
-                className={`btn btn-success w-full ${createLoading && "loading"}`}
-                type="submit"
-              />
-            )}
-          </form>
-        </>
+        <div className={"flex flex-row"}>
+          <div className={"w-64"}>
+            <ul>
+              {labelingResources.map((r) => (
+                <li
+                  key={r.ordinalNumber}
+                  className={`${r.ordinalNumber <= projectCurrentPage ? "cursor-pointer" : ""} ${
+                    r.ordinalNumber === currentResourceNumber ? "text-green-600 font-bold" : ""
+                  }`}
+                  onClick={
+                    r.ordinalNumber <= projectCurrentPage
+                      ? () => {
+                          setCurrentResourceNumber(r.ordinalNumber);
+                          reset();
+                        }
+                      : undefined
+                  }
+                >
+                  {r.title}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className={"flex-1 min-w-0"}>
+            <div className="font-bold flex justify-center mt-2 mb-4">{currentResource.title || "Resource title"}</div>
+            <div className="mt-2 mb-4">{currentResource.text || ""}</div>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-3 mb-8">
+                {reduxFields && reduxFields.length > 0
+                  ? reduxFields.map((item) => (
+                      <Field key={item.name} field={item} register={register} errors={errors} />
+                    ))
+                  : "No labeling data."}
+              </div>
+              {labelingResources.length > 0 && (
+                <input
+                  disabled={createLoading}
+                  className={`btn btn-success w-full ${createLoading && "loading"}`}
+                  type="submit"
+                />
+              )}
+            </form>
+          </div>
+        </div>
       )}
     </Modal>
   );
