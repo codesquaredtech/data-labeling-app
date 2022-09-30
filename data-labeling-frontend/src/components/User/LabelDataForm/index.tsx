@@ -24,11 +24,11 @@ type LabelDataProps = {
 };
 
 export default function LabelData({ projectId, open, setOpen }: LabelDataProps) {
-  const createLoading = useSelector(projectsSliceSelectors.createLoading);
   const projectCurrentPage = useSelector(resourcesSliceSelectors.projectCurrentPage);
   const labelingResources = useSelector(resourcesSliceSelectors.labelingResources);
   const labelingFields = useSelector(resourcesSliceSelectors.labelingFields);
   const labelingDataLoading = useSelector(resourcesSliceSelectors.labelingDataLoading);
+  const labelingInProgress = useSelector(resourcesSliceSelectors.labelingInProgress);
   const dispatch = useDispatch<AppDispatch>();
 
   const [currentResourceNumber, setCurrentResourceNumber] = useState(projectCurrentPage || 1);
@@ -77,6 +77,30 @@ export default function LabelData({ projectId, open, setOpen }: LabelDataProps) 
     dispatch(labelData({ submitData: { id: projectId, labelingData: modifiedLabelingData }, onDone }));
   };
 
+  const getResourceClassNames = (ordinalNumber: number) => {
+    const classNames = [];
+    if (!projectCurrentPage) return [];
+
+    if (ordinalNumber === currentResourceNumber) {
+      classNames.push("font-bold");
+      classNames.push("cursor-pointer");
+    }
+    if (ordinalNumber > projectCurrentPage) {
+      classNames.push("text-gray-400");
+    } else if (ordinalNumber < projectCurrentPage || projectCurrentPage === labelingResources.length) {
+      classNames.push("text-green-600");
+      classNames.push("cursor-pointer");
+    }
+    return classNames;
+  };
+
+  const resourceClickFunction = (ordinalNumber: number) => {
+    if (!projectCurrentPage || ordinalNumber > projectCurrentPage) return;
+
+    setCurrentResourceNumber(ordinalNumber);
+    reset();
+  };
+
   return (
     <Modal
       open={open}
@@ -93,24 +117,17 @@ export default function LabelData({ projectId, open, setOpen }: LabelDataProps) 
         <div className={"flex flex-row"}>
           <div className={"w-64"}>
             <ul>
-              {labelingResources.map((r) => (
-                <li
-                  key={r.ordinalNumber}
-                  className={`${r.ordinalNumber <= projectCurrentPage ? "cursor-pointer" : ""} ${
-                    r.ordinalNumber === currentResourceNumber ? "text-green-600 font-bold" : ""
-                  }`}
-                  onClick={
-                    r.ordinalNumber <= projectCurrentPage
-                      ? () => {
-                          setCurrentResourceNumber(r.ordinalNumber);
-                          reset();
-                        }
-                      : undefined
-                  }
-                >
-                  {r.title}
-                </li>
-              ))}
+              {labelingResources.map((r) => {
+                return (
+                  <li
+                    key={r.ordinalNumber}
+                    className={getResourceClassNames(r.ordinalNumber).join(" ")}
+                    onClick={() => resourceClickFunction(r.ordinalNumber)}
+                  >
+                    {r.title}
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div className={"flex-1 min-w-0"}>
@@ -126,8 +143,8 @@ export default function LabelData({ projectId, open, setOpen }: LabelDataProps) 
               </div>
               {labelingResources.length > 0 && (
                 <input
-                  disabled={createLoading}
-                  className={`btn btn-success w-full ${createLoading && "loading"}`}
+                  disabled={labelingInProgress}
+                  className={`btn btn-success w-full ${labelingInProgress && "loading"}`}
                   type="submit"
                 />
               )}

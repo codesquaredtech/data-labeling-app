@@ -30,6 +30,7 @@ interface InitState {
   projectCurrentPage: number | null;
   labelingData: null | LabelingData;
   labelingDataLoading: boolean;
+  labelingInProgress: boolean;
   labelingResources: any[];
   outputFields: any[];
   error: any;
@@ -43,6 +44,7 @@ const initialState: InitState = {
   projectCurrentPage: null,
   labelingData: null,
   labelingDataLoading: false,
+  labelingInProgress: false,
   labelingResources: [],
   outputFields: [],
   error: null,
@@ -86,8 +88,15 @@ export const resourcesSlice = createSlice({
     builder.addCase(getLabelingData.fulfilled, (state, { payload }: PayloadAction<LabelingData>) => {
       state.labelingData = payload;
     });
+    builder.addCase(labelData.pending, (state) => {
+      state.labelingInProgress = true;
+    });
     builder.addCase(labelData.fulfilled, (state, { payload }: PayloadAction<number>) => {
+      state.labelingInProgress = false;
       state.projectCurrentPage = payload;
+    });
+    builder.addCase(labelData.rejected, (state) => {
+      state.labelingInProgress = false;
     });
   },
 });
@@ -116,6 +125,10 @@ export const resourcesSliceSelectors = {
   projectCurrentPage: (rootState: RootState) => {
     const appState = getAppState(rootState);
     return appState.projectCurrentPage;
+  },
+  labelingInProgress: (rootState: RootState) => {
+    const appState = getAppState(rootState);
+    return appState.labelingInProgress;
   },
   labelingData: (rootState: RootState) => {
     const appState = getAppState(rootState);
