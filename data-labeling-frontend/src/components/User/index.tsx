@@ -70,6 +70,12 @@ export const User = () => {
         width: 450,
       },
       {
+        Header: "Resources",
+        accessor: "numberOfResources",
+        disableFilters: true,
+        width: 100,
+      },
+      {
         Header: "Metadata",
         accessor: "metadata",
         disableFilters: true,

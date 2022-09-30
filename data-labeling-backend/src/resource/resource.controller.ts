@@ -39,10 +39,14 @@ export class ResourceController {
   ) {
     const project = await this.projectService.findProject(projectId);
 
-    return await this.resourceService.createResourceForService(
+    const data = await this.resourceService.createResourceForService(
       template,
       project,
     );
+    project.numberOfResources = await this.resourceService.countByProject(projectId);
+    await this.projectService.updateProject(projectId, project);
+
+    return data;
   }
 
   @Roles(Role.Admin)
@@ -91,6 +95,10 @@ export class ResourceController {
       resourceId,
       resource,
     );
+
+    const project = await this.projectService.findProject(projectId);
+    project.numberOfResources = await this.resourceService.countByProject(projectId);
+    await this.projectService.updateProject(projectId, project);
 
     return updated;
   }

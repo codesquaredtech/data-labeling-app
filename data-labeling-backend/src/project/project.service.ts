@@ -103,6 +103,7 @@ export class ProjectService {
     project.title = projectTemplate.title;
     project.description = projectTemplate.description;
     project.identNumber = projectTemplate.identNumber;
+    project.numberOfResources = 0;
     project.users = [];
     project.metadata = [];
     this.createProject(project);
@@ -118,7 +119,7 @@ export class ProjectService {
       dto.id = p.identNumber;
       dto.title = p.title;
       dto.description = p.description;
-      // dto.numberOfResources = p.numberOfResources; // if we have a filter for completed projects
+      dto.numberOfResources = p.numberOfResources || 0;
       dto.usersLastResource = usersLastResource?.ordinalNumber || 0;
       return dto;
     });
