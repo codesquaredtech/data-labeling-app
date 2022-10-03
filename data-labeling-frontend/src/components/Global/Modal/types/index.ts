@@ -12,4 +12,5 @@ export type ModalProps = {
   closeButton?: boolean;
   hideButton?: boolean;
   children: ReactChild;
+  preventClickOutside?: boolean;
 };

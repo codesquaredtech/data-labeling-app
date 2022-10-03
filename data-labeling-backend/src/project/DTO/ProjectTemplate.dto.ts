@@ -4,6 +4,4 @@ export class ProjectTemplateDTO {
   title: string;
 
   description: string;
-
-  users: string[];
 }

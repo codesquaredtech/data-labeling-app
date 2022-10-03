@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Select from "react-select";
-import { createMetadata, getMetadataByProjectId, updateMetadata } from "../../../../actions/metadata";
+import { createMetadata, updateMetadata } from "../../../../actions/metadata";
 import { AppDispatch } from "../../../../config/store";
 import { metadataSliceSelectors, setEditMetadata } from "../../../../slices/Metadata/metadataSlice";
 import { MetadataTypes } from "../../../../types/global";
@@ -63,15 +63,14 @@ export default function CreateEditMetadataForm({ onDone }: { onDone?: () => void
   const onSubmit: SubmitHandler<InitData> = (data) => {
     if (!projectId) return;
     const onDoneHandler = () => {
-      dispatch(getMetadataByProjectId(projectId));
       if (onDone) onDone();
       reset();
     };
     const modifiedData = { ...data, type: data.type.value };
     if (editMetadata) {
-      dispatch(updateMetadata({ id: metadataId, submitData: modifiedData, onDone: onDoneHandler }));
+      dispatch(updateMetadata({ projectId, id: metadataId, submitData: modifiedData, onDone: onDoneHandler }));
     } else {
-      dispatch(createMetadata({ id: projectId, submitData: modifiedData, onDone: onDoneHandler }));
+      dispatch(createMetadata({ projectId, submitData: modifiedData, onDone: onDoneHandler }));
     }
   };
 

@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { deleteMetadata, getMetadataByProjectId } from "../../../../../actions/metadata";
+import { deleteMetadata } from "../../../../../actions/metadata";
 import { AppDispatch } from "../../../../../config/store";
-import { metadataSliceSelectors, setEditMetadata } from "../../../../../slices/Metadata/metadataSlice";
+import { setEditMetadata } from "../../../../../slices/Metadata/metadataSlice";
 import DeleteModal from "../../../../Global/DeleteModal";
 import Modal from "../../../../Global/Modal";
 import CreateEditMetadataForm from "../../Metadata/CreateEditMetadataForm";
 import Card from "../Card";
+import { projectsSliceSelectors } from "../../../../../slices/Projects/projectsSlice";
 
 export default function MetadataList() {
-  const metadata = useSelector(metadataSliceSelectors.metadataList);
+  const metadata = useSelector(projectsSliceSelectors.projectMetadata);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [metadataId, setMetadataId] = useState<string | null>(null);
@@ -22,10 +23,9 @@ export default function MetadataList() {
   const handleDeleteMetadata = () => {
     if (projectId && metadataId) {
       const onDone = () => {
-        dispatch(getMetadataByProjectId(projectId));
         setDeleteModalOpen(false);
       };
-      dispatch(deleteMetadata({ data: { projectId, metadataId }, onDone }));
+      dispatch(deleteMetadata({ projectId, metadataId, onDone }));
     }
   };
 

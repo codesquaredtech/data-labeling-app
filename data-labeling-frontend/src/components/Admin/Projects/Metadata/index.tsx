@@ -5,14 +5,15 @@ import { CellValue } from "react-table";
 import { clearState, metadataSliceSelectors } from "../../../../slices/Metadata/metadataSlice";
 import { AppDispatch } from "../../../../config/store";
 import Table from "../../../Global/Table";
-import { deleteMetadata, getMetadataByProjectId } from "../../../../actions/metadata";
+import { deleteMetadata } from "../../../../actions/metadata";
 import { useParams } from "react-router-dom";
 import DeleteModal from "../../../Global/DeleteModal";
 import CreateEditMetadataForm from "./CreateEditMetadataForm";
 import Modal from "../../../Global/Modal";
+import { projectsSliceSelectors } from "../../../../slices/Projects/projectsSlice";
 
 export const Metadata = () => {
-  const data = useSelector(metadataSliceSelectors.metadataList);
+  const data = useSelector(projectsSliceSelectors.projectMetadata);
   const loading = useSelector(metadataSliceSelectors.fetchLoading);
   const { id: projectId } = useParams();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -26,22 +27,12 @@ export const Metadata = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {
-    if (projectId) {
-      dispatch(getMetadataByProjectId(projectId));
-    }
-    return () => {
-      dispatch(clearState());
-    };
-  }, [dispatch, projectId]);
-
   const handleDeleteMetadata = () => {
     if (projectId && metadataId) {
       const onDone = () => {
-        dispatch(getMetadataByProjectId(projectId));
         setDeleteModalOpen(false);
       };
-      dispatch(deleteMetadata({ data: { projectId, metadataId }, onDone }));
+      dispatch(deleteMetadata({ projectId, metadataId, onDone }));
     }
   };
 

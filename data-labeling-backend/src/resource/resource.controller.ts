@@ -14,7 +14,6 @@ import { ResourceService } from './resource.service';
 import { Roles } from 'src/auth/roles.decorator';
 import { ProjectService } from 'src/project/project.service';
 import { UserService } from 'src/user/user.service';
-import { MetadataService } from 'src/project/metadata.service';
 import { ProjectMetadataDTO } from 'src/project/DTO/ProjectMetadata.dto';
 import { ObjectId } from 'mongodb';
 
@@ -24,7 +23,6 @@ export class ResourceController {
   constructor(
     private readonly resourceService: ResourceService,
     private readonly projectService: ProjectService,
-    private readonly metadataService: MetadataService,
     private readonly userService: UserService,
   ) {}
 
@@ -41,10 +39,14 @@ export class ResourceController {
   ) {
     const project = await this.projectService.findProject(projectId);
 
-    return await this.resourceService.createResourceForService(
+    const data = await this.resourceService.createResourceForService(
       template,
       project,
     );
+    project.numberOfResources = await this.resourceService.countByProject(projectId);
+    await this.projectService.updateProject(projectId, project);
+
+    return data;
   }
 
   @Roles(Role.Admin)
@@ -94,6 +96,10 @@ export class ResourceController {
       resource,
     );
 
+    const project = await this.projectService.findProject(projectId);
+    project.numberOfResources = await this.resourceService.countByProject(projectId);
+    await this.projectService.updateProject(projectId, project);
+
     return updated;
   }
 
@@ -106,6 +112,7 @@ export class ResourceController {
   ) {
     const project = await this.projectService.findProject(id);
     const resource = await this.resourceService.findByOrdinalNumber(
+      project.identNumber,
       numberOfResource,
       project._id.toString(),
     );
@@ -113,7 +120,7 @@ export class ResourceController {
       project.identNumber,
     );
 
-    return await this.metadataService.getMetadataOptions(
+    return await this.projectService.getMetadataOptions(
       project,
       resource,
       resourceList,
@@ -138,6 +145,7 @@ export class ResourceController {
   ) {
     const project = await this.projectService.findProject(projectId);
     const resource = await this.resourceService.findByOrdinalNumber(
+      project.identNumber,
       body.ordinalNumber,
       project._id.toString(),
     );

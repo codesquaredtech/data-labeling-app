@@ -1,4 +1,7 @@
+import { Metadata } from '../../project/models/metamodel.model';
+
 export class currentPageDTO {
   page: number;
-  total: number;
+  resources: any[];
+  metadata: Metadata[];
 }

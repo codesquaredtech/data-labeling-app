@@ -1,7 +1,8 @@
+import { Types } from 'mongoose';
+
 export class OutputData {
-  resourceId: string;
-  type: string;
   name: string;
+  type: string;
   value: string | boolean;
-  _id: string;
+  userId: Types.ObjectId;
 }

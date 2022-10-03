@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const SLICE_NAME = "metadata";
 
-type Metadata = {
+export type Metadata = {
   _id: string;
   name: string;
   type: string;
@@ -51,6 +51,7 @@ export const metadataSlice = createSlice({
     });
     builder.addCase(createMetadata.pending, (state) => {
       state.createLoading = true;
+      state.error = null;
     });
     builder.addCase(createMetadata.fulfilled, (state) => {
       state.createLoading = false;
@@ -75,7 +76,6 @@ export const metadataSliceSelectors = {
     const appState = getAppState(rootState);
     return appState.createLoading;
   },
-
   metadataList: (rootState: RootState) => {
     const appState = getAppState(rootState);
     return appState.metadataList;

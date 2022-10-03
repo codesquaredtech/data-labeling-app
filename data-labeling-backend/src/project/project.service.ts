@@ -11,6 +11,8 @@ import { ProjectMetadataDTO } from './DTO/ProjectMetadata.dto';
 import { ProjectTemplateDTO } from './DTO/ProjectTemplate.dto';
 import { Project, ProjectDocument } from './models/project.model';
 import { UserAndTheirLastResource } from './models/userLastResource.model';
+import { UsersProjectDto } from './DTO/UsersProject.dto';
+import { Metadata } from './models/metamodel.model';
 
 @Injectable()
 export class ProjectService {
@@ -65,7 +67,7 @@ export class ProjectService {
   ) {
     const userAndTheirLastResource = new UserAndTheirLastResource();
     userAndTheirLastResource.ordinalNumber = ordinalNumber;
-    userAndTheirLastResource.userId = user._id.toString();
+    userAndTheirLastResource.userId = user._id;
     project.userAndTheirLastResource.push(userAndTheirLastResource);
     const updatedProject = await this.updateProject(
       project.identNumber,
@@ -74,17 +76,26 @@ export class ProjectService {
     console.log(updatedProject);
   }
 
-  async findIfExist(resource: Resource, project: Project, user: User) {
-    for (const labeled of project.userAndTheirLastResource) {
-      if (
-        labeled.ordinalNumber + 1 == resource.ordinalNumber &&
-        labeled.userId == user._id.toString()
-      ) {
-        return labeled;
-      } else {
-        return null;
-      }
+  async updateUsersLastResource(
+    resource: Resource,
+    project: Project,
+    user: User,
+  ) {
+    let usersLastResource = project.userAndTheirLastResource.find(
+      (u) => user._id.equals(u.userId)
+    );
+    if (!usersLastResource) {
+      usersLastResource = new UserAndTheirLastResource();
+      usersLastResource.userId = user._id;
+      project.userAndTheirLastResource.push(usersLastResource);
     }
+
+    if (resource.ordinalNumber <= usersLastResource.ordinalNumber) {
+      return;
+    }
+
+    usersLastResource.ordinalNumber = resource.ordinalNumber;
+    await this.updateProject(project.identNumber, project);
   }
 
   async createProjectFromTemplate(projectTemplate: ProjectTemplateDTO) {
@@ -92,34 +103,26 @@ export class ProjectService {
     project.title = projectTemplate.title;
     project.description = projectTemplate.description;
     project.identNumber = projectTemplate.identNumber;
+    project.numberOfResources = 0;
     project.users = [];
-    for (const userId of projectTemplate.users) {
-      const user = await this.userService.findUser(userId);
-      console.log(user);
-      project.users.push(user);
-    }
+    project.metadata = [];
     this.createProject(project);
   }
 
-  async getProjectByUsers(projects: Project[]) {
-    const result = [];
-    for (const p of projects) {
-      const resourceNumberTotal = await this.resourceService.findByProject(
-        p.identNumber,
+  async getProjectByUsers(userId: ObjectId) {
+    const projects = await this.findByUser(userId);
+    return projects.map((p) => {
+      const usersLastResource = p.userAndTheirLastResource.find(
+        (u) => u.userId == userId,
       );
-      if (p.userAndTheirLastResource.length == 0) {
-        result.push(p);
-      } else {
-        for (const r of p.userAndTheirLastResource) {
-          if (r.ordinalNumber < resourceNumberTotal.length) {
-            result.push(p);
-          }
-        }
-      }
-    }
-
-    console.log(result);
-    return result;
+      const dto = new UsersProjectDto();
+      dto.id = p.identNumber;
+      dto.title = p.title;
+      dto.description = p.description;
+      dto.numberOfResources = p.numberOfResources || 0;
+      dto.usersLastResource = usersLastResource?.ordinalNumber || 0;
+      return dto;
+    });
   }
 
   async acceptLabeledData(
@@ -128,15 +131,14 @@ export class ProjectService {
     user: User,
     body: ProjectMetadataDTO,
   ) {
-    if (!resource.outputFields || resource.outputFields.length === 0) {
-      resource.outputFields = [];
-    }
+    resource.outputFields = resource.outputFields?.filter((f) => !user._id.equals(f.userId)) || []
 
-    for (const b of body.fields) {
+    for (const metadata of body.fields) {
       const outputFields = new OutputData();
-      outputFields.name = b.name;
-      outputFields.type = b.type;
-      outputFields.value = b.value;
+      outputFields.name = metadata.name;
+      outputFields.type = metadata.type;
+      outputFields.value = metadata.value;
+      outputFields.userId = user._id;
       if (outputFields.value == null) {
         outputFields.value = false;
       }
@@ -148,17 +150,45 @@ export class ProjectService {
       resource._id,
       resource,
     );
-    const labeled = await this.findIfExist(resource, project, user);
+    await this.updateUsersLastResource(resource, project, user);
+  }
 
-    if (labeled == null) {
-      this.createUserLastResource(resource.ordinalNumber, project, user);
-    } else {
-      labeled.ordinalNumber++;
-      const updatedProject = await this.updateProject(
-        project.identNumber,
-        project,
-      );
-      console.log(updatedProject.userAndTheirLastResource.length);
-    }
+  async createMetadata(projectId: string, metadata: Metadata) {
+    const project = await this.findProject(projectId);
+    metadata._id = new ObjectId();
+    project.metadata.push(metadata);
+    return await this.updateProject(projectId, project);
+  }
+
+  async deleteMetadata(projectId: string, id: string) {
+    const project = await this.findProject(projectId);
+    project.metadata = project.metadata.filter(
+      (md) => md._id.toString() !== id,
+    );
+    return await this.updateProject(projectId, project);
+  }
+
+  async updateMetadata(projectId, id, dto): Promise<Project> {
+    const project = await this.findProject(projectId);
+    project.metadata = project.metadata.map((md) =>
+      md._id.toString() === id ? { ...md, ...dto } : md,
+    );
+    return await this.updateProject(projectId, project);
+  }
+
+  async getMetadataOptions(
+    project: Project,
+    resource: Resource,
+    resourceList: Resource[],
+  ) {
+    const metadataProjectDTO = new ProjectMetadataDTO();
+    metadataProjectDTO.fields = project.metadata;
+    metadataProjectDTO.projectId = project.identNumber;
+    metadataProjectDTO.text = resource.text;
+    metadataProjectDTO.title = resource.title;
+    metadataProjectDTO.totalNumber = resourceList.length;
+    metadataProjectDTO.ordinalNumber = resource.ordinalNumber;
+
+    return metadataProjectDTO;
   }
 }

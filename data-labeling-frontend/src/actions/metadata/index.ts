@@ -4,9 +4,13 @@ import { Metadata } from "../../components/Admin/Projects/Metadata/CreateEditMet
 import { createMetadataApi, deleteMetadataApi, getMetadataByProjectIdApi } from "./../../services/metadata";
 
 export type CreateMetadataPayload = {
-  id: string;
+  projectId: string;
   submitData: Metadata;
   onDone: () => void;
+};
+
+export type UpdateMetadataPayload = CreateMetadataPayload & {
+  id: string;
 };
 
 export type DeleteMetadataDTO = {
@@ -14,8 +18,7 @@ export type DeleteMetadataDTO = {
   metadataId: string;
 };
 
-export type DeleteMetadataPayload = {
-  data: DeleteMetadataDTO;
+export type DeleteMetadataPayload = DeleteMetadataDTO & {
   onDone: () => void;
 };
 
@@ -36,9 +39,9 @@ export const getMetadataByProjectId = createAsyncThunk(
 
 export const createMetadata = createAsyncThunk(
   "metadata/create",
-  async ({ id, submitData, onDone }: CreateMetadataPayload, { rejectWithValue }) => {
+  async ({ projectId, submitData, onDone }: CreateMetadataPayload, { rejectWithValue }) => {
     try {
-      const { data } = await createMetadataApi(id, submitData);
+      const { data } = await createMetadataApi(projectId, submitData);
       if (onDone) {
         onDone();
       }
@@ -54,9 +57,9 @@ export const createMetadata = createAsyncThunk(
 
 export const updateMetadata = createAsyncThunk(
   "metadata/update",
-  async ({ id, submitData, onDone }: CreateMetadataPayload, { rejectWithValue }) => {
+  async ({ projectId, id, submitData, onDone }: UpdateMetadataPayload, { rejectWithValue }) => {
     try {
-      const { data } = await updateMetadataApi(id, submitData);
+      const { data } = await updateMetadataApi(projectId, id, submitData);
       if (onDone) {
         onDone();
       }
@@ -72,12 +75,13 @@ export const updateMetadata = createAsyncThunk(
 
 export const deleteMetadata = createAsyncThunk(
   "metadata/deleteMetadata",
-  async ({ data, onDone }: DeleteMetadataPayload, { rejectWithValue }) => {
+  async ({ projectId, metadataId, onDone }: DeleteMetadataPayload, { rejectWithValue }) => {
     try {
-      await deleteMetadataApi(data);
+      const { data } = await deleteMetadataApi(projectId, metadataId);
       if (onDone) {
         onDone();
       }
+      return data;
     } catch (err: any) {
       if (!err.response) {
         throw err;

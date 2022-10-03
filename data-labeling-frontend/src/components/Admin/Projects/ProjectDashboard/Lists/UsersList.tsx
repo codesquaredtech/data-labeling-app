@@ -26,7 +26,7 @@ export default function UsersList() {
         dispatch(getUsersByProjectId(projectId));
         setDeleteModalOpen(false);
       };
-      dispatch(deleteUser({ data: { projectId, userId }, onDone }));
+      dispatch(deleteUser({ projectId, userId, onDone }));
     }
   };
 

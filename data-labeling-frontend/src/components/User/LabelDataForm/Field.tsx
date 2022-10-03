@@ -10,7 +10,6 @@ export type FormField = {
 
 export type FieldProps = {
   field: FormField | null;
-  index: number;
   register: UseFormRegister<any>;
   errors: FieldErrorsImpl<DeepRequired<any>>;
 };
@@ -19,7 +18,7 @@ export interface Key {
   key: number;
 }
 
-export const Field = ({ index, field, register, errors }: FieldProps) => {
+export const Field = ({ field, register, errors }: FieldProps) => {
   const { type, name } = field ?? {};
 
   switch (type) {
@@ -32,11 +31,11 @@ export const Field = ({ index, field, register, errors }: FieldProps) => {
                 <span className="label-text">{name}</span>
               </label>
               <input
-                {...register(`labelDataForm.${index}.${name}`)}
+                {...register(name)}
                 type="text"
-                className={`input w-full input-bordered ${errors.labelDataForm?.[index]?.[name] ? "is-invalid" : ""}`}
+                className={`input w-full input-bordered ${errors[name] ? "is-invalid" : ""}`}
               />
-              <div className="invalid-feedback">{errors.labelDataForm?.[index]?.[name]?.message}</div>
+              <div className="invalid-feedback">{errors[name]?.message}</div>
             </>
           )}
         </div>
@@ -50,11 +49,11 @@ export const Field = ({ index, field, register, errors }: FieldProps) => {
                 <span className="label-text">{name}</span>
               </label>
               <input
-                {...register(`labelDataForm.${index}.${name}`)}
+                {...register(name)}
                 type="number"
-                className={`input w-full input-bordered ${errors.labelDataForm?.[index]?.[name] ? "is-invalid" : ""}`}
+                className={`input w-full input-bordered ${errors[name] ? "is-invalid" : ""}`}
               />
-              <div className="invalid-feedback">{errors.labelDataForm?.[index]?.[name]?.message}</div>
+              <div className="invalid-feedback">{errors[name]?.message}</div>
             </>
           )}
         </div>
@@ -68,11 +67,11 @@ export const Field = ({ index, field, register, errors }: FieldProps) => {
                 <span className="label-text">{name}</span>
               </label>
               <input
-                {...register(`labelDataForm.${index}.${name}`)}
+                {...register(name)}
                 type="checkbox"
-                className={`checkbox checkbox-primary${errors.labelDataForm?.[index]?.[name] ? "is-invalid" : ""}`}
+                className={`checkbox checkbox-primary${errors[name] ? "is-invalid" : ""}`}
               />
-              <div className="invalid-feedback">{errors.labelDataForm?.[index]?.[name]?.message}</div>
+              <div className="invalid-feedback">{errors[name]?.message}</div>
             </>
           )}
         </div>

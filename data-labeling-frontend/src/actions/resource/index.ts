@@ -139,7 +139,7 @@ export const labelData = createAsyncThunk(
       if (onDone) {
         onDone();
       }
-      return data;
+      return submitData.labelingData.ordinalNumber + 1;
     } catch (err: any) {
       if (!err.response) {
         throw err;

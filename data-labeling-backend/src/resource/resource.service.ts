@@ -65,8 +65,17 @@ export class ResourceService {
     return resources;
   }
 
-  async findByOrdinalNumber(nr: number, id: string) {
-    const resource = <Resource>await this.resourceModel
+  async countByProject(projectId: string) {
+    const connection = await this.globalService.getConnection(projectId);
+
+    const resourceModel = connection.model('Resource', ResourceSchema);
+    return await resourceModel.count({ deleted: false || undefined }).exec();
+  }
+
+  async findByOrdinalNumber(projectId: string, nr: number, id: string) {
+    const connection = await this.globalService.getConnection(projectId);
+    const resourceModel = connection.model('Resource', ResourceSchema);
+    const resource = <Resource>await resourceModel
       .findOne({ ordinalNumber: nr, project: new ObjectId(id) })
       .lean()
       .exec();
@@ -77,7 +86,9 @@ export class ResourceService {
     template: ResourceTemplate[],
     project: Project,
   ) {
-    let number = 0;
+    let number =
+      project.numberOfResources ||
+      (await this.countByProject(project.identNumber));
     for (const res of template) {
       number++;
       const newResource = new Resource();
@@ -91,19 +102,21 @@ export class ResourceService {
 
   async findCurrentPage(project: Project, user: User) {
     const currentPage = new currentPageDTO();
+    const usersLastResource = project.userAndTheirLastResource.find((r) =>
+      user._id.equals(r.userId),
+    );
 
-    for (const p of project.userAndTheirLastResource) {
-      if (p.userId === user._id.toString()) {
-        currentPage.page = p.ordinalNumber + 1;
-      }
+    const resources = await this.findByProject(project.identNumber);
+    resources.forEach((r) => {
+      r.outputFields = r.outputFields.filter((f) => user._id.equals(f.userId));
+    });
+
+    currentPage.page = usersLastResource?.ordinalNumber || 0;
+    if (currentPage.page < resources.length) {
+      currentPage.page = currentPage.page + 1;
     }
-
-    if (project.userAndTheirLastResource.length == 0) {
-      currentPage.page = 1;
-    }
-
-    const resource = await this.findByProject(project.identNumber);
-    currentPage.total = resource.length;
+    currentPage.resources = resources;
+    currentPage.metadata = project.metadata;
 
     return currentPage;
   }
