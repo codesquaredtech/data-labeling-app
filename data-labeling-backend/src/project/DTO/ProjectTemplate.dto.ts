@@ -4,4 +4,6 @@ export class ProjectTemplateDTO {
   title: string;
 
   description: string;
+
+  draft?: boolean;
 }

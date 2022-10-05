@@ -17,13 +17,13 @@ type CreateProjectPayload = {
 };
 
 export type UpdateProjectDTO = {
-  data: Pick<Project, "title" | "description">;
+  data: Pick<Project, "title" | "description" | "draft">;
   projectId: string;
 };
 
 type UpdateProjectPayload = {
   submitData: UpdateProjectDTO;
-  onDone: () => void;
+  onDone?: () => void;
 };
 
 export type DeleteUserDTO = {

@@ -17,6 +17,7 @@ export type Project = {
   identNumber: string;
   title: string;
   description: string;
+  draft?: boolean;
   users: string[];
   metadata: Metadata[];
 };

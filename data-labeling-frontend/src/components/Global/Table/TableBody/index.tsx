@@ -8,7 +8,10 @@ const TableBody = ({ getTableBodyProps, prepareRow, page }: TablePropsBody) => {
       {page.map((row) => {
         prepareRow(row);
         return (
-          <div {...row.getRowProps()} className="odd:bg-neutral-focus even:bg-neutral text-neutral-content border-0">
+          <div
+            {...row.getRowProps()}
+            className="odd:bg-neutral-focus even:bg-neutral text-neutral-content border-0  min-w-full"
+          >
             {row.cells.map((cell) => {
               return (
                 <div {...cell.getCellProps()} className="td px-[1.05rem] py-2">

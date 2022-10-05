@@ -101,6 +101,17 @@ export const Projects = () => {
         width: 600,
         Cell: ({ row }: CellValue) => <div className="truncate">{row.original.description}</div>,
       },
+      {
+        Header: "Draft",
+        width: 100,
+        accessor: "draft",
+        disableFilters: true,
+        Cell: ({ value }: CellValue) => (
+          <div>
+            <input type="checkbox" checked={value || value === undefined} className="checkbox" disabled />
+          </div>
+        ),
+      },
       { Header: "Users", width: 260, accessor: "users.length", disableFilters: true },
       { Header: "Metadata", width: 265, accessor: "metadata.length", disableFilters: true },
     ],

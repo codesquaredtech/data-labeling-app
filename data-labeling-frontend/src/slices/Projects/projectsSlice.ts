@@ -4,6 +4,7 @@ import {
   getAllAdminProjects,
   getAllUserProjects,
   createProject,
+  updateProject,
 } from "../../actions/project";
 import { RootState } from "../../config/store";
 import { createSlice } from "@reduxjs/toolkit";
@@ -77,6 +78,7 @@ export const projectsSlice = createSlice({
       (action) =>
         [
           getProjectById.fulfilled.type,
+          updateProject.fulfilled.type,
           createMetadata.fulfilled.type,
           updateMetadata.fulfilled.type,
           deleteMetadata.fulfilled.type,

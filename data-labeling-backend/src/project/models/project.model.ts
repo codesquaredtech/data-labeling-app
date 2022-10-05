@@ -26,6 +26,9 @@ export class Project {
   @Prop()
   numberOfResources: number;
 
+  @Prop()
+  draft: boolean;
+
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }] })
   users: User[];
 

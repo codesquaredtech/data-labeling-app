@@ -13,6 +13,8 @@ import { projectsSliceSelectors } from "../../../../../slices/Projects/projectsS
 
 export default function MetadataList() {
   const metadata = useSelector(projectsSliceSelectors.projectMetadata);
+  const { draft } = useSelector(projectsSliceSelectors.project) || {};
+
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [metadataId, setMetadataId] = useState<string | null>(null);
@@ -47,19 +49,21 @@ export default function MetadataList() {
         <div className="flex gap-2">
           <h2 className="text-2xl mb-4 text-neutral-content">Metadata</h2>
           <div className="divider w-full h-1 before:bg-gradient-to-r before:from-primary before:to-neutral-focus after:bg-neutral-focus" />
-          <button onClick={() => setCreateModalOpen(true)} className="btn btn-success btn-sm">
-            Add
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              fill="currentColor"
-              className="bi bi-plus"
-              viewBox="0 0 16 16"
-            >
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-            </svg>
-          </button>
+          {draft !== false && (
+            <button onClick={() => setCreateModalOpen(true)} className="btn btn-success btn-sm">
+              Add
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+                className="bi bi-plus"
+                viewBox="0 0 16 16"
+              >
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+              </svg>
+            </button>
+          )}
         </div>
         {metadata.length > 0 ? (
           <div className="overflow-y-auto">
@@ -70,8 +74,8 @@ export default function MetadataList() {
                   type="metadata"
                   title={meta.name}
                   subtitle={meta.type}
-                  onRemove={() => handleOpenDeleteModal(meta._id)}
-                  onEdit={() => handleEdit(meta._id)}
+                  onRemove={draft !== false ? () => handleOpenDeleteModal(meta._id) : undefined}
+                  onEdit={draft !== false ? () => handleEdit(meta._id) : undefined}
                 />
               ))
               .reverse()}
@@ -80,19 +84,23 @@ export default function MetadataList() {
           <div className="flex items-center justify-center h-full text-neutral-content">No metadata found.</div>
         )}
       </div>
-      {createModalOpen && (
-        <Modal visibleOverflow hideButton title="Add metadata" setOpen={setCreateModalOpen} open={createModalOpen}>
-          {/* Overflow visible added because of the dropdown inside the modal*/}
-          <CreateEditMetadataForm onDone={() => setCreateModalOpen(false)} />
-        </Modal>
-      )}
-      {deleteModalOpen && (
-        <DeleteModal
-          open={deleteModalOpen}
-          setOpen={setDeleteModalOpen}
-          onDelete={handleDeleteMetadata}
-          entityName="metadata"
-        />
+      {draft !== false && (
+        <>
+          {createModalOpen && (
+            <Modal visibleOverflow hideButton title="Add metadata" setOpen={setCreateModalOpen} open={createModalOpen}>
+              {/* Overflow visible added because of the dropdown inside the modal*/}
+              <CreateEditMetadataForm onDone={() => setCreateModalOpen(false)} />
+            </Modal>
+          )}
+          {deleteModalOpen && (
+            <DeleteModal
+              open={deleteModalOpen}
+              setOpen={setDeleteModalOpen}
+              onDelete={handleDeleteMetadata}
+              entityName="metadata"
+            />
+          )}
+        </>
       )}
     </>
   );

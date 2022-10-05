@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
@@ -43,9 +43,10 @@ export class ProjectService {
     return project;
   }
 
-  async findByUser(id): Promise<Project[]> {
+  async findByUserNotDraft(id): Promise<Project[]> {
     const projectList = <Project[]>await this.projectModel
       .find({
+        draft: false,
         users: new ObjectId(id),
       })
       .lean()
@@ -73,7 +74,6 @@ export class ProjectService {
       project.identNumber,
       project,
     );
-    console.log(updatedProject);
   }
 
   async updateUsersLastResource(
@@ -106,11 +106,12 @@ export class ProjectService {
     project.numberOfResources = 0;
     project.users = [];
     project.metadata = [];
+    project.draft = true;
     this.createProject(project);
   }
 
   async getProjectByUsers(userId: ObjectId) {
-    const projects = await this.findByUser(userId);
+    const projects = await this.findByUserNotDraft(userId);
     return projects.map((p) => {
       const usersLastResource = p.userAndTheirLastResource.find(
         (u) => u.userId == userId,
@@ -131,6 +132,10 @@ export class ProjectService {
     user: User,
     body: ProjectMetadataDTO,
   ) {
+    if(project.draft) {
+      throw new BadRequestException('Cannot label a draft project!');
+    }
+
     resource.outputFields = resource.outputFields?.filter((f) => !user._id.equals(f.userId)) || []
 
     for (const metadata of body.fields) {
@@ -155,6 +160,9 @@ export class ProjectService {
 
   async createMetadata(projectId: string, metadata: Metadata) {
     const project = await this.findProject(projectId);
+    if(!project.draft) {
+      throw new BadRequestException('Project setup is finished!');
+    }
     metadata._id = new ObjectId();
     project.metadata.push(metadata);
     return await this.updateProject(projectId, project);
@@ -162,6 +170,9 @@ export class ProjectService {
 
   async deleteMetadata(projectId: string, id: string) {
     const project = await this.findProject(projectId);
+    if(!project.draft) {
+      throw new BadRequestException('Project setup is finished!');
+    }
     project.metadata = project.metadata.filter(
       (md) => md._id.toString() !== id,
     );
@@ -170,6 +181,9 @@ export class ProjectService {
 
   async updateMetadata(projectId, id, dto): Promise<Project> {
     const project = await this.findProject(projectId);
+    if(!project.draft) {
+      throw new BadRequestException('Project setup is finished!');
+    }
     project.metadata = project.metadata.map((md) =>
       md._id.toString() === id ? { ...md, ...dto } : md,
     );

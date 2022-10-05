@@ -61,23 +61,22 @@ export const User = () => {
           </span>
         ),
       },
-      { Header: "ID", accessor: "id", disableFilters: true },
+      { Header: "ID", accessor: "id", disableFilters: true, width: 100 },
+      {
+        Header: "Completed",
+        accessor: (row: any) => row.numberOfResources == row.usersLastResource,
+        disableFilters: true,
+        width: 100,
+        Cell: ({ value }: CellValue) => (
+          <div>
+            <input type="checkbox" checked={value || value === undefined} className="checkbox" disabled />
+          </div>
+        ),
+      },
       { Header: "Title", accessor: "title", disableFilters: true, width: 300 },
       {
         Header: "Description",
         accessor: "description",
-        disableFilters: true,
-        width: 450,
-      },
-      {
-        Header: "Resources",
-        accessor: "numberOfResources",
-        disableFilters: true,
-        width: 100,
-      },
-      {
-        Header: "Metadata",
-        accessor: "metadata",
         disableFilters: true,
         width: 500,
       },
