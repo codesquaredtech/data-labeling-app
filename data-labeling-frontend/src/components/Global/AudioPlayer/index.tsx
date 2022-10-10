@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, MutableRefObject, useState, useCallback } from "react";
 import WaveSurfer from "wavesurfer.js";
 import WaveformRegionsPlugin from "wavesurfer.js/src/plugin/regions";
 import TimelinePlugin from "wavesurfer.js/src/plugin/timeline";
@@ -8,22 +8,23 @@ import daisyuiColors from "daisyui/src/colors/themes";
 import { getTheme } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../config/store";
-import { addRegion } from "../../../slices/Labeling/audioSlice";
+import { addRegion, audioLabelingSliceSelectors, setIsPlaying } from "../../../slices/Labeling/audioSlice";
+import { useSelector } from "react-redux";
 
 const PLAYBACK_SPEED_OPTIONS = [0.25, 0.5, 1, 1.5, 2];
 
 export const AudioPlayer = ({
-	url,
-	activeLabelColor,
+	waveformRef,
+	url = "",
 	zoomEnabled = false,
 }: {
+	waveformRef: MutableRefObject<WaveSurfer | null>;
 	url: string;
-	activeLabelColor?: { color: string; rgbColor: string };
 	zoomEnabled?: boolean;
 }) => {
-	const [isPlaying, setIsPlaying] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
-	const waveformRef = useRef<WaveSurfer | null>(null);
+	const isPlaying = useSelector(audioLabelingSliceSelectors.isPlaying);
+	const activeLabel = useSelector(audioLabelingSliceSelectors.activeLabel);
 	const theme = getTheme();
 	const themeColors = daisyuiColors[`[data-theme=${theme}]`];
 	const primaryColor = themeColors.primary;
@@ -32,7 +33,7 @@ export const AudioPlayer = ({
 
 	// it will trigger on initial render and on every update of the url prop or theme
 	useEffect(() => {
-		setIsPlaying(false);
+		dispatch(setIsPlaying(false));
 		waveformRef.current?.destroy();
 		waveformRef.current = null;
 		waveformRef.current = WaveSurfer.create({
@@ -64,29 +65,87 @@ export const AudioPlayer = ({
 		waveformRef.current.load(url);
 
 		waveformRef.current.on("finish", (e) => {
-			setIsPlaying(false);
+			dispatch(setIsPlaying(false));
 		});
 
 		// Enable dragging on the audio waveform
 		waveformRef.current.enableDragSelection({
 			maxLength: 90,
 		});
-		// Perform action when new region is created
-	}, [primaryColor, primaryFocusColor, url]);
+
+		waveformRef.current.on("region-out", (region) => {
+			// TODO: modify logic
+			if (!region.loop && !waveformRef.current?.isPlaying()) {
+				dispatch(setIsPlaying(false));
+			}
+		});
+
+		// Cleanup
+		return () => {
+			waveformRef.current?.destroy();
+			waveformRef.current = null;
+		};
+	}, [dispatch, primaryColor, primaryFocusColor, url, waveformRef]);
 
 	useEffect(() => {
-		if (waveformRef.current && activeLabelColor) {
+		if (waveformRef.current && activeLabel) {
 			waveformRef.current.on("region-created", (e) => {
-				// let color = randomColor({
-				// 	luminosity: "light",
-				// 	alpha: 0.3,
-				// 	format: "rgba",
-				// });
-				e.color = `rgb(${activeLabelColor.rgbColor}, 0.3)`;
-				dispatch(addRegion({ id: e.id, color: activeLabelColor.color }));
+				e.color = `rgb(${activeLabel.rgbColor}, 0.5)`;
+			});
+			waveformRef.current.on("region-update-end", (e) => {
+				dispatch(
+					addRegion({
+						id: e.id,
+						start: Math.floor(e.start * 100) / 100,
+						end: Math.floor(e.end * 100) / 100,
+						color: activeLabel.color,
+					}),
+				);
 			});
 		}
-	}, [dispatch, activeLabelColor]);
+	}, [activeLabel, dispatch, waveformRef]);
+
+	// AUDIO CONTROLS
+	const handlePlayPauseAudio = useCallback(() => {
+		if (waveformRef.current) {
+			waveformRef.current.playPause();
+			dispatch(setIsPlaying(waveformRef.current.isPlaying()));
+		}
+	}, [dispatch, waveformRef]);
+
+	const handleSkipAudio = useCallback(
+		(isForward: boolean) => {
+			if (waveformRef.current) {
+				waveformRef.current.skip(isForward ? 2 : -2);
+			}
+		},
+		[waveformRef],
+	);
+
+	const handleToggleMute = useCallback(() => {
+		if (waveformRef.current) {
+			waveformRef.current.toggleMute();
+			setIsMuted(waveformRef.current.getMute());
+		}
+	}, [waveformRef]);
+
+	const handleChangePlaybackSpeed = (speed: number) => {
+		if (waveformRef.current) {
+			waveformRef.current.setPlaybackRate(speed);
+		}
+	};
+
+	const handleZoom = (zoom: number, isHorizontal = true) => {
+		if (waveformRef.current) {
+			if (isHorizontal) {
+				waveformRef.current.zoom(zoom);
+			} else {
+				waveformRef.current.params.barHeight = zoom;
+				// waveformRef.current.empty();
+				waveformRef.current.drawBuffer();
+			}
+		}
+	};
 
 	// handle key events
 	useEffect(() => {
@@ -108,55 +167,7 @@ export const AudioPlayer = ({
 		return () => {
 			window.removeEventListener("keydown", handleKeyDown);
 		};
-	}, [isPlaying]);
-
-	// delete a particular region
-	const deleteRegion = (regionId: string) => {
-		waveformRef.current?.regions.list[regionId].remove();
-	};
-
-	// play a particular region
-	const playRegion = (regionId: string) => {
-		waveformRef.current?.regions.list[regionId].play();
-	};
-
-	const handlePlayPauseAudio = () => {
-		if (waveformRef.current) {
-			waveformRef.current.playPause();
-			setIsPlaying(waveformRef.current.isPlaying());
-		}
-	};
-
-	const handleSkipAudio = (isForward: boolean) => {
-		if (waveformRef.current) {
-			waveformRef.current.skip(isForward ? 2 : -2);
-		}
-	};
-
-	const handleToggleMute = () => {
-		if (waveformRef.current) {
-			waveformRef.current.toggleMute();
-			setIsMuted(waveformRef.current.getMute());
-		}
-	};
-
-	const handleChangePlaybackSpeed = (speed: number) => {
-		if (waveformRef.current) {
-			waveformRef.current.setPlaybackRate(speed);
-		}
-	};
-
-	const handleZoom = (zoom: number, isHorizontal = true) => {
-		if (waveformRef.current) {
-			if (isHorizontal) {
-				waveformRef.current.zoom(zoom);
-			} else {
-				waveformRef.current.params.barHeight = zoom;
-				// waveformRef.current.empty();
-				waveformRef.current.drawBuffer();
-			}
-		}
-	};
+	}, [handlePlayPauseAudio, handleSkipAudio, handleToggleMute]);
 
 	return (
 		<div className="flex flex-col w-full bg-neutral p-4 rounded-sm">

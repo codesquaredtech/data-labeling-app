@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AudioPlayer } from ".";
 import { uploadResources } from "../../../actions/resource";
@@ -7,6 +7,7 @@ import { Dropzone } from "../Dropzone";
 
 export const ExampleAudioPlayer = () => {
 	const [files, setFiles] = useState<File[]>([]);
+	const waveformRef = useRef<WaveSurfer | null>(null);
 	const dispatch = useDispatch<AppDispatch>();
 
 	const onDrop = useCallback((acceptedFiles) => {
@@ -20,7 +21,11 @@ export const ExampleAudioPlayer = () => {
 
 	return (
 		<div className="w-2/5 h-screen flex flex-col justify-center items-center gap-12">
-			<AudioPlayer url="https://actions.google.com/sounds/v1/cartoon/whistle_toy.ogg" zoomEnabled />
+			<AudioPlayer
+				waveformRef={waveformRef}
+				url="https://actions.google.com/sounds/v1/cartoon/whistle_toy.ogg"
+				zoomEnabled
+			/>
 
 			<Dropzone onDrop={onDrop} />
 			<button className="btn btn-primary" disabled={files.length < 1} onClick={handleUpload}>
