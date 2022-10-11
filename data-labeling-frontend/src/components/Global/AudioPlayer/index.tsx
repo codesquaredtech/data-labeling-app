@@ -1,4 +1,4 @@
-import React, { useEffect, MutableRefObject, useState, useCallback } from "react";
+import React, { useEffect, MutableRefObject, useState, useCallback, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
 import WaveformRegionsPlugin from "wavesurfer.js/src/plugin/regions";
 import TimelinePlugin from "wavesurfer.js/src/plugin/timeline";
@@ -8,7 +8,12 @@ import daisyuiColors from "daisyui/src/colors/themes";
 import { getTheme } from "../../../utils";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../config/store";
-import { addRegion, audioLabelingSliceSelectors, setIsPlaying } from "../../../slices/Labeling/audioSlice";
+import {
+	addRegion,
+	audioLabelingSliceSelectors,
+	setIsPlaying,
+	updateRegion,
+} from "../../../slices/Labeling/audioSlice";
 import { useSelector } from "react-redux";
 
 const PLAYBACK_SPEED_OPTIONS = [0.25, 0.5, 1, 1.5, 2];
@@ -25,6 +30,7 @@ export const AudioPlayer = ({
 	const [isMuted, setIsMuted] = useState(false);
 	const isPlaying = useSelector(audioLabelingSliceSelectors.isPlaying);
 	const activeLabel = useSelector(audioLabelingSliceSelectors.activeLabel);
+	const activeLabelColorRef = useRef<{ color: string; rgbColor: string } | null>(null);
 	const theme = getTheme();
 	const themeColors = daisyuiColors[`[data-theme=${theme}]`];
 	const primaryColor = themeColors.primary;
@@ -88,22 +94,40 @@ export const AudioPlayer = ({
 	}, [dispatch, primaryColor, primaryFocusColor, url, waveformRef]);
 
 	useEffect(() => {
-		if (waveformRef.current && activeLabel) {
+		if (activeLabel) {
+			activeLabelColorRef.current = { color: activeLabel.color, rgbColor: activeLabel.rgbColor };
+		} else {
+			activeLabelColorRef.current = null;
+		}
+	}, [activeLabel]);
+
+	useEffect(() => {
+		if (waveformRef.current) {
 			waveformRef.current.on("region-created", (e) => {
-				e.color = `rgb(${activeLabel.rgbColor}, 0.5)`;
+				if (activeLabelColorRef.current) {
+					e.color = `rgb(${activeLabelColorRef.current.rgbColor}, 0.5)`;
+					dispatch(
+						addRegion({
+							id: e.id,
+							color: activeLabelColorRef.current.color,
+							createdAt: Date.now(),
+						}),
+					);
+				} else {
+					e.remove();
+				}
 			});
 			waveformRef.current.on("region-update-end", (e) => {
 				dispatch(
-					addRegion({
+					updateRegion({
 						id: e.id,
 						start: Math.floor(e.start * 100) / 100,
 						end: Math.floor(e.end * 100) / 100,
-						color: activeLabel.color,
 					}),
 				);
 			});
 		}
-	}, [activeLabel, dispatch, waveformRef]);
+	}, [dispatch, waveformRef]);
 
 	// AUDIO CONTROLS
 	const handlePlayPauseAudio = useCallback(() => {
@@ -141,7 +165,6 @@ export const AudioPlayer = ({
 				waveformRef.current.zoom(zoom);
 			} else {
 				waveformRef.current.params.barHeight = zoom;
-				// waveformRef.current.empty();
 				waveformRef.current.drawBuffer();
 			}
 		}

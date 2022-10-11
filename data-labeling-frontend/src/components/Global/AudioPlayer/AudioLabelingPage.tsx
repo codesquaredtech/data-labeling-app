@@ -4,7 +4,7 @@ import { AudioPlayer } from ".";
 import Regions from "./Regions";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../config/store";
-import { setActiveLabel } from "../../../slices/Labeling/audioSlice";
+import { setActiveLabel, setSortOrder, SortOrder } from "../../../slices/Labeling/audioSlice";
 
 export type AudioLabel = {
 	color: string;
@@ -12,6 +12,13 @@ export type AudioLabel = {
 	title: string;
 	enabled: boolean;
 };
+
+const SORT_OPTIONS = [
+	{ label: "Created ASC", value: SortOrder.CREATED_ASC },
+	{ label: "Created DESC", value: SortOrder.CREATED_DESC },
+	{ label: "Start ASC", value: SortOrder.START_ASC },
+	{ label: "Start DESC", value: SortOrder.START_DESC },
+];
 
 export const AudioLabelingPage = () => {
 	const [labels, setLabels] = useState([
@@ -34,6 +41,10 @@ export const AudioLabelingPage = () => {
 				return { ...l, enabled: false };
 			}),
 		);
+	};
+
+	const handleSort = (value: string) => {
+		dispatch(setSortOrder(value));
 	};
 
 	return (
@@ -74,6 +85,24 @@ export const AudioLabelingPage = () => {
 			<div className="flex flex-col bg-neutral h-[calc(100vh_-_64px)] w-1/3">
 				<div className="flex w-full items-center justify-between py-8 px-4 bg-neutral-focus">
 					<span className="text-neutral-content">Audio file.wav (0:00 / 2:20)</span>
+					<div className="w-fit">
+						<select
+							onChange={(e) => handleSort(e.target.value)}
+							defaultValue="default"
+							className="select select-link w-full max-w-xs"
+						>
+							<option disabled value="default">
+								Sort
+							</option>
+							{SORT_OPTIONS.map(({ value, label }) => {
+								return (
+									<option value={value} key={value}>
+										{label}
+									</option>
+								);
+							})}
+						</select>
+					</div>
 				</div>
 				<div ref={listEl} className="overflow-y-auto w-full py-4 px-3">
 					<Regions waveformRef={waveformRef} />
