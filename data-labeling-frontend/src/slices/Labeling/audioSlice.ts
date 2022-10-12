@@ -1,21 +1,22 @@
 import { RootState } from "../../config/store";
 import { createSlice } from "@reduxjs/toolkit";
 import { AudioLabel } from "../../components/Global/AudioPlayer/AudioLabelingPage";
+import { SortOrder, sortRegions } from "../../components/Global/AudioPlayer/utils";
 
 const SLICE_NAME = "audioLabeling";
 
-export enum SortOrder {
-	CREATED_ASC = "CREATED_ASC",
-	CREATED_DESC = "CREATED_DESC",
-	START_ASC = "START_ASC",
-	START_DESC = "START_DESC",
-}
-
+export type Region = {
+	id: string;
+	color: string;
+	start: number;
+	end: number;
+	createdAt: number;
+};
 interface InitState {
-	regions: any[];
+	regions: Region[];
 	activeLabel: AudioLabel | null;
 	isPlaying: boolean;
-	sortOrder: string;
+	sortOrder: SortOrder;
 }
 
 const initialState: InitState = {
@@ -30,15 +31,19 @@ export const audioLabelingSlice = createSlice({
 	initialState,
 	reducers: {
 		addRegion: (state, action) => {
-			state.regions.push(action.payload);
+			let preparedRegions: Region[] = [...state.regions, action.payload];
+			preparedRegions = sortRegions(preparedRegions, state.sortOrder);
+			state.regions = preparedRegions;
 		},
 		updateRegion: (state, action) => {
-			state.regions = state.regions.map((region) => {
+			let preparedRegions: Region[] = state.regions.map((region) => {
 				if (region.id === action.payload.id) {
 					return { ...action.payload, color: region.color, createdAt: region.createdAt };
 				}
 				return region;
 			});
+			preparedRegions = sortRegions(preparedRegions, state.sortOrder);
+			state.regions = preparedRegions;
 		},
 
 		removeRegion: (state, action) => {
@@ -52,20 +57,7 @@ export const audioLabelingSlice = createSlice({
 		},
 		setSortOrder: (state, action) => {
 			state.sortOrder = action.payload;
-			state.regions = state.regions.sort((a, b) => {
-				switch (state.sortOrder) {
-					case SortOrder.CREATED_ASC:
-						return a.createdAt - b.createdAt;
-					case SortOrder.CREATED_DESC:
-						return b.createdAt - a.createdAt;
-					case SortOrder.START_ASC:
-						return a.start - b.start;
-					case SortOrder.START_DESC:
-						return b.start - a.start;
-					default:
-						return 0;
-				}
-			});
+			state.regions = sortRegions(state.regions, action.payload);
 		},
 		setIsPlaying: (state, action) => {
 			state.isPlaying = action.payload;

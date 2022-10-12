@@ -4,7 +4,8 @@ import { AudioPlayer } from ".";
 import Regions from "./Regions";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../config/store";
-import { setActiveLabel, setSortOrder, SortOrder } from "../../../slices/Labeling/audioSlice";
+import { setActiveLabel, setSortOrder } from "../../../slices/Labeling/audioSlice";
+import { SortOrder } from "./utils";
 
 export type AudioLabel = {
 	color: string;
